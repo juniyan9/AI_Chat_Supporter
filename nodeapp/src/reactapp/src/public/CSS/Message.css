@@ -1,0 +1,23 @@
+.user-message{
+  margin-top: 0px;
+  margin-bottom: 10px;
+  text-align:left;
+  border: 0.5px solid rgb(155, 39, 39);
+  
+  }
+
+p 
+  {
+    margin: 1px;
+    
+    border: 0.5px solid rgb(62, 207, 106);
+  } 
+
+.ai-message {
+    margin-top: 0px;
+    margin-bottom: 10px;
+    text-align:left;
+    border: 0.5px solid rgb(98, 192, 230);
+    
+  }
+

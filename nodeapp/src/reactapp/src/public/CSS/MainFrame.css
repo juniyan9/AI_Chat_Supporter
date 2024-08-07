@@ -1,0 +1,10 @@
+.MainFrame {
+    color: rgb(250, 240, 230);
+    background: rgb(250, 240, 230);
+    border: 2px solid #2e2e2e;
+    line-height: 1.5;
+    width: 1920px;
+    height: 1080px;
+    margin: 3%;
+    justify-content: space-around;
+}

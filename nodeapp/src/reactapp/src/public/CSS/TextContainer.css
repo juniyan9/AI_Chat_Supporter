@@ -1,0 +1,9 @@
+.TextContainer {
+    color: black;
+    background: white;
+    border: 1px solid #2e2e2e;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    font-size: 1rem;
+    height: 10%;
+}

@@ -1,0 +1,10 @@
+.InfoBar {
+    color: black;
+    background: white;
+    border: 1px solid #2e2e2e;
+    border-bottom: 1px solid #2e2e2e;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    font-size: 1rem;
+    height: 5%;
+}
