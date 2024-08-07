@@ -1,4 +1,4 @@
-import '../CSS/MessageContainer.css';
+import '../../CSS/MessageContainer.css';
 import Message from './Message';
 
 

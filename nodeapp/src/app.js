@@ -1,8 +1,10 @@
 /* NodeJS declaration */
 import express from 'express';
 import customLogger from './class/customLogger.js'
-import user from './class/user.js'
+import userObj from './class/user.js'
+import roomObj from './class/room.js'
 import path from 'path';
+import cors from 'cors';
 import * as url from 'url';
 
 let app = express();
@@ -34,13 +36,40 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
+app.use(cors({ cors: '*' }));
+
+
+
 
 app.get('/', (req, res) => {
   res.readFile("index.html")
 });
 
-let roomName
+/*
+  
+*/
+
+let room =[
+    { 
+      id : 0,
+      name: 'room1',  
+      count: 1,
+      maxCount: 10,
+    },
+    { 
+      id : 1,
+      name: 'room2',  
+      count: 3,
+      maxCount: 7,
+    }
+  ];
 let users = {};
+
+
+
+app.get('/chatList', (req, res) => {
+  res.send(room);
+});
 
 
 
@@ -55,24 +84,25 @@ httpServer.listen(WS_port, () => {
 io.on("connection", (socket) => {
   logger.info('Client connected');
 
-  socket.on('enter_room', (name, roomName) => {
+  socket.on('enter_room', (nickName, roomName) => {
 
-    users[socket.id] = {name, roomName};
+    users[socket.id] = {nickName, roomName};
 
-    logger.info('UserName >>'+ users[socket.id].name);
+    logger.info('UserName >>'+ users[socket.id].nickName);
     
     socket.join(roomName);
-    logger.info('Client joined to ' + roomName);
-    socket.to(roomName).emit("reply","welcome");
+    logger.info(users[socket.id].nickName + 'Client joined to ' + roomName);
+    
+    socket.in(roomName).emit("reply", users[socket.id].nickName, "welcome");
   });
   
-  socket.on('message', (message, roomName) => {
+  socket.on('message', (message, roomName) => { 
     logger.info('Received message from client:' + message);
     logger.info('Received message from client room:' + roomName);
 
     const user = users[socket.id];
     if (user) {
-      socket.to(roomName).emit('reply', users[socket.id].name, message);
+      socket.to(roomName).emit('reply', message ,users[socket.id].nickName, message);
     }
   });
 
@@ -80,7 +110,7 @@ io.on("connection", (socket) => {
     const user = users[socket.id];
     if (user) {
         logger.info('A client disconnected');
-        io.to(user.room).emit('message', `${user.name} has left the room`);
+        io.to(roomName).emit('message', `${user.nickName} has left the room`);
         delete users[socket.id];
     }
   });

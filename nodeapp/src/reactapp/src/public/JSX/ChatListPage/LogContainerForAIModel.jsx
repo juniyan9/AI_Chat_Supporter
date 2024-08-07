@@ -1,4 +1,4 @@
-import '../CSS/LogContainerForAIModel.css';
+import '../../CSS/LogContainerForAIModel.css';
 
 export default function LogContainerForAIModel() {
     return (

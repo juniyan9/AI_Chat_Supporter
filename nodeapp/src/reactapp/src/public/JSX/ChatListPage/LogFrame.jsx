@@ -1,6 +1,6 @@
 import { React } from "react";
 
-import '../CSS/LogFrame.css';
+import '../../CSS/LogFrame.css';
 
 import LogContainerForAIModel from "./LogContainerForAIModel";
 import LogContainerForAPI from "./LogContainerForAPI";

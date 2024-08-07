@@ -1,4 +1,4 @@
-import '../CSS/InfoBar.css';
+import '../../CSS/InfoBar.css';
 
 export default function InfoBar() {
     return (

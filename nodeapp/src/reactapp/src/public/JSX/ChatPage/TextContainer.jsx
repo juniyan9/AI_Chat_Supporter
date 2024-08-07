@@ -1,5 +1,5 @@
 import React from "react"
-import '../CSS/TextContainer.css';
+import '../../CSS/TextContainer.css';
 import { useState } from "react";
 
 /*
@@ -9,7 +9,7 @@ import { useState } from "react";
     2. 
 
 */
-export default function TextContainer({ socket, setMessages, name }) {
+export default function TextContainer({ socket, setMessages, nickName, roomName }) {
     
     
     const [message, setMessage] = useState('');
@@ -24,15 +24,17 @@ export default function TextContainer({ socket, setMessages, name }) {
     const handleSubmit = () => {
 
         if(message !== '' && message.length !== 0){
-            socket.current.emit('message', message, 'room1');
+            socket.current.emit('message', message, roomName);
+            /*
             setMessage('');
             setMessages((prevMessages) => [
                 ...prevMessages,
                 { 
-                  name: name, 
+                  nickName: nickName, 
                   text: message,
                 },
               ]);
+              */
         }
     }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
 
-import '../CSS/ChatFrame.css';
+import '../../CSS/ChatFrame.css';
 import io from 'socket.io-client';
 import InfoBar from "./InfoBar"
 import MessageContainer from "./MessageContainer"

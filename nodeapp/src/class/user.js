@@ -1,17 +1,17 @@
 class user {
 
-    constructor(id, name, room){
+    constructor(id, nickName, roomName){
         this.id = id;
-        this.name = name;
-        this.room = room;
+        this.nickName = nickName;
+        this.roomName = roomName;
     }
 
-    setName(name){
-        this.name = name
+    setName(nickName){
+        this.nickName = nickName
     }
 
-    setRoom(room){
-        this.room = room
+    setRoomName(roomName){
+        this.roomName = roomName
     }
 
 }

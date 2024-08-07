@@ -1,4 +1,4 @@
-import '../CSS/LogContainerForAPI.css';
+import '../../CSS/LogContainerForAPI.css';
 
 export default function LogContainerForAPI() {
     return (
