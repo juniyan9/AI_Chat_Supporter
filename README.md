@@ -1,7 +1,7 @@
 <h1># AI_chat_supporter_react_nodejs</h1>
 Conversation support for LLM and AI emotional analysis
 
-목적
+### 요구사항:
 
 채팅 중 발생하는 애로사항을 개선할 수 있게 감정분석모델과 LLM을 이용하여 서포팅하는 Add-on 서비스를 개발하고자 함
 
@@ -12,18 +12,13 @@ Conversation support for LLM and AI emotional analysis
 3. 실시간 채팅 환경이기 때문에 응답을 빠르게 처리할 수 있는지
 4. 개인적인 정보가 포함될 수 있는 대화 내용에 대한 서버에서의 보안 문제
 
-프로젝트 현황
+### 프로젝트 현황:
 
-2024-08-05 
+#### 2024-08-05 
 주제 선정
 
-2024-08-06
+#### 2024-08-06
 웹소켓 채팅 환경 구현: React, NodeJS를 이용하여 웹소켓 채팅 구현
 
-2024-08-07
+#### 2024-08-07
 웹소켓 채팅 환경 구현: React, NodeJS를 이용하여 웹소켓 채팅 개선
-
-
-
-
-
