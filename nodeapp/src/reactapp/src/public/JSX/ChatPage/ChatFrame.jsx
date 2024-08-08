@@ -21,7 +21,7 @@ export default function ChatFrame(props) {
     const socket = useRef(null);
     
     useEffect(() => {
-      socket.current = io('http://192.168.0.108:5050');
+      socket.current = io('http://192.168.0.94:5050');
         socket.current.on('connect', () => {
           console.log('Connected to server');
           // 룸 입장 emit
