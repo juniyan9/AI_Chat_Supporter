@@ -21,6 +21,12 @@ export default function TextContainer({ socket, setMessages, nickName, roomName 
         setMessage(event.target.value);
     }
 
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleSubmit();
+        }
+      };
+
     const handleSubmit = () => {
 
         if(message !== '' && message.length !== 0){
@@ -33,15 +39,15 @@ export default function TextContainer({ socket, setMessages, nickName, roomName 
                   nickName: nickName, 
                   text: message,
                   user1: true
-                },
+                }
               ]);
         }
     }
 
     return (
         <div className="TextContainer">
-            <input className="textinput"type="text" name="message" value={message} onChange={handleLocalMessage}/>
-            <button type="button" onClick={handleSubmit}>보내기</button>
+                <input className="textinput"type="text" name="message" value={message} onChange={handleLocalMessage} onKeyDown={handleKeyPress}/>
+                <button type="button" onClick={handleSubmit}>보내기</button>
         </div>
     );
 }
