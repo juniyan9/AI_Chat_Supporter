@@ -9,7 +9,7 @@ export default function LogFrame() {
     return (
         <div className="LogFrame">
             <LogContainerForAPI />
-            <div></div>
+            <LogContainerForAIModel />
         </div>
     )
 }

@@ -21,7 +21,7 @@ export default function ChatFrame(props) {
     const socket = useRef(null);
     
     useEffect(() => {
-      socket.current = io('http://192.168.0.94:5050');
+      socket.current = io('http://192.168.0.113:5050');
         socket.current.on('connect', () => {
           console.log('Connected to server');
           // 룸 입장 emit
@@ -31,7 +31,7 @@ export default function ChatFrame(props) {
         // 서버 메세지 대기
         socket.current.on('reply', (reply_message, nickName) => {
           console.log('From server ::', reply_message);
-/*
+
           // 채팅 메세지 업데이트
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -40,7 +40,8 @@ export default function ChatFrame(props) {
               text: reply_message,
             },
           ]);
-          */
+
+
         });
     
         return () => {

@@ -1,23 +1,40 @@
-.user-message{
-  margin-top: 0px;
-  margin-bottom: 10px;
-  text-align:left;
-  border: 0.5px solid rgb(155, 39, 39);
-  
-  }
+.user1 {
+  width: 180px;
+  background: #fff;
+  margin :5px 0px 0px 199px;
+}
 
-p 
-  {
-    margin: 1px;
-    
-    border: 0.5px solid rgb(62, 207, 106);
-  } 
+.username1{
+  display: none;
+}
+.user1 p{
+  padding: 10px;
+  border: solid 1px;
+  border-radius: 10px;
+  margin: auto;
+  font-size: small;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  background: #f2ffa5;
+}
 
-.ai-message {
-    margin-top: 0px;
-    margin-bottom: 10px;
-    text-align:left;
-    border: 0.5px solid rgb(98, 192, 230);
-    
-  }
+.username2{
+  text-align: left;
+}
+.user2 {
+  width: 180px;
+  background: #fff;
+  margin: 5px 0px 0px 5px;
+}
+
+.user2 p{
+  padding: 10px;
+  border: solid 1px;
+  border-radius: 10px;
+  margin: auto;
+  font-size: small;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  background: rgb(195, 206, 255);
+}
 

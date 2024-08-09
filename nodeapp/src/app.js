@@ -106,7 +106,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', (roomName) => {
     const user = users[socket.id];
     if (user) {
         logger.info('A client disconnected');

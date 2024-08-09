@@ -11,7 +11,7 @@ export default function ChatPage() {
     console.log('ChatPage:::', location.state);
     return (
         <div className="chatPage">
-            <ChatFrame roomName={location.state.roomName} nickName={location.state.nickName}/>
+            <ChatFrame roomName={location.state.roomName} nickName={location.state.nickName} />
             <LogFrame />
         </div>
     );

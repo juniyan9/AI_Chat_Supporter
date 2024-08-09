@@ -14,7 +14,7 @@ export default function ChatListPage() {
 
     useEffect(() => {
         async function fetchRooms() {
-            fetch('http://192.168.0.94:5000/chatList', {
+            fetch('http://192.168.0.113:5000/chatList', {
                 method: "GET",
             })
             .then((response) => response.json())
