@@ -25,7 +25,7 @@ export default function TextContainer({ socket, setMessages, nickName, roomName 
 
         if(message !== '' && message.length !== 0){
             socket.current.emit('message', message, roomName);
-            /*
+            
             setMessage('');
             setMessages((prevMessages) => [
                 ...prevMessages,
@@ -34,7 +34,7 @@ export default function TextContainer({ socket, setMessages, nickName, roomName 
                   text: message,
                 },
               ]);
-              */
+              
         }
     }
 

@@ -82,35 +82,34 @@ httpServer.listen(WS_port, () => {
 
 //events
 io.on("connection", (socket) => {
-  logger.info('Client connected');
+  logger.info('A Client connected');
 
   socket.on('enter_room', (nickName, roomName) => {
 
     users[socket.id] = {nickName, roomName};
+        logger.info(`Client (${users[socket.id].nickName}) enter_room called`);
 
-    logger.info('UserName >>'+ users[socket.id].nickName);
-    
     socket.join(roomName);
-    logger.info(users[socket.id].nickName + 'Client joined to ' + roomName);
-    
-    socket.in(roomName).emit("reply", users[socket.id].nickName, "welcome");
+        logger.info(`${users[socket.id].nickName} joined to ${roomName}`);
+
+    socket.broadcast.in(roomName).emit("reply", users[socket.id].nickName, "welcome");
   });
-  
+
   socket.on('message', (message, roomName) => { 
     logger.info('Received message from client:' + message);
     logger.info('Received message from client room:' + roomName);
 
     const user = users[socket.id];
     if (user) {
-      socket.to(roomName).emit('reply', message ,users[socket.id].nickName, message);
+      socket.to(roomName).emit('reply', message , users[socket.id].nickName);
     }
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', (roomName) => {
     const user = users[socket.id];
     if (user) {
         logger.info('A client disconnected');
-        io.to(roomName).emit('message', `${user.nickName} has left the room`);
+        io.to(roomName).emit('message', `(${user.nickName}) has left the room`);
         delete users[socket.id];
     }
   });

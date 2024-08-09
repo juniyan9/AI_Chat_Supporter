@@ -31,7 +31,7 @@ export default function ChatFrame(props) {
         // 서버 메세지 대기
         socket.current.on('reply', (reply_message, nickName) => {
           console.log('From server ::', reply_message);
-/*
+
           // 채팅 메세지 업데이트
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -40,11 +40,11 @@ export default function ChatFrame(props) {
               text: reply_message,
             },
           ]);
-          */
+          
         });
     
         return () => {
-          socket.current.disconnect(); // 컴포넌트 언마운트 시 연결 종료
+          socket.current.disconnect(roomName); // 컴포넌트 언마운트 시 연결 종료
         };
     }, []);
 
