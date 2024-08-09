@@ -32,15 +32,15 @@ export default function TextContainer({ socket, setMessages, nickName, roomName 
                 { 
                   nickName: nickName, 
                   text: message,
+                  user1: true
                 },
               ]);
-              
         }
     }
 
     return (
         <div className="TextContainer">
-            <input type="text" name="message" value={message} onChange={handleLocalMessage}/>
+            <input className="textinput"type="text" name="message" value={message} onChange={handleLocalMessage}/>
             <button type="button" onClick={handleSubmit}>보내기</button>
         </div>
     );

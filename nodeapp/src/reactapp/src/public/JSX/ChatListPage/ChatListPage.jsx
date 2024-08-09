@@ -13,15 +13,17 @@ export default function ChatListPage() {
     console.log(location.state.nickName);
 
     useEffect(() => {
-        
-        fetch('http://192.168.0.108:5000/chatList', {
-            method: "GET",
-        })
-        .then((response) => response.json())
-        .then((data) => 
-                setRooms(data)
-        )
-        
+        async function fetchRooms() {
+            fetch('http://192.168.0.113:5000/chatList', {
+                method: "GET",
+            })
+            .then((response) => response.json())
+            .then((data) => 
+                    setRooms(data)
+                )
+        }
+        fetchRooms();
+
     }, []);
 
     const handleAddRoom = () => {

@@ -6,5 +6,11 @@
     border-top-left-radius: 0.5rem;
     border-top-right-radius: 0.5rem;
     font-size: 1rem;
-    height: 5%;
+    height: 40px;
+}
+
+.InfoBar h3{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

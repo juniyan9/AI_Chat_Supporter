@@ -13,11 +13,15 @@ export default function MainPage() {
         }
     }
     
+
+
     return (
         <div className="MainPage">
+            <div className="Main">
                 <input type='text' name='nickName' placeholder="닉네임을 입력해주세요." onChange={(e)=>{setNickName(e.target.value)}}></input>
-                <br></br>
-                <button onClick={handleNickNameSubmit}>입장하기</button>
+                <button  onClick={handleNickNameSubmit}>입장하기</button>
+
+            </div>
         </div>
     );
 }

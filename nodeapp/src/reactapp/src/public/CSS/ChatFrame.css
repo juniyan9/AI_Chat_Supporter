@@ -1,7 +1,4 @@
 .ChatFrame {
-    width: 900px;
-    height: 940px;
-    align-self: center;
-    /*margin-right: 5%;*/
-    margin-left: 5%;
+    width: 400px;
+    height: 600px;
 }
