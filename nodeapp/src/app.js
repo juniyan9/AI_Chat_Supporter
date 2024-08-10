@@ -28,8 +28,10 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 /* middleware */
 //app.use('요청 경로', express.static('실제 경로'));
+
 app.use('/', express.static(path.join(__dirname, 'reactapp/build')));
 // app.use('/', express.static(__dirname));
+
 //app.use(express.static(path.join(__dirname, 'reactapp/build/static')));
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -37,6 +39,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors({ cors: '*' }));
+
 
 
 app.get('/', (req, res) => {
@@ -61,6 +64,7 @@ let room = [
     maxCount: 7,
   }
 ];
+
 let users = {};
 
 
@@ -75,6 +79,7 @@ app.get('/chatList', (req, res) => {
 
 const WS_port = 5050;
 httpServer.listen(WS_port, () => {
+
   console.log('WebSocket listening at port %d', WS_port);
 });
 
@@ -87,11 +92,12 @@ let nickNames = new Set ();
 io.on("connection", (socket) => {
   logger.info('A Client has connected');
 
-  socket.on('enter_room', (nickName, roomName, cb) => {
+  socket.on('enter_room', (nickName, roomName) => {
 
     if (nickNames.has(nickName)) {
-      cb ({error: '이미 사용중인 닉네임입니다.'});
-      return;   //위 조건에 걸리면 나머지 코드 실행하지 않고 함수 종료.
+      // cb ({error: '이미 사용중인 닉네임입니다.'});
+      // return;   //위 조건에 걸리면 나머지 코드 실행하지 않고 함수 종료.
+      logger.info(`ID (${socket.id})가 중복된 닉네임 (${nickName}) 사용.`);
     }
 
     nickNames.add(nickName);  //사용되지 않은 닉네임인 경우 nickNames에 저장.
@@ -118,6 +124,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on('message', (message, roomName) => {
+
+  
     logger.info('Received message from client:' + message);
     logger.info('Received message from client room:' + roomName);
 
@@ -145,10 +153,15 @@ io.on("connection", (socket) => {
       socket.broadcast.to(roomName).emit('message', `${user.nickName} 님이 방을 나가셨습니다.`);
 
       delete users[socket.id];
+
+      
     }
   });
 
 });
 
 
+
 export { app, io };
+
+
