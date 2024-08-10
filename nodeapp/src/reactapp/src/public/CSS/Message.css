@@ -1,0 +1,44 @@
+.user1 {
+  width: 180px;
+  background: #fff;
+  margin :5px 0px 0px 199px;
+}
+
+.username1{
+  display: none;
+  
+}
+.user1 p{
+  padding: 7px;
+  border: solid 1px;
+  border-radius: 10px;
+  margin: auto;
+  font-size: small;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  background: #f2ffa5;
+}
+
+.username2{
+  text-align: left;
+  font-size: 13px;
+  font-weight: 550;
+  margin-bottom: 2px;
+}
+.user2 {
+  width: 180px;
+  background: #fff;
+  margin: 5px 0px 0px 5px;
+}
+
+.user2 p{
+  padding: 7px;
+  border: solid 1px;
+  border-radius: 10px;
+  margin: auto;
+  font-size: small;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  background: rgb(195, 206, 255);
+}
+
