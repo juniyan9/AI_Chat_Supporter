@@ -1,9 +1,6 @@
 .MessageContainer {
     color: black;
     background: white;
-    border-right: 1px solid #2e2e2e;
-    border-left: 1px solid #2e2e2e;
-    padding: auto;
     font-size: 1rem;
     height: 85%;
     overflow-y: auto;

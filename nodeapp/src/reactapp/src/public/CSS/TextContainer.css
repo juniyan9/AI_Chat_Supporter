@@ -1,17 +1,31 @@
 .TextContainer {
     color: black;
     background: white;
-    border: 1px solid #2e2e2e;
-    border-bottom-left-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
     font-size: 1rem;
-    height: 10%;
+    display: flex;
+    justify-content: center;
 }
 
 .textinput{
-    border: solid 0px;
-    border-radius: 0px 0px 0px 8px;
-    width: 324px;
-    height: 58px;
-    font-size: 18px;
+    border: solid 1px;
+    width: 200px;
+    height: 30px;
+    font-size: 13px;
+
+}
+.test1{
+    background: url(../IMG/Icon.png);
+    background-size: cover;
+    margin: 0 10px;
+    width: 35px;
+    height: 35px;
+    border: solid 1px;
+}
+.test2{
+    background: url(../IMG/Icon.png);
+    background-size: cover;
+    width: 35px;
+    height: 35px;
+    border: 0;
+    border: solid 1px;
 }
