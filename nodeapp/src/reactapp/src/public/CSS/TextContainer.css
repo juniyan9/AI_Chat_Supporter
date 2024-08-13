@@ -1,37 +1,17 @@
 .TextContainer {
     color: black;
     background: white;
+    border: 1px solid #2e2e2e;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
     font-size: 1rem;
-    display: flex;
-    justify-content: center;
-    height: 60px;
-    align-items: center;
+    height: 10%;
 }
 
 .textinput{
-    border: solid 1px #E8E6EA;
-    border-radius: 10px;
-    width: 200px;
-    height: 30px;
-    font-size: 13px;
+    border: solid 0px;
+    border-radius: 0px 0px 0px 8px;
+    width: 324px;
+    height: 58px;
+    font-size: 18px;
 }
-
-.textinput:focus{
-    border-radius: 0.5px;
-}
-.test1{
-    background: url(../IMG/Icon.png) no-repeat 7px;
-    margin: 0 10px;
-    width: 35px;
-    height: 35px;
-    border: solid 1px #E8E6EA;
-    border-radius: 10px;
-
-}
-/* .test2{
-    background: url(../IMG/Icon.png) no-repeat 7px;
-    width: 35px;
-    height: 35px;
-    border: solid 1px #E8E6EA;
-    border-radius: 10px;
-} */

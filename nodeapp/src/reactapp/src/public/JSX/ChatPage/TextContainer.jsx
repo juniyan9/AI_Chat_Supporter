@@ -9,7 +9,7 @@ import { useState } from "react";
     2. 
 
 */
-export default function TextContainer({ socket, setMessages, nickName, roomName, messages }) {
+export default function TextContainer({ socket, setMessages, nickName, roomName }) {
     
     
     const [message, setMessage] = useState('');
@@ -26,7 +26,6 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
             handleSubmit();
         }
       };
-    
 
     const handleSubmit = () => {
 
@@ -44,16 +43,11 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
               ]);
         }
     }
-    
-    // const test = ()=>{
-    //     console.log(messages);
-    // }
 
     return (
         <div className="TextContainer">
-                <input className="textinput"type="text" name="message" value={message} onChange={handleLocalMessage} onKeyDown={handleKeyPress} />
-                <button type="button" onClick={handleSubmit} className="test1"></button>
-                {/* <button type="button" onClick={test} className="test2"></button> */}
+                <input className="textinput"type="text" name="message" value={message} onChange={handleLocalMessage} onKeyDown={handleKeyPress}/>
+                <button type="button" onClick={handleSubmit}>보내기</button>
         </div>
     );
 }
