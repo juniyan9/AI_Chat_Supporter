@@ -1,9 +1,7 @@
 .LogContainerForAIModel {
     color: black;
     background: white;
-    border: 1px solid #2e2e2e;
-    border-radius: 0.5rem;
-    font-size: 1rem;
+    border: 3px solid #d9d9d9;
     width: 400px;
     height: 200px;
 }

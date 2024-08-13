@@ -4,28 +4,34 @@
     font-size: 1rem;
     display: flex;
     justify-content: center;
+    height: 60px;
+    align-items: center;
 }
 
 .textinput{
-    border: solid 1px;
+    border: solid 1px #E8E6EA;
+    border-radius: 10px;
     width: 200px;
     height: 30px;
     font-size: 13px;
+}
 
+.textinput:focus{
+    border-radius: 0.5px;
 }
 .test1{
-    background: url(../IMG/Icon.png);
-    background-size: cover;
+    background: url(../IMG/Icon.png) no-repeat 7px;
     margin: 0 10px;
     width: 35px;
     height: 35px;
-    border: solid 1px;
+    border: solid 1px #E8E6EA;
+    border-radius: 10px;
+
 }
 .test2{
-    background: url(../IMG/Icon.png);
-    background-size: cover;
+    background: url(../IMG/Icon.png) no-repeat 7px;
     width: 35px;
     height: 35px;
-    border: 0;
-    border: solid 1px;
+    border: solid 1px #E8E6EA;
+    border-radius: 10px;
 }
