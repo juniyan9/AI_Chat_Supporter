@@ -3,7 +3,7 @@ import '../../CSS/LogContainerForAPI.css';
 export default function LogContainerForAPI() {
     return (
         <div className="LogContainerForAPI">
-            LogContainerForAPI
+            모델들어올자리
         </div>
     )
 }
