@@ -95,7 +95,9 @@ let roomUsers = {};
 io.on("connection", (socket) => {
   logger.info('A Client has connected');
 
-  socket.on('enter_room', (nickName, roomName, cb = () => {}) => {
+  // socket.on('enter_room', (nickName, roomName, cb = () => {}) => {
+  socket.on('enter_room', (nickName, roomName) => {
+
 
     if (nickNames.has(nickName)) {  //enter_room 전에 넣어야함.
       cb ({error: '이미 사용중인 닉네임입니다.'});
