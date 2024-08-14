@@ -10,13 +10,12 @@
 }
 .user1 p{
   padding: 7px;
-  border: solid 1px;
-  border-radius: 10px;
+  border-radius: 10px 10px 0px 10px;
   margin: auto;
-  font-size: small;
+  font-size: 13px;
   text-overflow: ellipsis;
   word-break: break-all;
-  background: #f2ffa5;
+  background: #CAF3FC;
 }
 
 .username2{
@@ -28,17 +27,16 @@
 .user2 {
   width: 180px;
   background: #fff;
-  margin: 5px 0px 0px 5px;
+  margin: 5px 0px 0px 13px;
 }
 
 .user2 p{
   padding: 7px;
-  border: solid 1px;
   border-radius: 10px;
   margin: auto;
-  font-size: small;
+  font-size: 13px;
   text-overflow: ellipsis;
   word-break: break-all;
-  background: rgb(195, 206, 255);
+  background: #F4F3F2;
 }
 
