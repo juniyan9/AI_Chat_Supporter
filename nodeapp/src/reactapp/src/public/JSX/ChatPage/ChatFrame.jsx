@@ -53,7 +53,7 @@ export default function ChatFrame(props) {
             <div className="ChatFrame">
                 <InfoBar roomName={roomName}/>
                 <MessageContainer messages={messages}/>               
-                <TextContainer socket={socket} setMessages={setMessages} nickName={nickName} roomName={roomName}/>
+                <TextContainer socket={socket} setMessages={setMessages} nickName={nickName} roomName={roomName} messages={messages}/>
             </div>
     );
     

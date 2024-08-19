@@ -1,16 +1,28 @@
 .InfoBar {
-    color: black;
-    background: white;
-    border: 1px solid #2e2e2e;
-    border-bottom: 1px solid #2e2e2e;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-    font-size: 1rem;
-    height: 40px;
+    color: #000;
+    background: #fff;
+    height: 60px;
 }
 
 .InfoBar h3{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 360px;
+    padding: 14px;
+    font-size: 20px;
+}
+
+.line{
+    border-top: 1px solid #444444;
+    width: 300px;
+    margin: -29px auto;
+}
+
+.barsearch{
+    background: url(../IMG/Vector.png)no-repeat 6px;
+    width: 30px;
+    height: 30px;
+    border: solid 1px #E8E6EA;
+    border-radius: 10px;
+    position: relative;
+    bottom: 40px;
+    left: 354px;
 }
