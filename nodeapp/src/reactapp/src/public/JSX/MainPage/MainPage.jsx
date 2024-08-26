@@ -10,7 +10,7 @@ export default function MainPage() {
     const handleNickNameSubmit = async () => {
         if (nickName) {
             try {
-                const response = await fetch('http://192.168.0.113:5000/check-nickName', {
+                const response = await fetch('http://192.168.0.113:5000/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -24,7 +24,7 @@ export default function MainPage() {
                 if (result === 'exist') {
                     alert('이미 존재하는 닉네임입니다.');
                     window.location.reload();
-                } else if (result === 'non-exist') {
+                } else if (result === 'nickname_registered_successfully') {
                     const userSession = Cookies.get('user_session');
                     console.log('쿠키에서 읽은 사용자 세션:', userSession);
                     navigate('/chatListPage', { state: { nickName: nickName } });
