@@ -12,16 +12,16 @@ export default function ChatListPage() {
     console.log(location.state?.nickName);
 
     // 미리 방을 설정
-    useEffect(() => {
-        setRooms([
-            { id: 1, name: '채팅방 이름 1', count: 0, maxCount: 3 },
-            { id: 2, name: '채팅방 이름 2', count: 0, maxCount: 3 },
-            { id: 3, name: '채팅방 이름 3', count: 0, maxCount: 3 },
-            { id: 4, name: '채팅방 이름 4', count: 0, maxCount: 3 },
-            { id: 5, name: '채팅방 이름 5', count: 0, maxCount: 3 },
-            { id: 6, name: '채팅방 이름 6', count: 0, maxCount: 3 },
-        ]);
-    }, []);
+    // useEffect(() => {
+    //     setRooms([
+    //         { id: 1, name: '채팅방 이름 1', count: 0, maxCount: 3 },
+    //         { id: 2, name: '채팅방 이름 2', count: 0, maxCount: 3 },
+    //         { id: 3, name: '채팅방 이름 3', count: 0, maxCount: 3 },
+    //         { id: 4, name: '채팅방 이름 4', count: 0, maxCount: 3 },
+    //         { id: 5, name: '채팅방 이름 5', count: 0, maxCount: 3 },
+    //         { id: 6, name: '채팅방 이름 6', count: 0, maxCount: 3 },
+    //     ]);
+    // }, []);
 
     useEffect(() => {
         async function fetchRooms() {
