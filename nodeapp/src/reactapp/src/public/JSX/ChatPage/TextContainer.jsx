@@ -44,16 +44,11 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
               ]);
         }
     }
-    
-    // const test = ()=>{
-    //     console.log(messages);
-    // }
 
     return (
         <div className="TextContainer">
                 <input className="textinput"type="text" name="message" value={message} onChange={handleLocalMessage} onKeyDown={handleKeyPress} />
                 <button type="button" onClick={handleSubmit} className="test1"></button>
-                {/* <button type="button" onClick={test} className="test2"></button> */}
         </div>
     );
 }
