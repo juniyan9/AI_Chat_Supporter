@@ -18,22 +18,10 @@
 //     )
 // }
 
-import React, { useState,useEffect,useRef } from 'react';
+import React, { useState } from 'react';
 import '../../CSS/MessageContainer.css';
 import Message from './Message';
 export default function MessageContainer({ messages }) {
-    const scrollRef = useRef();
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    const scrollToBottom = () => {
-       if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-    };
-
     console.log("MessageContainer props messages ::", messages);
     // 숨겨진 메시지의 인덱스를 추적하기 위한 상태
     const [hiddenMessages, setHiddenMessages] = useState(new Set());
@@ -74,7 +62,7 @@ export default function MessageContainer({ messages }) {
         }
     };
     return (
-        <div className="MessageContainer" onClick={handleClickOutside} ref={scrollRef}>
+        <div className="MessageContainer" onClick={handleClickOutside}>
             {messages.map((message, index) => (
                 !hiddenMessages.has(index) && ( // 숨겨진 메시지는 렌더링하지 않습니다.
                     <div
