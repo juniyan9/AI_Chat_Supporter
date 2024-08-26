@@ -3,7 +3,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import customLogger from "./class/customLogger.js";
-import roomCreateRouter from './roomCreate.js';
+import { deleteRoom, getRooms } from './roomControl.js'; 
 import userObj from "./class/user.js";
 import roomObj from "./class/room.js";
 import path from "path";
@@ -91,23 +91,50 @@ function addUser(nickName) {
 // 쿠키 보내줄지 결정
 app.post("/register", (req, res) => {
   const { nickName } = req.body;
+  console.log(req.body)
+  console.log(nickName)
 
   if (isNickNameExist(nickName)) {
     res.send("exist"); // 닉네임이 중복됨, 위 isNickNameExist 함수 호출해서 true일 경우 이렇게 프론트에 보내는 거
     console.log("사용자가 중복된 닉네임 입력");
   } else {
     addUser(nickName); // 사용자 추가
-    res.send("nickname_registered_successfully"); // 사용자 추가 완료
+    res.send("non-existent"); // 사용자 추가 완료
   }
 });
 
-// id는 서버에서 자체적으로 부여 및 저장 (로그인 이후)
-// roomName은 클라이언트에서 보내준 거 받아서 저장, socketId는 socket 내부에서 자체적으로 부여되는 것인가..
 
-/*
-방 설정 저장
-*/
-app.use('/', roomCreateRouter);
+/*로비*/
+let rooms = [];
+
+/*방 만들기 및 설정 저장*/
+app.post('/add-room', (req, res) => {
+  const { roomName, maxCount, password, isPrivate } = req.body;
+  console.log(req.body);
+
+  // 새로운 방 만들기
+  const newRoomId = rooms.length + 1;
+  const room = {
+      id: newRoomId,
+      name: roomName,
+      count: 1,
+      maxCount,
+      //방 만든 사람이 설정할 수 있게
+      password,
+      isPrivate
+  };
+
+  rooms.push(room);
+  console.log(rooms)
+
+  // 방 성공적으로 등록됨을 전송.
+  res.send("방_성공적으로_저장됨");
+});
+
+/*방 목록 갱신 */
+app.get('/rooms', (req, res) => {
+  res.json(rooms);
+});
 
 /*
 방 입장
@@ -171,11 +198,16 @@ io.on("connection", (socket) => {
 
       logger.info(`Client (${user.nickName}) called 'enter_room'.`);
 
+      const ipAddress = socket.request.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
+      // const ipAddress = socket.request.headers['x-forwarded-for'] || req.connection.remoteAddress; //이거 안됨
+
+
       console.log(`방에 들어온 사용자 정보:`, {
         id: user.id,
         nickName: user.nickName,
         socketId: user.socketId,
         roomName: user.roomName,
+        ipAddress: ipAddress
       });
 
       logger.info(`${user.nickName} has joined ${user.roomName}`);
@@ -224,6 +256,15 @@ io.on("connection", (socket) => {
     } else {
       console.error("사용자를 찾을 수 없습니다.");
     }
+  });
+
+  // 방 삭제 요청
+  socket.on('delete_room', (roomId) => {
+    rooms = rooms.filter(room => room.id !== roomId);
+    console.log(rooms);
+
+    // 방 삭제 후 모든 클라이언트에게 채팅방 목록 업데이트를 알립니다.
+    io.emit('updated_rooms', rooms);
   });
 
   //소켓 연결 해제 처리
