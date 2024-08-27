@@ -3,7 +3,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import customLogger from "./class/customLogger.js";
-import { deleteRoom, getRooms } from './roomControl.js'; 
 import userObj from "./class/user.js";
 import roomObj from "./class/room.js";
 import path from "path";
@@ -50,6 +49,7 @@ app.get("/", (req, res) => {
 // //닉네임 중복 방지
 
 let userInfo = [];
+let roomUsers = {}; //방에 참여하는 유저만 관리
 let nextUserId = 1; //user ID 초기화
 
 // 닉네임 중복 확인 함수
@@ -91,8 +91,8 @@ function addUser(nickName) {
 // 쿠키 보내줄지 결정
 app.post("/register", (req, res) => {
   const { nickName } = req.body;
-  console.log(req.body)
-  console.log(nickName)
+  console.log(req.body);
+  console.log(nickName);
 
   if (isNickNameExist(nickName)) {
     res.send("exist"); // 닉네임이 중복됨, 위 isNickNameExist 함수 호출해서 true일 경우 이렇게 프론트에 보내는 거
@@ -103,43 +103,53 @@ app.post("/register", (req, res) => {
   }
 });
 
-
 /*로비*/
 let rooms = [];
+let nextRoomId = 1;
 
 /*방 만들기 및 설정 저장*/
-app.post('/add-room', (req, res) => {
-  const { roomName, maxCount, password, isPrivate } = req.body;
-  console.log(req.body);
+app.post("/add-room", (req, res) => {
+  const { name, count, maxCount, password, isPrivate } = req.body;
+  console.log("받은 room 설정 정보:", room);
 
-  // 새로운 방 만들기
-  const newRoomId = rooms.length + 1;
   const room = {
-      id: newRoomId,
-      name: roomName,
-      count: 1,
-      maxCount,
-      //방 만든 사람이 설정할 수 있게
-      password,
-      isPrivate
+    id: nextRoomId++, // 자동 증가하는 방 ID
+    name,
+    count,
+    maxCount,
+    password,
+    isPrivate,
+    ownerID,
   };
 
   rooms.push(room);
-  console.log(rooms)
+  console.log("업데이트된 방 배열:", rooms);
 
   // 방 성공적으로 등록됨을 전송.
   res.send("방_성공적으로_저장됨");
 });
 
 /*방 목록 갱신 */
-app.get('/rooms', (req, res) => {
+app.get("/rooms", (req, res) => {
   res.json(rooms);
 });
 
-/*
-방 입장
-*/ 
+/*방 입장*/
 
+/*로그아웃-유저 삭제*/
+app.post("/logout", (req, res) => {
+  const { userId } = req.body;
+  console.log(req.body);
+
+  // userId에 해당하는 사용자 객체 삭제
+  userInfo = userInfo.filter((user) => user.user.id !== userId); //들어온 userId와 user객체의 id가 같지 않은 경우로만 새 배열 만들어서 userInfo에 저장. 즉, 지우고 싶은 id는 이미 제외시키고 새 배열 만듦.
+  console.log(userInfo);
+
+  // 성공 응답 전송
+  res.send("로그아웃_완료");
+});
+
+/*dummy 방 데이터*/
 let room = [
   {
     id: 0,
@@ -170,7 +180,7 @@ httpServer.listen(WS_port, () => {
 
 const PORT = 3000;
 
-let roomUserCounts = {};
+// let roomUserCounts = {};
 // let roomUsers = {};
 
 //events
@@ -198,32 +208,52 @@ io.on("connection", (socket) => {
 
       logger.info(`Client (${user.nickName}) called 'enter_room'.`);
 
-      const ipAddress = socket.request.headers['x-forwarded-for'] || socket.request.connection.remoteAddress;
+      const ipAddress =
+        socket.request.headers["x-forwarded-for"] ||
+        socket.request.connection.remoteAddress;
       // const ipAddress = socket.request.headers['x-forwarded-for'] || req.connection.remoteAddress; //이거 안됨
-
 
       console.log(`방에 들어온 사용자 정보:`, {
         id: user.id,
         nickName: user.nickName,
         socketId: user.socketId,
         roomName: user.roomName,
-        ipAddress: ipAddress
+        ipAddress: ipAddress,
       });
 
       logger.info(`${user.nickName} has joined ${user.roomName}`);
 
-      // 방 이름이 없으면 초기화
-      if (!roomUserCounts[roomName]) {
-        roomUserCounts[roomName] = 0;
+      //방이 없을 경우 방을 새로 만들어서 rooms 배열에 업데이트
+      let room = rooms.find((room) => room.name === roomName);
+      if (!room) {
+        room = { name: roomName, count: 0 };
+        rooms.push(room);
+        console.log(`${roomName} 방이 생성되었고, rooms 배열에 입력 완료.`);
       }
+
+      if (!Array.isArray(roomUsers[roomName])) {
+        roomUsers[roomName] = []; // 배열로 만들어주고, 빈 배열로 초기화
+      }
+
+      // 사용자 ID를 배열에 추가
+      roomUsers[roomName].push(user.id);
 
       socket.join(user.roomName); //해당 소켓을 특정 방에 추가
 
-      roomUserCounts[roomName] += 1;
-
+      //roomUsers 기준으로 방 count 업데이트
+      // const room = rooms.find((room) => room.name === roomName);
+      // if (room) {
+        // room.count += 1;
+      room.count = roomUsers[roomName].length;
+      // }
       console.log(
-        `${roomName}에 있는 사람 수: ${roomUserCounts[roomName] || 0} 명`
+        `${roomName}에 있는 사람 수: ${roomUsers[roomName].length} 명`
       );
+
+      console.log("roomUsers 객체 정보(방에 있는 사용자 ID):", roomUsers);
+
+      const userIds = roomUsers[roomName].join(",");
+      console.log(`${roomName} 방의 유저 ID 목록: 유저 ID: ${userIds}`);
     } else {
       console.error("사용자를 찾을 수 없습니다.");
     }
@@ -241,30 +271,99 @@ io.on("connection", (socket) => {
   });
 
   //유저 메시지 접수 및 소켓들에 보내주기
-  socket.on("message", (message, roomName) => {
-    logger.info("Received message from client: " + message);
-    logger.info("Received message from client room: " + roomName);
+  // socket.on("message", (message, roomName) => {
+  // // socket.on('message', (messageData) => {
+  //   // const { socketId, messageId, message, roomName, date } = messageData;
+  //   logger.info("Received message from client: " + message);
+  //   logger.info("Received message from client room: " + roomName);
 
-    // userInfo 배열에서 socket.id에 해당하는 사용자 객체 찾기
+  // //   const message = {
+  // //     socketId,
+  // //     messageId,
+  // //     message,
+  // //     roomName,
+  // //     date
+  // // };
+
+  //   // messages.push(message);
+  //   // console.log('Updated messages array:', messages);
+
+  //   // socket.to(roomName).emit('reply', message);
+
+  //   // userInfo 배열에서 socket.id에 해당하는 사용자 객체 찾기
+  //   const userCheck = userInfo.find(
+  //     (check) => check.user.socketId === socket.id
+  //   );
+
+  //   if (userCheck) {
+  //     const user = userCheck.user;
+  //     socket.to(roomName).emit("reply", message, user.nickName);
+  //   } else {
+  //     console.error("사용자를 찾을 수 없습니다.");
+  //   }
+  // });
+
+  socket.on("update_messages", (updatedMessages) => {
+    console.log("클라이언트에서 받은 updated messages:", updatedMessages);
+
+    const roomName = updatedMessages.ROOMNAME; // 메시지 객체에서 방 이름을 추출
+    socket.to(roomName).emit("update_messages", updatedMessages);
+    socket.broadcast.in(roomName).emit("update_messages", updatedMessages);
+
+    // // 업데이트된 메시지 브로드캐스트
+    // socket.to(roomName).emit("messages_updated", updatedMessages, user.nickName);
+    // io.emit('messages_updated', updatedMessages);
+  });
+
+  // 방 삭제 요청
+  socket.on("delete_room", (roomId) => {
+    rooms = rooms.filter((room) => room.id !== roomId);
+    console.log(rooms);
+
+    // 방 삭제 후 모든 클라이언트에게 채팅방 목록 업데이트를 알립니다.
+    io.emit("updated_rooms", rooms);
+  });
+
+  // 로그아웃 요청 -- 이거 해야 하나?
+  socket.on("logout", (userId) => {
+    // 사용자 객체 삭제
+    userInfo = userInfo.filter((user) => user.user.id !== userId);
+    console.log(`사용자 ID: ${userId} 로그아웃됨`);
+
     const userCheck = userInfo.find(
       (check) => check.user.socketId === socket.id
     );
 
+    // socket.disconnect();
     if (userCheck) {
       const user = userCheck.user;
-      socket.to(roomName).emit("reply", message, user.nickName);
-    } else {
-      console.error("사용자를 찾을 수 없습니다.");
+      const roomName = user.roomName;
+
+      if (roomName) {
+        // 방의 유저 리스트에서 해당 유저를 제거
+        if (roomUsers[roomName]) {
+          roomUsers[roomName] = roomUsers[roomName].filter(
+            (id) => id !== userId
+          );
+          console.log("roomUsers:", roomUsers);
+
+          // 방의 유저 수 갱신
+          const roomObj = rooms.find((room) => room.name === roomName);
+          if (roomObj) {
+            roomObj.count = roomUsers[roomName].length;
+          }
+        }
+
+        // 방에 있는 다른 클라이언트에게 퇴장 메시지 전송
+        socket.broadcast
+          .to(roomName)
+          .emit("reply", `${user.nickName}님이 방을 나갔습니다.`);
+        console.log("유저 로그아웃에 따른 퇴장 메시지 전송 완료");
+      }
+
+      // 소켓 연결 해제
+      socket.disconnect();
     }
-  });
-
-  // 방 삭제 요청
-  socket.on('delete_room', (roomId) => {
-    rooms = rooms.filter(room => room.id !== roomId);
-    console.log(rooms);
-
-    // 방 삭제 후 모든 클라이언트에게 채팅방 목록 업데이트를 알립니다.
-    io.emit('updated_rooms', rooms);
   });
 
   //소켓 연결 해제 처리
@@ -279,29 +378,52 @@ io.on("connection", (socket) => {
       logger.info("A client has disconnected");
       const roomName = user.roomName; // 사용자 객체에서 방 이름 찾기
 
-      if (roomName && roomUserCounts[roomName]) {
-        roomUserCounts[roomName] -= 1;
-        // roomName이 존재하고, roomUserCounts 객체에 roomName 속성이 존재할 경우에만 위 코드 실행됨.
+      console.log("Room Name:", roomName);
+
+      if (roomName) {
+        const room = rooms.find((room) => room.name === roomName);
+        if (room) {
+          if (!Array.isArray(roomUsers[roomName])) {
+            // roomUsers[roomName]이 배열이 아닐 경우, 빈 배열로 초기화
+            roomUsers[roomName] = [];
+            console.log("roomUsers[roomName] 배열 만들기 완료");
+            console.warn(
+              `${roomName} 방의 사용자 목록이 배열이 아니어서 빈 배열로 초기화`
+            );
+          }
+
+          roomUsers[roomName] = roomUsers[roomName].filter(
+            (id) => id !== user.id
+          );
+          room.count = roomUsers[roomName].length;
+
+          console.log("Rooms Array:", rooms);
+          console.log("roomUsers 업데이트 완료")
+
+          const userIds = roomUsers[roomName].join(",");
+          console.log(`${roomName} 방의 사용자 목록: 유저 ID: ${userIds}`);
+          console.log(`${roomName}에 남아있는 사람 수: ${room.count || 0} 명`);
+        }
+
+        socket.emit("reply", `${user.nickName}님이 방을 나갔습니다.`);
+        socket.broadcast
+          .to(roomName)
+          .emit("reply", `${user.nickName}님이 방을 나갔습니다.`);
+
+        user.socketId = null;
+        user.roomName = null;
+
+        console.log(`방을 나간 사용자 정보:`, {
+          id: user.id,
+          nickName: user.nickName,
+          socketId: user.socketId,
+          roomName: user.roomName,
+        });
+      } else {
+        console.error("사용자의 방 정보가 없습니다.");
       }
-
-      socket.emit("reply", `${user.nickName}님이 방을 나갔습니다.`);
-      socket.broadcast
-        .to(roomName)
-        .emit("reply", `${user.nickName}님이 방을 나갔습니다.`);
-
-      // delete users[socket.id];
-      user.socketId = null;
-      user.roomName = null;
-      // console.log(userInfo);
-      console.log(`방을 나간 사용자 정보:`, {
-        id: user.id,
-        nickName: user.nickName,
-        socketId: user.socketId,
-        roomName: user.roomName,
-      });
-      console.log(
-        `${roomName}에 남아있는 사람 수: ${roomUserCounts[roomName] || 0} 명`
-      );
+    } else {
+      console.error("socket.id가 없어 사용자를 찾을 수 없습니다.");
     }
   });
 });
