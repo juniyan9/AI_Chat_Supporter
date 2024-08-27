@@ -243,7 +243,7 @@ io.on("connection", (socket) => {
       //roomUsers 기준으로 방 count 업데이트
       // const room = rooms.find((room) => room.name === roomName);
       // if (room) {
-        // room.count += 1;
+      // room.count += 1;
       room.count = roomUsers[roomName].length;
       // }
       console.log(
@@ -305,14 +305,37 @@ io.on("connection", (socket) => {
 
   socket.on("update_messages", (updatedMessages) => {
     console.log("클라이언트에서 받은 updated messages:", updatedMessages);
+    // console.log('소켓이 서버에 연결되었습니다. 소켓 ID:', socket.current.id);
 
-    const roomName = updatedMessages.ROOMNAME; // 메시지 객체에서 방 이름을 추출
-    socket.to(roomName).emit("update_messages", updatedMessages);
-    socket.broadcast.in(roomName).emit("update_messages", updatedMessages);
+    updatedMessages.forEach((message) => {
+      const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
+      console.log("메시지 속성들 뽑아서 message라고 해줌");
+      console.log(`ROOMNAME received: ${ROOMNAME}`);
+      console.log("Socket connected:", socket.id);
 
-    // // 업데이트된 메시지 브로드캐스트
-    // socket.to(roomName).emit("messages_updated", updatedMessages, user.nickName);
-    // io.emit('messages_updated', updatedMessages);
+      if (ROOMNAME) {
+        console.log("roomname만 잘 뽑아옴.");
+        socket.to(ROOMNAME).emit('update_messages', {
+          message: MESSAGE,
+          sender: NickName,
+          date: DATE,
+        });
+        console.log("emit 코드 읽음");
+
+        // socket.broadcast("new_message", {
+        //   message: MESSAGE,
+        //   sender: NickName,
+        //   date: DATE,
+        // });
+
+        // socket.broadcast.to(ROOMNAME).emit('update_messages', {
+        //   message: MESSAGE,
+        //   sender: NickName,
+        //   date: DATE,
+        // });
+      }
+    });
+    socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
   });
 
   // 방 삭제 요청
@@ -398,7 +421,7 @@ io.on("connection", (socket) => {
           room.count = roomUsers[roomName].length;
 
           console.log("Rooms Array:", rooms);
-          console.log("roomUsers 업데이트 완료")
+          console.log("roomUsers 업데이트 완료");
 
           const userIds = roomUsers[roomName].join(",");
           console.log(`${roomName} 방의 사용자 목록: 유저 ID: ${userIds}`);
