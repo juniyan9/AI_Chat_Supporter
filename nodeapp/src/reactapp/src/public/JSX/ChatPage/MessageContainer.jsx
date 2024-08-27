@@ -36,7 +36,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../../CSS/MessageContainer.css';
 import Message from './Message';
 
-export default function MessageContainer({ messages, onMessagesUpdate = () => {} }) {
+export default function MessageContainer({ messages, onMessagesUpdate }) {
     const scrollRef = useRef();
 
     useEffect(() => {
@@ -59,8 +59,8 @@ export default function MessageContainer({ messages, onMessagesUpdate = () => {}
     useEffect(() => {
         const updatedMessages = messages.filter((_, index) => !hiddenMessages.has(index));
         setFilteredMessages(updatedMessages);
-        console.log("Updated Filtered Messages ::", updatedMessages); // 삭제 후 배열 확인
-        onMessagesUpdate(updatedMessages); // 삭제되지 않은 메시지들만 업데이트하여 부모 컴포넌트나 백엔드로 전달
+        console.log("업데이트 된 배열 확인 :", updatedMessages); // 삭제 후 배열 확인
+        onMessagesUpdate(updatedMessages); // 부모 컴포넌트(ChatFrame)로 updatedMessages 전달
     }, [messages, hiddenMessages]);
 
     // 컨텍스트 메뉴의 위치와 가시성을 제어하기 위한 상태
@@ -89,7 +89,7 @@ export default function MessageContainer({ messages, onMessagesUpdate = () => {}
             setHiddenMessages(prevHiddenMessages => {
                 const updatedHiddenMessages = new Set(prevHiddenMessages);
                 updatedHiddenMessages.add(contextMenu.messageIndex);
-                console.log("Updated Hidden Messages Set ::", updatedHiddenMessages); // 숨겨진 메시지 확인
+                // console.log("Updated Hidden Messages Set ::", updatedHiddenMessages); // 숨겨진 메시지 확인
                 return updatedHiddenMessages;
             });
         }
@@ -128,9 +128,3 @@ export default function MessageContainer({ messages, onMessagesUpdate = () => {}
         </div>
     );
 }
-
-
-
-
-
-
