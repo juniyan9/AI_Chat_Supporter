@@ -9,11 +9,10 @@ function RoomModal({ isOpen, onClose, onSave }) {
     const [maxCount, setMaxCount] = useState(1); // 초기 값 1
     const navigate = useNavigate(); // useNavigate 훅 사용
     const location = useLocation(); // useLocation 훅 사용
-    const SERVER_URL = 'http://192.168.0.154:5050'; // 서버 URL
 
     const handleSave = async () => {
         if (roomName.length < 2) {
-            alert("방 제목은 2자 이상이어야 한다.");
+            alert("방 제목은 2자 이상이어야 합니다.");
             return;
         }
         if (maxCount < 1 || maxCount > 10) {
@@ -21,46 +20,29 @@ function RoomModal({ isOpen, onClose, onSave }) {
             return;
         }
 
-        const room = {
-            name: roomName, // 방 이름
-            count: 0,      // 방 생성 시 현재 인원 상태
-            maxCount,      // 최대 인원 수
-            password: password || '', // 비밀번호 (선택적)
-            isPrivate,     // 비공개 여부
+        // 방 생성 정보를 부모 컴포넌트에 전달
+        const newRoom = { 
+            roomName, 
+            password, 
+            isPrivate, 
+            maxCount,
             ownerID: location.state?.nickName // 방을 만든 유저 정보
         };
 
-        console.log('Creating room:', room); // 방이 만들어졌는지 확인 
-
-        // 클라이언트의 상태를 업데이트
-        onSave(room); // 부모 컴포넌트에 방 생성 정보 전달
-
         try {
-            // 서버에 새 방 정보를 전송
-            const response = await fetch(`${SERVER_URL}/add-room`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(room),
-            });
-
-            if (!response.ok) {
-                const errorMessage = await response.text(); // 오류 메시지 읽기
-                throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
-            }
-
-            // 방 생성 후 알림
-            alert('방이 성공적으로 생성되었습니다.');
+            // 부모 컴포넌트에서 방 생성 요청
+            await onSave(newRoom);
 
             // 방 생성 후 채팅방 페이지로 이동
             navigate(`/chatPage/${roomName}`, {
                 state: { roomName, nickName: location.state?.nickName }
             });
 
-            onClose(); // 모달 닫기
+            // 모달 닫기
+            onClose();
         } catch (error) {
-            console.error('Failed to add room', error);
+            console.error('Failed to create room', error);
+            alert('방 생성에 실패했습니다.');
         }
     };
 
