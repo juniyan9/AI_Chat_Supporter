@@ -109,8 +109,22 @@ let nextRoomId = 1;
 
 /*방 만들기 및 설정 저장*/
 app.post("/add-room", (req, res) => {
-  const { name, count, maxCount, password, isPrivate } = req.body;
-  console.log("받은 room 설정 정보:", room);
+  const { name, count, maxCount, password, isPrivate, nickName } = req.body;
+
+  if (!nickName) {
+    return res.status(400).send("방 설정에 nickName이 안 왔습니다.");
+  }
+
+  //받은 닉네임을 userInfo의 닉네임과 비교해서 유저를 찾음(유저 id를 ownerId로 매치해주기 위함)
+  const userCheck = userInfo.find((user) => user.user.nickName === nickName);
+
+  if (!userCheck) {
+    return res
+      .status(404)
+      .send("해당 nickName을 가진 사용자를 찾을 수 없습니다.");
+  }
+
+  const ownerID = userCheck.user.id;
 
   const room = {
     id: nextRoomId++, // 자동 증가하는 방 ID
@@ -122,7 +136,11 @@ app.post("/add-room", (req, res) => {
     ownerID,
   };
 
+  console.log("받은 room 설정 정보:", room);
+
+  //rooms 배열에 푸시
   rooms.push(room);
+
   console.log("업데이트된 방 배열:", rooms);
 
   // 방 성공적으로 등록됨을 전송.
@@ -262,6 +280,7 @@ io.on("connection", (socket) => {
     if (user) {
       //userCheck의 user
       socket.emit("reply", `${nickName}님이 입장하셨습니다. 반갑습니다.`); // 나도 웰컴 메시지 확인할 수 있게 수정.
+      // res.send("웰컴메시지 보냄.")
 
       //broadcast: 현재 소켓(클라이언트)을 제외한 다른 소켓들에게만 메시지 보냄.
       socket.broadcast
@@ -270,7 +289,7 @@ io.on("connection", (socket) => {
     } //위에서는 if(user)로 user를 걸어줘서 user.nickName / user.roomName 이런 식으로 안 해줘도 됨.
   });
 
-  //유저 메시지 접수 및 소켓들에 보내주기
+  // //유저 메시지 접수 및 소켓들에 보내주기
   // socket.on("message", (message, roomName) => {
   // // socket.on('message', (messageData) => {
   //   // const { socketId, messageId, message, roomName, date } = messageData;
@@ -304,38 +323,44 @@ io.on("connection", (socket) => {
   // });
 
   socket.on("update_messages", (updatedMessages) => {
+    //   if (updatedMessages.length > 0) {
+    //     // 배열의 각 메시지 객체를 순회
+    //     updatedMessages.forEach(message => {
+    //         console.log(`NickName: ${message.NickName}가 보낸 메시지: ${message.MESSAGE}`);
+    //     });
+    // } else {
+    //     console.log("업데이트된 메시지가 없습니다.");
+    // }
+
     console.log("클라이언트에서 받은 updated messages:", updatedMessages);
     // console.log('소켓이 서버에 연결되었습니다. 소켓 ID:', socket.current.id);
 
     updatedMessages.forEach((message) => {
       const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
-      console.log("메시지 속성들 뽑아서 message라고 해줌");
-      console.log(`ROOMNAME received: ${ROOMNAME}`);
-      console.log("Socket connected:", socket.id);
+    //   console.log("메시지 속성들 뽑아서 message라고 해줌");
+    //   console.log(`ROOMNAME received: ${ROOMNAME}`);
+    //   console.log("Socket connected:", socket.id);
 
       if (ROOMNAME) {
-        console.log("roomname만 잘 뽑아옴.");
-        socket.to(ROOMNAME).emit('update_messages', {
-          message: MESSAGE,
-          sender: NickName,
-          date: DATE,
-        });
-        console.log("emit 코드 읽음");
-
-        // socket.broadcast("new_message", {
-        //   message: MESSAGE,
-        //   sender: NickName,
-        //   date: DATE,
+        // console.log("roomname만 잘 뽑아옴.");
+        // socket.to(ROOMNAME).emit("reply", {
+        //   MESSAGE,
+        //   NickName,
+        //   DATE,
         // });
+        socket.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);   //reply
+        
+        // console.log("emit 코드 읽음");
+        console.log('클라한테 메시지, 닉네임 전달.', ROOMNAME, 'with message:', MESSAGE, 'and nickname:', NickName);
 
-        // socket.broadcast.to(ROOMNAME).emit('update_messages', {
+        // socket.broadcast.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);
         //   message: MESSAGE,
         //   sender: NickName,
         //   date: DATE,
         // });
       }
     });
-    socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
+    // socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
   });
 
   // 방 삭제 요청
@@ -421,7 +446,7 @@ io.on("connection", (socket) => {
           room.count = roomUsers[roomName].length;
 
           console.log("Rooms Array:", rooms);
-          console.log("roomUsers 업데이트 완료");
+          console.log("roomUsers 업데이트 완료", roomUsers);
 
           const userIds = roomUsers[roomName].join(",");
           console.log(`${roomName} 방의 사용자 목록: 유저 ID: ${userIds}`);
@@ -433,6 +458,7 @@ io.on("connection", (socket) => {
           .to(roomName)
           .emit("reply", `${user.nickName}님이 방을 나갔습니다.`);
 
+        user.nickName = null;
         user.socketId = null;
         user.roomName = null;
 
