@@ -20,13 +20,10 @@ export default function MainPage() {
 
                 const result = await response.text();
 
-                console.log(result);
                 if (result === 'exist') {
                     alert('이미 존재하는 닉네임입니다.');
                     window.location.reload();
-                } else if (result === 'nickname_registered_successfully') {
-                    const userSession = Cookies.get('user_session');
-                    console.log('쿠키에서 읽은 사용자 세션:', userSession);
+                } else if (result === 'non-existent') {
                     navigate('/chatListPage', { state: { nickName: nickName } });
                 }
             } catch (error) {
