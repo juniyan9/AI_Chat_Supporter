@@ -14,12 +14,12 @@ export default function ChatListPage() {
     const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
     const location = useLocation();
     const navigate = useNavigate();
-    const SERVER_URL = 'http://192.168.0.113:5000'; // 서버 URL 하드코딩
+    const SERVER_URL = 'http://192.168.0.154:5050'; // 서버 URL 하드코딩
 
     useEffect(() => {
         async function fetchRooms() {
             try {
-                const response = await fetch(`${SERVER_URL}/chatList`, {
+                const response = await fetch(`${SERVER_URL}/rooms`, {
                     method: "GET",
                 });
                 const data = await response.json();
@@ -70,12 +70,16 @@ export default function ChatListPage() {
     const handleAddRoom = async (newRoom) => {
         const room = {
             name: newRoom.roomName, /* 방 이름 */
-            count: 1, /* 방 생성 시 현재 인원 상태 */
+            count: 0, /* 방 생성 시 현재 인원 상태 */
             maxCount: newRoom.maxCount, /* 입장 가능한 최대 인원 수 */
-            password: newRoom.password, /* 비밀번호 */
+            password: newRoom.password || '', /* 비밀번호 (선택적) */
             isPrivate: newRoom.isPrivate, /* 비공개 여부 */
             ownerID: location.state?.nickName // 방을 만든 유저 정보
         };
+
+        console.log('Creating room:', room); // 방이 만들어졌는지 확인 
+
+        // 클라이언트의 상태를 업데이트
         setRooms((prevRooms) => [...prevRooms, room]);
 
         // 방 추가 후, 목록에 반영
@@ -94,13 +98,13 @@ export default function ChatListPage() {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                const errorMessage = await response.text(); // 오류 메시지 읽기
+                throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
             }
 
-            // 방 추가 후 해당 방으로 이동
-            navigate(`/chatPage/${room.name}`, {
-                state: { 'roomName': room.name, 'nickName': location.state?.nickName }
-            });
+            // 방 생성 후 알림
+            alert('방이 성공적으로 생성되었습니다.');
+
         } catch (error) {
             console.error('Failed to add room', error);
         }
@@ -115,9 +119,9 @@ export default function ChatListPage() {
             // 검색어가 없을 때는 공개 방만 표시
             setFilteredRoom(rooms.filter(room => !room.isPrivate));
         } else {
-            // 검색어가 있으면, 공개 방과 검색어에 일치하는 비공개 방을 모두 표시
+            // 공개 방은 검색어의 일부만 포함해도 표시, 비공개 방은 검색어와 정확히 일치하는 경우만 표시
             setFilteredRoom(rooms.filter(room =>
-                room.name.toLowerCase().includes(query) ||
+                (!room.isPrivate && room.name.toLowerCase().includes(query)) ||
                 (room.isPrivate && room.name.toLowerCase() === query)
             ));
         }
@@ -139,7 +143,7 @@ export default function ChatListPage() {
                 <div className="room-list">
                     {filteredRooms.map((room) => (
                         <div 
-                            key={room.id} 
+                            key={room.name} 
                             onClick={() => handleSelectRoom(room)} 
                             className={`room ${room.count >= room.maxCount ? 'full' : ''}`}
                         >
