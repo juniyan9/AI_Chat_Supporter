@@ -291,25 +291,25 @@ io.on("connection", (socket) => {
 
   // //유저 메시지 접수 및 소켓들에 보내주기
   socket.on("message", (message, roomName) => {
-  // // socket.on('message', (messageData) => {
-  //   // const { socketId, messageId, message, roomName, date } = messageData;
+    // // socket.on('message', (messageData) => {
+    //   // const { socketId, messageId, message, roomName, date } = messageData;
     logger.info("Received message from client: " + message);
     logger.info("Received message from client room: " + roomName);
 
-  // //   const message = {
-  // //     socketId,
-  // //     messageId,
-  // //     message,
-  // //     roomName,
-  // //     date
-  // // };
+    // //   const message = {
+    // //     socketId,
+    // //     messageId,
+    // //     message,
+    // //     roomName,
+    // //     date
+    // // };
 
-  //   // messages.push(message);
-  //   // console.log('Updated messages array:', messages);
+    //   // messages.push(message);
+    //   // console.log('Updated messages array:', messages);
 
-  //   // socket.to(roomName).emit('reply', message);
+    //   // socket.to(roomName).emit('reply', message);
 
-  //   // userInfo 배열에서 socket.id에 해당하는 사용자 객체 찾기
+    //   // userInfo 배열에서 socket.id에 해당하는 사용자 객체 찾기
     const userCheck = userInfo.find(
       (check) => check.user.socketId === socket.id
     );
@@ -323,7 +323,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("update_messages", (updatedMessages) => {
-
     console.log("클라이언트에서 받은 updated messages:", updatedMessages);
     // console.log('소켓이 서버에 연결되었습니다. 소켓 ID:', socket.current.id);
 
@@ -332,17 +331,24 @@ io.on("connection", (socket) => {
       const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
       // const ROOMNAME = updatedMessages[0].ROOMNAME
       let count2 = 0;
-      count1 += 1
-      count2 += 1
+      count1 += 1;
+      count2 += 1;
 
       if (ROOMNAME) {
-        socket.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);   //reply
+        socket.to(ROOMNAME).emit("update_messages_reply", MESSAGE, NickName); //reply
         //통으로 전달할려면 updatedMessages를 넣어야 하나
         //전달받는 데이터가 저렇게 다섯 가지 있어서 통으로 전달 안 한건데
         // ui 에 선택적으로 message, nickname만 뿌리면 되나..?
-        
+
         // console.log("emit 코드 읽음");
-        console.log(`count2: ${count2}, ${count1}클라한테 메시지, 닉네임 전달.`, ROOMNAME, 'with message:', MESSAGE, 'and nickname:', NickName);
+        console.log(
+          `count2: ${count2}, ${count1}클라한테 메시지, 닉네임 전달.`,
+          ROOMNAME,
+          "with message:",
+          MESSAGE,
+          "and nickname:",
+          NickName
+        );
 
         // socket.broadcast.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);
       }
