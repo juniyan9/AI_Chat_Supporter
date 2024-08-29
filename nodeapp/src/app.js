@@ -322,46 +322,33 @@ io.on("connection", (socket) => {
     }
   });
 
-  // socket.on("update_messages", (updatedMessages) => {
-    //   if (updatedMessages.length > 0) {
-    //     // 배열의 각 메시지 객체를 순회
-    //     updatedMessages.forEach(message => {
-    //         console.log(`NickName: ${message.NickName}가 보낸 메시지: ${message.MESSAGE}`);
-    //     });
-    // } else {
-    //     console.log("업데이트된 메시지가 없습니다.");
-    // }
+  socket.on("update_messages", (updatedMessages) => {
 
-    // console.log("클라이언트에서 받은 updated messages:", updatedMessages);
+    console.log("클라이언트에서 받은 updated messages:", updatedMessages);
     // console.log('소켓이 서버에 연결되었습니다. 소켓 ID:', socket.current.id);
 
-    // updatedMessages.forEach((message) => {
-    //   const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
-    //   console.log("메시지 속성들 뽑아서 message라고 해줌");
-    //   console.log(`ROOMNAME received: ${ROOMNAME}`);
-    //   console.log("Socket connected:", socket.id);
+    let count1 = 0;
+    updatedMessages.forEach((message) => {
+      const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
+      // const ROOMNAME = updatedMessages[0].ROOMNAME
+      let count2 = 0;
+      count1 += 1
+      count2 += 1
 
-      // if (ROOMNAME) {
-        // console.log("roomname만 잘 뽑아옴.");
-        // socket.to(ROOMNAME).emit("reply", {
-        //   MESSAGE,
-        //   NickName,
-        //   DATE,
-        // });
-        // socket.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);   //reply
+      if (ROOMNAME) {
+        socket.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);   //reply
+        //통으로 전달할려면 updatedMessages를 넣어야 하나
+        //전달받는 데이터가 저렇게 다섯 가지 있어서 통으로 전달 안 한건데
+        // ui 에 선택적으로 message, nickname만 뿌리면 되나..?
         
         // console.log("emit 코드 읽음");
-        // console.log('클라한테 메시지, 닉네임 전달.', ROOMNAME, 'with message:', MESSAGE, 'and nickname:', NickName);
+        console.log(`count2: ${count2}, ${count1}클라한테 메시지, 닉네임 전달.`, ROOMNAME, 'with message:', MESSAGE, 'and nickname:', NickName);
 
         // socket.broadcast.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);
-        //   message: MESSAGE,
-        //   sender: NickName,
-        //   date: DATE,
-        // });
-    //   }
-    // });
-    // socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
-  // });
+      }
+    });
+    socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
+  });
 
   // 방 삭제 요청
   socket.on("delete_room", (roomId) => {
