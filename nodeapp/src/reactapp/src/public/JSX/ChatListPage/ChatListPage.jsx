@@ -14,7 +14,7 @@ export default function ChatListPage() {
     const [searchQuery, setSearchQuery] = useState(''); // 검색어 상태
     const location = useLocation();
     const navigate = useNavigate();
-    const SERVER_URL = 'http://192.168.0.113:5000'; // 서버 URL 하드코딩
+    const SERVER_URL = 'http://192.168.0.154:5050'; // 서버 URL 하드코딩
 
     useEffect(() => {
         async function fetchRooms() {
@@ -23,11 +23,8 @@ export default function ChatListPage() {
                     method: "GET",
                 });
                 const data = await response.json();
-
-                // 비공개 방은 기본적으로 목록에 포함되지 않도록 필터링
-                const publicRooms = data.filter(room => !room.isPrivate);
-                setRooms(data); // 전체 방 목록 저장 (공개 + 비공개)
-                setFilteredRoom(publicRooms); // 기본적으로 공개 방만 표시
+                setRooms(data);
+                setFilteredRoom(data); // 필터링된 방 상태 초기화
             } catch (error) {
                 console.error('Failed to fetch rooms:', error);
             }
@@ -68,24 +65,21 @@ export default function ChatListPage() {
 
     // 방 추가 기능
     const handleAddRoom = async (newRoom) => {
+        const newRoomId = rooms.length + 1;
         const room = {
+            id: newRoomId, /* 방 아이디 */
             name: newRoom.roomName, /* 방 이름 */
             count: 1, /* 방 생성 시 현재 인원 상태 */
             maxCount: newRoom.maxCount, /* 입장 가능한 최대 인원 수 */
             password: newRoom.password, /* 비밀번호 */
             isPrivate: newRoom.isPrivate, /* 비공개 여부 */
-            ownerID: location.state?.nickName // 방을 만든 유저 정보
         };
         setRooms((prevRooms) => [...prevRooms, room]);
-
-        // 방 추가 후, 목록에 반영
-        if (!room.isPrivate || (searchQuery && room.name.toLowerCase().includes(searchQuery))) {
-            setFilteredRoom((prevRooms) => [...prevRooms, room]);
-        }
+        setFilteredRoom((prevRooms) => [...prevRooms, room]);
 
         try {
             // 서버에 새 방 정보를 전송
-            const response = await fetch(`${SERVER_URL}/add-room`, {
+            const response = await fetch(`${SERVER_URL}/addRoom`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -110,16 +104,11 @@ export default function ChatListPage() {
     const handleSearchChange = (e) => {
         const query = e.target.value.toLowerCase();
         setSearchQuery(query);
-
-        if (query === '') {
-            // 검색어가 없을 때는 공개 방만 표시
-            setFilteredRoom(rooms.filter(room => !room.isPrivate));
-        } else {
-            // 검색어가 있으면, 공개 방과 검색어에 일치하는 비공개 방을 모두 표시
-            setFilteredRoom(rooms.filter(room =>
-                room.name.toLowerCase().includes(query) ||
-                (room.isPrivate && room.name.toLowerCase() === query)
-            ));
+        
+        if (query ==='') {
+            setFilteredRoom(rooms);
+        }else {
+            setFilteredRoom(rooms.filter(room => room.name.toLowerCase() === (query)));
         }
     };
 
@@ -144,7 +133,7 @@ export default function ChatListPage() {
                             className={`room ${room.count >= room.maxCount ? 'full' : ''}`}
                         >
                             <h3>{room.name}</h3>
-                            <p>{room.isPrivate && <span className="lock-icon">🔒</span>} {room.count}/{room.maxCount}, {room.count}명 접속중</p>
+                            <p>{room.count}/{room.maxCount}, {room.count}명 접속중</p>
                         </div>
                     ))}
                 </div>
