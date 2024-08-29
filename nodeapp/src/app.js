@@ -290,11 +290,11 @@ io.on("connection", (socket) => {
   });
 
   // //유저 메시지 접수 및 소켓들에 보내주기
-  // socket.on("message", (message, roomName) => {
+  socket.on("message", (message, roomName) => {
   // // socket.on('message', (messageData) => {
   //   // const { socketId, messageId, message, roomName, date } = messageData;
-  //   logger.info("Received message from client: " + message);
-  //   logger.info("Received message from client room: " + roomName);
+    logger.info("Received message from client: " + message);
+    logger.info("Received message from client room: " + roomName);
 
   // //   const message = {
   // //     socketId,
@@ -310,19 +310,19 @@ io.on("connection", (socket) => {
   //   // socket.to(roomName).emit('reply', message);
 
   //   // userInfo 배열에서 socket.id에 해당하는 사용자 객체 찾기
-  //   const userCheck = userInfo.find(
-  //     (check) => check.user.socketId === socket.id
-  //   );
+    const userCheck = userInfo.find(
+      (check) => check.user.socketId === socket.id
+    );
 
-  //   if (userCheck) {
-  //     const user = userCheck.user;
-  //     socket.to(roomName).emit("reply", message, user.nickName);
-  //   } else {
-  //     console.error("사용자를 찾을 수 없습니다.");
-  //   }
-  // });
+    if (userCheck) {
+      const user = userCheck.user;
+      socket.to(roomName).emit("reply", message, user.nickName);
+    } else {
+      console.error("사용자를 찾을 수 없습니다.");
+    }
+  });
 
-  socket.on("update_messages", (updatedMessages) => {
+  // socket.on("update_messages", (updatedMessages) => {
     //   if (updatedMessages.length > 0) {
     //     // 배열의 각 메시지 객체를 순회
     //     updatedMessages.forEach(message => {
@@ -332,36 +332,36 @@ io.on("connection", (socket) => {
     //     console.log("업데이트된 메시지가 없습니다.");
     // }
 
-    console.log("클라이언트에서 받은 updated messages:", updatedMessages);
+    // console.log("클라이언트에서 받은 updated messages:", updatedMessages);
     // console.log('소켓이 서버에 연결되었습니다. 소켓 ID:', socket.current.id);
 
-    updatedMessages.forEach((message) => {
-      const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
+    // updatedMessages.forEach((message) => {
+    //   const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
     //   console.log("메시지 속성들 뽑아서 message라고 해줌");
     //   console.log(`ROOMNAME received: ${ROOMNAME}`);
     //   console.log("Socket connected:", socket.id);
 
-      if (ROOMNAME) {
+      // if (ROOMNAME) {
         // console.log("roomname만 잘 뽑아옴.");
         // socket.to(ROOMNAME).emit("reply", {
         //   MESSAGE,
         //   NickName,
         //   DATE,
         // });
-        socket.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);   //reply
+        // socket.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);   //reply
         
         // console.log("emit 코드 읽음");
-        console.log('클라한테 메시지, 닉네임 전달.', ROOMNAME, 'with message:', MESSAGE, 'and nickname:', NickName);
+        // console.log('클라한테 메시지, 닉네임 전달.', ROOMNAME, 'with message:', MESSAGE, 'and nickname:', NickName);
 
         // socket.broadcast.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);
         //   message: MESSAGE,
         //   sender: NickName,
         //   date: DATE,
         // });
-      }
-    });
+    //   }
+    // });
     // socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
-  });
+  // });
 
   // 방 삭제 요청
   socket.on("delete_room", (roomId) => {
