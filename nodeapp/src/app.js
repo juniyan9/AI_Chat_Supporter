@@ -66,9 +66,7 @@ function isNickNameExist(nickName) {
 function addUser(nickName) {
   let newUser = {
     id: nextUserId,
-    nickName: nickName,
-    socketId: null,
-    roomName: null,
+    nickName: nickName
   };
 
   // userInfo 배열에 새로운 사용자 추가
@@ -78,13 +76,6 @@ function addUser(nickName) {
 
   // 다음 사용자 ID 증가
   nextUserId++;
-
-  // userInfo 배열을 이루는 요소의 타입 확인
-  // userInfo.forEach((item, index) => {
-  //   console.log(`id: ${index + 1}:`);
-  //   console.log("Type of item:", typeof item); // 전체 요소 출력
-  //   console.log("---");
-  // });
 }
 
 // 닉네임 등록 받아주기 및 응답 전송
@@ -134,6 +125,7 @@ app.post("/add-room", (req, res) => {
     password,
     isPrivate,
     ownerID,
+    ownerNickname: nickName,
   };
 
   console.log("받은 room 설정 정보:", room);
@@ -147,9 +139,63 @@ app.post("/add-room", (req, res) => {
   res.send("방_성공적으로_저장됨");
 });
 
+/*방 설정 업데이트 */
+app.post("update_room", (req, res) => {
+  const {
+    originalName,
+    updatedName,
+    ownerNickname,
+    updatedMaxCount,
+    updatedPassword,
+    updatedIsPrivate,
+  } = req.body;
+  console.log("update_room 요청 받음:", req.body);
+
+  //ownerNickname 왔는지 안 왔는지 체크
+  if (!ownerNickname) {
+    return res.status(400).send("업데이트된 방 정보에 nickname이 안 왔습니다.");
+  }
+
+  //ownerNickname이랑 originalName으로 기존 방 배열에 해당 닉네임이랑 방 이름으로 만든 방이 있는지 확인
+  const roomCheck = rooms.find(
+    (room) => room.ownerNickname === ownerNickname && room.name === originalName
+  );
+
+  if (!roomCheck) {
+    return res.status(404).send("해당 ownerNickname이 만든 방이 없습니다.");
+  }
+  //ownerNickname과 originalName 기준으로 room 인덱스 찾기
+  let roomIndex = rooms.findIndex(
+    (room) => room.ownerNickname === ownerNickname && room.name === originalName
+  );
+
+  if (roomIndex !== -1) {
+    const updatedRoomData = {
+      id: rooms[roomIndex].id,
+      name: updatedName,
+      count: rooms[roomIndex].count,
+      maxCount: updatedMaxCount,
+      password: updatedPassword,
+      isPrivate: updatedIsPrivate,
+      ownerID: rooms[roomIndex].ownerID,
+      ownerNickname: ownerNickname,
+    };
+
+    //roomUpdate를 인덱스로 해서 그 위치에 업데이트한 방 정보 덮어씌우기
+    rooms[roomIndex] = updatedRoomData;
+
+    console.log("방 정보 업데이트 성공");
+
+    res.send({ status: "방 정보 업데이트 성공", updatedRoom: updatedRoomData });
+  } else {console.log("업데이트된 방 정보가 없습니다.");
+    res.status(404).send("업데이트된 방 정보가 없습니다.")
+  }
+});
+
 /*방 목록 갱신 */
 app.get("/rooms", (req, res) => {
   res.json(rooms);
+  console.log("방 목록 요청에 따른 제공");
 });
 
 /*방 입장*/
@@ -296,14 +342,6 @@ io.on("connection", (socket) => {
     logger.info("Received message from client: " + message);
     logger.info("Received message from client room: " + roomName);
 
-    // //   const message = {
-    // //     socketId,
-    // //     messageId,
-    // //     message,
-    // //     roomName,
-    // //     date
-    // // };
-
     //   // messages.push(message);
     //   // console.log('Updated messages array:', messages);
 
@@ -322,90 +360,81 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("update_messages", (updatedMessages) => {
-    console.log("클라이언트에서 받은 updated messages:", updatedMessages);
-    // console.log('소켓이 서버에 연결되었습니다. 소켓 ID:', socket.current.id);
+  // socket.on("update_messages", (updatedMessages) => {
+  //   console.log("클라이언트에서 받은 updated messages:", updatedMessages);
+  //   // console.log('소켓이 서버에 연결되었습니다. 소켓 ID:', socket.current.id);
 
-    let count1 = 0;
-    updatedMessages.forEach((message) => {
-      const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
-      // const ROOMNAME = updatedMessages[0].ROOMNAME
-      let count2 = 0;
-      count1 += 1;
-      count2 += 1;
+  //   let count1 = 0;
+  //   updatedMessages.forEach((message) => {
+  //     const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
+  //     // const ROOMNAME = updatedMessages[0].ROOMNAME
+  //     let count2 = 0;
+  //     count1 += 1;
+  //     count2 += 1;
 
-      if (ROOMNAME) {
-        socket.to(ROOMNAME).emit("update_messages_reply", MESSAGE, NickName); //reply
-        //통으로 전달할려면 updatedMessages를 넣어야 하나
-        //전달받는 데이터가 저렇게 다섯 가지 있어서 통으로 전달 안 한건데
-        // ui 에 선택적으로 message, nickname만 뿌리면 되나..?
+  //     if (ROOMNAME) {
+  //       socket.to(ROOMNAME).emit("update_messages_reply", MESSAGE, NickName); //reply
+  //       //통으로 전달할려면 updatedMessages를 넣어야 하나
+  //       //전달받는 데이터가 저렇게 다섯 가지 있어서 통으로 전달 안 한건데
+  //       // ui 에 선택적으로 message, nickname만 뿌리면 되나..?
 
-        // console.log("emit 코드 읽음");
-        console.log(
-          `count2: ${count2}, ${count1}클라한테 메시지, 닉네임 전달.`,
-          ROOMNAME,
-          "with message:",
-          MESSAGE,
-          "and nickname:",
-          NickName
-        );
+  //       // console.log("emit 코드 읽음");
+  //       console.log(
+  //         `count2: ${count2}, ${count1}클라한테 메시지, 닉네임 전달.`,
+  //         ROOMNAME,
+  //         "with message:",
+  //         MESSAGE,
+  //         "and nickname:",
+  //         NickName
+  //       );
 
-        // socket.broadcast.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);
-      }
-    });
-    socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
-  });
+  //       // socket.broadcast.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);
+  //     }
+  //   });
+  //   socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
+  // });
 
-  // 방 삭제 요청
-  socket.on("delete_room", (roomId) => {
-    rooms = rooms.filter((room) => room.id !== roomId);
-    console.log(rooms);
+  /* 로그아웃 요청 -- 이거 해야 하나? */
+  // socket.on("logout", (userId) => {
+  //   // 사용자 객체 삭제
+  //   userInfo = userInfo.filter((user) => user.user.id !== userId);
+  //   console.log(`사용자 ID: ${userId} 로그아웃됨`);
 
-    // 방 삭제 후 모든 클라이언트에게 채팅방 목록 업데이트를 알립니다.
-    io.emit("updated_rooms", rooms);
-  });
+  //   const userCheck = userInfo.find(
+  //     (check) => check.user.socketId === socket.id
+  //   );
 
-  // 로그아웃 요청 -- 이거 해야 하나?
-  socket.on("logout", (userId) => {
-    // 사용자 객체 삭제
-    userInfo = userInfo.filter((user) => user.user.id !== userId);
-    console.log(`사용자 ID: ${userId} 로그아웃됨`);
+  //   // socket.disconnect();
+  //   if (userCheck) {
+  //     const user = userCheck.user;
+  //     const roomName = user.roomName;
 
-    const userCheck = userInfo.find(
-      (check) => check.user.socketId === socket.id
-    );
+  //     if (roomName) {
+  //       // 방의 유저 리스트에서 해당 유저를 제거
+  //       if (roomUsers[roomName]) {
+  //         roomUsers[roomName] = roomUsers[roomName].filter(
+  //           (id) => id !== userId
+  //         );
+  //         console.log("roomUsers:", roomUsers);
 
-    // socket.disconnect();
-    if (userCheck) {
-      const user = userCheck.user;
-      const roomName = user.roomName;
+  //         // 방의 유저 수 갱신
+  //         const roomObj = rooms.find((room) => room.name === roomName);
+  //         if (roomObj) {
+  //           roomObj.count = roomUsers[roomName].length;
+  //         }
+  //       }
 
-      if (roomName) {
-        // 방의 유저 리스트에서 해당 유저를 제거
-        if (roomUsers[roomName]) {
-          roomUsers[roomName] = roomUsers[roomName].filter(
-            (id) => id !== userId
-          );
-          console.log("roomUsers:", roomUsers);
+  //       // 방에 있는 다른 클라이언트에게 퇴장 메시지 전송
+  //       socket.broadcast
+  //         .to(roomName)
+  //         .emit("reply", `${user.nickName}님이 방을 나갔습니다.`);
+  //       console.log("유저 로그아웃에 따른 퇴장 메시지 전송 완료");
+  //     }
 
-          // 방의 유저 수 갱신
-          const roomObj = rooms.find((room) => room.name === roomName);
-          if (roomObj) {
-            roomObj.count = roomUsers[roomName].length;
-          }
-        }
-
-        // 방에 있는 다른 클라이언트에게 퇴장 메시지 전송
-        socket.broadcast
-          .to(roomName)
-          .emit("reply", `${user.nickName}님이 방을 나갔습니다.`);
-        console.log("유저 로그아웃에 따른 퇴장 메시지 전송 완료");
-      }
-
-      // 소켓 연결 해제
-      socket.disconnect();
-    }
-  });
+  //     // 소켓 연결 해제
+  //     socket.disconnect();
+  //   }
+  // });
 
   //소켓 연결 해제 처리
   // socket.on("disconnect", (roomName) => {  //소켓 끊어질 때 자동으로 발생하는 이벤트이므로 클라에서 관련 코드를 굳이 수동으로 호출할 필요 없고, 따라서 여기서도 roomName 넣어줄 필요가 없게 됨.
