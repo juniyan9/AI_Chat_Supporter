@@ -13,12 +13,5 @@ export default function Message({nickName, text, user1}) {
           {text}
         </p>
       </div>
-      // <div  className='user1'>
-        
-      //   <p>
-      //     {nickName}:{text}
-      //   </p>
-
-      // </div>
     )
 }
