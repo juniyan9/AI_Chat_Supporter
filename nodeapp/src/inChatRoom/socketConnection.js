@@ -25,6 +25,14 @@ export function socketConnection() {
   
   //events
   io.on("connection", (socket) => {
+    // if (!req.session.nickName || !req.session.userId) {
+    //   userInfo = userInfo.filter(
+    //     (user) => user.user.nickName != req.session.nickName
+    //   );
+    // }
+    
+    //   console.log("세션 없음. userInfo에서 유저 객체 삭제 완료.");
+    //   res.status(401).send("세션이 유효하지 않습니다.");
     logger.info("A Client has connected.");
   
     // 방에 들어갈 때 socketId와 roomName이 userInfo의 user에 업데이트 돼야함.
