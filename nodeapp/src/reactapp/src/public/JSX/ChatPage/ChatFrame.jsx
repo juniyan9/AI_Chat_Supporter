@@ -68,11 +68,12 @@ import TextContainer from "./TextContainer";
 
 export default function ChatFrame(props) {
     
-    console.log('ChatFrame Rerendered');
+    // console.log('ChatFrame Rerendered');
     
     const [messages, setMessages] = useState([]);
     const [roomName, setRoomName] = useState(props.roomName);
     const [nickName, setNickName] = useState(props.nickName);
+    const [onsearchtext, setonSearchText] = useState('');
 
     const socket = useRef(null);
     
@@ -119,21 +120,24 @@ export default function ChatFrame(props) {
         } else {
             console.error("소켓이 아직 초기화가 되질 않음");
         }
-    };
+    };    
 
     return (
         <div className="ChatFrame">
-            <InfoBar roomName={roomName}/>
+            <InfoBar
+                roomName={roomName}
+                onsearchtext={setonSearchText}
+            />
             <MessageContainer 
-                messages={messages} 
+                messages={messages}
+                onsearchtext={onsearchtext}
                 onMessagesUpdate={handleMessagesUpdate} // 메시지 업데이트 콜백 전달
             />
             <TextContainer 
                 socket={socket} 
                 setMessages={setMessages} 
                 nickName={nickName} 
-                roomName={roomName} 
-                messages={messages}
+                roomName={roomName}
             />
         </div>
     );

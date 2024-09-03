@@ -1,130 +1,114 @@
+import '../../CSS/MessageContainer.css';
+import Message from './Message';
+
+
+export default function MessageContainer({messages,onsearchtext}) {
+
+    // console.log("MessageContainer props messages ::", messages);
+
+    const filtermsg = messages.filter(msg =>msg.text.includes(onsearchtext));
+            
+    return (
+        <div className="MessageContainer">
+
+            {messages.map((message, index) => (
+                // const isHighlighted = message.text.includes(onsearchtext);
+                    <Message
+                        css={message.text.includes(onsearchtext) == true ? 'highlighted' : ''}
+                        key={index}
+                        {...message}
+                    />
+            )
+            )
+            }
+
+        </div>
+    )
+}
+
+// import React, { useState } from 'react';
 // import '../../CSS/MessageContainer.css';
 // import Message from './Message';
-// import React, { useEffect,useRef } from 'react';
 
 
-// export default function MessageContainer({messages}) {
 
-//     console.log("MessageContainer props messages ::", messages);
-    
-//     const scrollRef = useRef();
+// export default function MessageContainer({ messages,onsearchtext }) {
 
-//     useEffect(() => {
-//         scrollToBottom();
-//     }, [messages]);
- 
-//     const scrollToBottom = () => {
-//         if (scrollRef.current) {
-//             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+
+//     // console.log("MessageContainer props messages ::", messages);
+//     // 숨겨진 메시지의 인덱스를 추적하기 위한 상태
+//     const [hiddenMessages, setHiddenMessages] = useState(new Set());
+//     // 컨텍스트 메뉴의 위치와 가시성을 제어하기 위한 상태
+//     const [contextMenu, setContextMenu] = useState({
+//         visible: false,
+//         x: 0,
+//         y: 0,
+//         messageIndex: null,
+//     });
+//     // 우클릭 시 컨텍스트 메뉴를 표시하는 핸들러
+//     const handleContextMenu = (event, index) => {
+//         event.preventDefault(); // 기본 우클릭 메뉴를 방지합니다.
+//         // 클릭한 위치의 좌표와 메시지 인덱스를 설정하여 컨텍스트 메뉴를 표시합니다.
+//         setContextMenu({
+//             visible: true,
+//             x: event.clientX,
+//             y: event.clientY,
+//             messageIndex: index,
+//         });
+//     };
+//     // 컨텍스트 메뉴에서 숨기기 버튼을 클릭했을 때의 핸들러
+//     const handleHideMessage = () => {
+//         if (contextMenu.messageIndex !== null) {
+//             setHiddenMessages(prevHiddenMessages => {
+//                 const updatedHiddenMessages = new Set(prevHiddenMessages);
+//                 updatedHiddenMessages.add(contextMenu.messageIndex);
+//                 return updatedHiddenMessages;
+//             });
+//         }
+//         // 컨텍스트 메뉴를 숨깁니다.
+//         setContextMenu({ ...contextMenu, visible: false });
+//     };
+//     // 컨텍스트 메뉴를 닫는 핸들러
+//     const handleClickOutside = () => {
+//         if (contextMenu.visible) {
+//             setContextMenu({ ...contextMenu, visible: false });
 //         }
 //     };
 
 
+//     const filtermessages = messages.filter(msg =>
+//         msg.text.includes(onsearchtext)
+//     );
+    
+//     console.log('text',filtermessages);
+
+//     //만약 안녕이 들어있다면 css를 변경해라
+
+
+
 //     return (
-//         <div className="MessageContainer" ref={scrollRef}>
+//         <div className="MessageContainer" onClick={handleClickOutside}>
 //             {messages.map((message, index) => (
-//                 <Message
-//                     key={index}
-//                     {...message}
-//                 />
+//                 !hiddenMessages.has(index) && ( // 숨겨진 메시지는 렌더링하지 않습니다.
+//                     <div
+//                         key={index}
+//                         onContextMenu={(event) => handleContextMenu(event, index)} // 우클릭 시 메시지를 숨깁니다.
+//                     >
+//                         <Message
+//                             key={index}
+//                             {...message}
+//                         />
+//                     </div>
+//                 )
 //             ))}
+//             {contextMenu.visible && (
+//                 <div
+//                     className="context-menu"
+//                     style={{ top: `${contextMenu.y}px`, left: `${contextMenu.x}px`, position: 'absolute' }}
+//                 >
+//                     <button onClick={handleHideMessage}>삭제</button>
+//                 </div>
+//             )}
 //         </div>
-//     )
+//     );
 // }
-
-import React, { useState, useEffect, useRef } from 'react';
-import '../../CSS/MessageContainer.css';
-import Message from './Message';
-
-export default function MessageContainer({ messages, onMessagesUpdate }) {
-    const scrollRef = useRef();
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    const scrollToBottom = () => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        }
-    };
-
-    // 숨겨진 메시지의 인덱스를 추적하기 위한 상태
-    const [hiddenMessages, setHiddenMessages] = useState(new Set());
-
-    // 삭제되지 않은 메시지 리스트를 상태로 관리
-    const [filteredMessages, setFilteredMessages] = useState(messages);
-
-    // messages나 hiddenMessages가 변경될 때마다 필터링된 메시지 리스트를 업데이트
-    useEffect(() => {
-        const updatedMessages = messages.filter((_, index) => !hiddenMessages.has(index));
-        setFilteredMessages(updatedMessages);
-        console.log("업데이트 된 배열 확인 :", updatedMessages); // 삭제 후 배열 확인
-        onMessagesUpdate(updatedMessages); // 부모 컴포넌트(ChatFrame)로 updatedMessages 전달
-    }, [messages, hiddenMessages]);
-
-    // 컨텍스트 메뉴의 위치와 가시성을 제어하기 위한 상태
-    const [contextMenu, setContextMenu] = useState({
-        visible: false, 
-        x: 0,
-        y: 0,
-        messageIndex: null,
-    });
-
-    // 우클릭 시 컨텍스트 메뉴를 표시하는 핸들러
-    const handleContextMenu = (event, index) => {
-        event.preventDefault(); // 기본 우클릭 메뉴를 방지합니다.
-        // 클릭한 위치의 좌표와 메시지 인덱스를 설정하여 컨텍스트 메뉴를 표시합니다.
-        setContextMenu({
-            visible: true,
-            x: event.clientX,
-            y: event.clientY,
-            messageIndex: index,
-        });
-    };
-
-    // 컨텍스트 메뉴에서 숨기기 버튼을 클릭했을 때의 핸들러
-    const handleHideMessage = () => {
-        if (contextMenu.messageIndex !== null) {
-            setHiddenMessages(prevHiddenMessages => {
-                const updatedHiddenMessages = new Set(prevHiddenMessages);
-                updatedHiddenMessages.add(contextMenu.messageIndex);
-                // console.log("Updated Hidden Messages Set ::", updatedHiddenMessages); // 숨겨진 메시지 확인
-                return updatedHiddenMessages;
-            });
-        }
-        // 컨텍스트 메뉴를 숨깁니다.
-        setContextMenu({ ...contextMenu, visible: false });
-    };
-
-    // 컨텍스트 메뉴를 닫는 핸들러
-    const handleClickOutside = () => {
-        if (contextMenu.visible) {
-            setContextMenu({ ...contextMenu, visible: false });
-        }
-    };
-
-    return (
-        <div className="MessageContainer" onClick={handleClickOutside} ref={scrollRef}>
-            {filteredMessages.map((message, index) => (
-                <div
-                    key={index}
-                    onContextMenu={(event) => handleContextMenu(event, index)} // 우클릭 시 메시지를 숨깁니다.
-                >
-                    <Message
-                        key={index}
-                        {...message}
-                    />
-                </div>
-            ))}
-            {contextMenu.visible && (
-                <div
-                    className="context-menu"
-                    style={{ top: `${contextMenu.y}px`, left: `${contextMenu.x}px`, position: 'absolute' }}
-                >
-                    <button onClick={handleHideMessage}>삭제</button>
-                </div>
-            )}
-        </div>
-    );
-}
