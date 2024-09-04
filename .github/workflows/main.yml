@@ -22,5 +22,4 @@ jobs:
             git pull origin main &&
             npm install &&
             cd nodeapp/src &&
-            pwd &&
-            pm2 restart /home/ubuntu/project/AI_chat_supporter_react_nodejs/nodeapp/src/server.js
+            node server.js
