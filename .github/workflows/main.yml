@@ -1,0 +1,27 @@
+name: Deploy NodeJs App
+
+on:
+  push:
+    branches:
+      - main  # main브랜치에 푸쉬가 일어나면 실행되도록 설정
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # 작업환경 : Ubuntu 최신버전
+
+
+	# 필요한 package를 설치하고 build
+    - name: Install dependencies and build 
+      run: 
+        sudo npm install
+     
+    # ubuntu 서버에 접속하여 빌드파일을 전송하고 배포된 파일을 교체
+    - name: Copy build directory to server
+      uses: actions/checkout@v2
+      with:
+        host: ${{ secrets.NODEJS_SERVER_HOST }}
+        username: ${{ secrets.NODEJS_SERVER_USER }}
+        port: ${{ secrets.NODEJS_SERVER_PORT }}
+        source: "*"
+        target: "/home/ubuntu/nodejs/AI_chat_supporter_react_nodejs/"
+#        script: sudo systemctl restart npm run dev
