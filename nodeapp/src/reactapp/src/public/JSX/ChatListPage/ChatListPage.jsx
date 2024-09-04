@@ -1,141 +1,170 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
-import '../../CSS/ChatListPage.css'
+import '../../CSS/ChatListPage.css';
+import '../../CSS/FilteredRoom.css';
+import RoomModal from './RoomModal';
+import PasswordModal from './PasswordModal';
 
 export default function ChatListPage() {
-
     const [rooms, setRooms] = useState([]);
+    const [filteredRooms, setFilteredRooms] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+    const [selectedRoom, setSelectedRoom] = useState(null);
+
     const location = useLocation();
     const navigate = useNavigate();
-
-    // 사용자 닉네임 확인
-    console.log(location.state?.nickName);
-
-    // 미리 방을 설정
-    useEffect(() => {
-        setRooms([
-            { id: 1, name: '채팅방 이름 1', count: 0, maxCount: 3 },
-            { id: 2, name: '채팅방 이름 2', count: 0, maxCount: 3 },
-            { id: 3, name: '채팅방 이름 3', count: 0, maxCount: 3 },
-            { id: 4, name: '채팅방 이름 4', count: 0, maxCount: 3 },
-            { id: 5, name: '채팅방 이름 5', count: 0, maxCount: 3 },
-            { id: 6, name: '채팅방 이름 6', count: 0, maxCount: 3 },
-        ]);
-    }, []);
+    const SERVER_URL = 'http://192.168.0.154:5001';
 
     useEffect(() => {
+        // Fetch the list of rooms
         async function fetchRooms() {
-            fetch('http://192.168.0.113:5000/chatList', {
-                method: "GET",
-        })
-            .then((response) => response.json())
-            .then((data) => 
-            setRooms(data)
-            )
+            try {
+
+                const response = await fetch(`${SERVER_URL}/rooms`);
+
+                const data = await response.json();
+                console.log("response:", response);
+                console.log("data:" ,data);
+                setRooms(data);
+                setFilteredRooms(data.filter(room => !room.isPrivate));
+            } catch (error) {
+                console.error('Failed to fetch rooms:', error);
+            }
         }
         fetchRooms();
-
     }, []);
 
-    // 방을 클릭하면 채팅 페이지로 이동
+    // Handle room selection
     function handleSelectRoom(room) {
+        room.isPrivate ? openPasswordModal(room) : navigateToRoom(room);
+    }
+
+    // Open the password modal
+    function openPasswordModal(room) {
+        setSelectedRoom(room);
+        setIsPasswordModalOpen(true);
+    }
+
+    // Navigate to the chat room
+    function navigateToRoom(room) {
         if (room.count < room.maxCount) {
             navigate(`/chatPage/${room.name}`, {
-                state: { 'roomName': room.name, 'nickName': location.state?.nickName }
+                state: { roomName: room.name, nickName: location.state?.nickName }
             });
         } else {
-            alert('방이 꽉 찼습니다..');
+            alert('방이 꽉 찼습니다.');
         }
     }
 
-    // 방 추가 기능
-    const handleAddRoom = () => {
-        const newRoomId = rooms.length + 1;
-        const newRoom = {
-            id: newRoomId,
-            name: `채팅방 이름 ${newRoomId}`,
+    // Handle password submission
+    const handlePasswordSubmit = async (enteredPassword) => {
+        if (selectedRoom?.password === enteredPassword) {
+            setIsPasswordModalOpen(false);
+            navigateToRoom(selectedRoom);
+        } else {
+            alert('비밀번호가 틀렸습니다.');
+        }
+    };
+
+    // Handle adding a new room
+    const handleAddRoom = async (newRoom) => {
+        const room = {
+            name: newRoom.roomName,
             count: 0,
-            maxCount: 3,  // 여기서 최대 인원을 설정할 수 있습니다.
+            maxCount: newRoom.maxCount,
+            password: newRoom.password || '',
+            isPrivate: newRoom.isPrivate,
+            nickName: location.state?.nickName
         };
-        setRooms((prevRooms) => [...prevRooms, newRoom]);
-    }
+
+        console.log("room:", room); 
+        try {
+            const response = await fetch(`${SERVER_URL}/add-room`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(room)
+            });
+
+            // const data = await response.json();
+            // console.log("data1: ", data);
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
+            }
+
+            setRooms(prevRooms => [...prevRooms, room]);
+            if (!room.isPrivate || searchQuery && room.name.toLowerCase().includes(searchQuery)) {
+                setFilteredRooms(prevRooms => [...prevRooms, room]);
+            }
+
+            // alert('방이 성공적으로 생성되었습니다.');
+            return true;
+        } catch (error) {
+            console.error('Failed to add room', error);
+            alert('방 생성에 실패했습니다.');
+            return false;
+        }
+    };
+
+    // Handle search query change
+    const handleSearchChange = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery(query);
+        setFilteredRooms(rooms.filter(room =>
+            (!room.isPrivate && room.name.toLowerCase().includes(query)) ||
+            (room.isPrivate && room.name.toLowerCase() === query)
+        ));
+    };
 
     return (
         <div className="chatListPage">
-            <h2>채팅방 목록</h2>
-            {rooms.map((room) => (
-                <div 
-                    key={room.id} 
-                    onClick={() => handleSelectRoom(room)} 
-                    className={`room ${room.count >= room.maxCount ? 'full' : ''}`}
-                >
-                    <h3>{room.name}</h3>
-                    <p>{room.count}/{room.maxCount}, {room.count}명 접속중</p>
+            <div className="room-list-section">
+                <h2>채팅방 목록</h2>
+                <div className="search-section">
+                    <input
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                        placeholder="방 제목 검색"
+                        className="search-input"
+                    />
                 </div>
-            ))}
-            
-            {/* 방 추가 버튼 */}
-            <div className="add-room-section">
-                <button onClick={handleAddRoom}>방 추가</button>
+                <div className="room-list">
+                    {filteredRooms.map((room) => (
+                        <div
+                            key={room.name}
+                            onClick={() => handleSelectRoom(room)}
+                            className={`room ${room.count >= room.maxCount ? 'full' : ''}`}
+                        >
+                            <h3>{room.name}</h3>
+                            <p>{room.isPrivate && <span className="lock-icon">🔒</span>} {room.count}/{room.maxCount}, {room.count}명 접속중</p>
+                        </div>
+                    ))}
+                </div>
             </div>
+
+
+            <div className="add-room-section">
+                {/* 버튼을 클릭하면 setIsModalOpen(true)가 실행된다. */}
+                <button onClick={() => setIsModalOpen(true)}>방 만들기</button>
+            </div>
+
+            {isModalOpen && (
+                <RoomModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSave={handleAddRoom}
+                />
+            )}
+
+            {isPasswordModalOpen && (
+                <PasswordModal
+                    isOpen={isPasswordModalOpen}
+                    onClose={() => setIsPasswordModalOpen(false)}
+                    onSubmit={handlePasswordSubmit}
+                />
+            )}
         </div>
     );
 }
-
-
-
-// import React, { useEffect, useState } from "react"
-// import { useNavigate, useLocation } from 'react-router-dom';
-// import '../../CSS/ChatListPage.css';
-
-
-// export default function ChatListPage() {
-
-//     const [rooms, setRooms] = useState([]);
-
-//     const location = useLocation();
-//     const navigate = useNavigate();
-
-//     console.log(location.state.nickName);
-
-//     useEffect(() => {
-//         async function fetchRooms() {
-//             fetch('http://192.168.0.113:5000/chatList', {
-//                 method: "GET",
-//             })
-//             .then((response) => response.json())
-//             .then((data) => 
-//                     setRooms(data)
-//                 )
-//         }
-//         fetchRooms();
-
-//     }, []);
-
-//     const handleAddRoom = () => {
-
-//         setRooms((prevRooms) => [...prevRooms, { id : 3,
-//             name: 'room3',  
-//             count: 3,
-//             maxCount: 6,}]);
-//     }
-
-//     function handleSelectRoom (room){
-
-//         console.log('handleSelectRoom >> come');
-//         navigate(`/chatPage/${room.name}`, {state:{'roomName':room.name, 'nickName' : location.state.nickName }});
-//     }
-    
-//     return (
-//         <div className="ChatListPage">
-//             <button onClick={handleAddRoom}>방 추가</button>
-                        
-//             {rooms.map((room) => (
-//                 <div key={room.id} onClick={()=>handleSelectRoom(room)}>
-//                     <h3>id: {room.id}, Room name:{room.name} </h3> 
-//                     <h5  key={room} >{room.count}/{room.maxCount}</h5>
-//                 </div>
-//             ))}
-//         </div>
-//     )
-// }

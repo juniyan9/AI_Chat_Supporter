@@ -16,13 +16,19 @@
     margin: -29px auto;
 }
 
+.searchtext{
+    width: 120px;
+    height: 20px;
+    position: relative;
+    bottom: 50px;
+    left: 260px;
+}
 .barsearch{
     background: url(../IMG/Vector.png)no-repeat 6px;
     width: 30px;
     height: 30px;
-    border: solid 1px #E8E6EA;
-    border-radius: 10px;
+    border: 0;
     position: relative;
     bottom: 40px;
-    left: 354px;
+    left: 228px;
 }

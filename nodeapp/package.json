@@ -11,6 +11,7 @@
   "type": "module",
   "description": "",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -21,5 +22,8 @@
   "optionalDependencies": {
     "bufferutil": "^4.0.8",
     "utf-8-validate": "^6.0.4"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
   }
 }

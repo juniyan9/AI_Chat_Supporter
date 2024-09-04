@@ -1,0 +1,174 @@
+import React, { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
+import { useNavigate } from "react-router-dom";
+import '../../CSS/RoomSettingsModal.css';
+
+const SERVER_URL = 'http://192.168.0.154:5001';
+
+export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpdate, onDelete }) {
+    const [roomName, setRoomName] = useState(roomDetails?.name || '');
+    const [maxCount, setMaxCount] = useState(roomDetails?.maxCount || 10);
+    const [password, setPassword] = useState(roomDetails?.password || '');
+    const [isPrivate, setIsPrivate] = useState(roomDetails?.isPrivate || false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [count, setCount] = useState(roomDetails?.count || 0);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (roomDetails) {
+            setRoomName(roomDetails.name);
+            setMaxCount(roomDetails.maxCount);
+            setPassword(roomDetails.password);
+            setIsPrivate(roomDetails.isPrivate);
+            setCount(roomDetails.count);
+        }
+    }, [roomDetails]);
+
+    const handleSave = async () => {
+        if (roomName.trim() === '') {
+            alert('방 이름을 입력하세요.');
+            return;
+        }
+        if (maxCount < 1 || maxCount > 10) {
+            alert('최대 인원수는 1에서 10 사이여야 합니다.');
+            return;
+        }
+
+        setIsSaving(true);
+
+        try {
+            const response = await fetch(`${SERVER_URL}/update_room`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    originalName: roomDetails.name,
+                    name: roomName,
+                    count,
+                    maxCount,
+                    password,
+                    isPrivate
+                }),
+            });
+
+            const data = await response.json();
+            setIsSaving(false);
+
+            if (response.ok) {
+                alert('방 정보가 업데이트되었습니다.');
+                onUpdate({ 
+                    name: roomName, 
+                    maxCount, 
+                    password, 
+                    isPrivate, 
+                    count 
+                });
+                onClose();
+            
+            } else {
+                alert('방 정보 업데이트에 실패했습니다.');
+                console.error('Failed to update room:', data.error);
+            }
+        } catch (error) {
+            setIsSaving(false);
+            alert('서버와의 통신 중 오류가 발생했습니다.');
+            console.error('Failed to update room:', error);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (window.confirm("정말로 방을 삭제하시겠습니까?")) {
+            setIsDeleting(true);
+
+            try {
+                const response = await fetch(`${SERVER_URL}/delete_room`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ roomName: roomDetails.name }),
+                });
+
+                const data = await response.json();
+                setIsDeleting(false);
+
+                if (response.ok) {
+                    alert('방이 삭제되었습니다.');
+                    onDelete(roomDetails.name);
+                    onClose();
+                    navigate('/ChatListPage');
+                } else {
+                    alert('방 삭제에 실패했습니다.');
+                    console.error('Failed to delete room:', data.error);
+                }
+            } catch (error) {
+                setIsDeleting(false);
+                alert('서버와의 통신 중 오류가 발생했습니다.');
+                console.error('Failed to delete room:', error);
+            }
+        }
+    };
+
+    return (
+        isOpen && (
+            <div className="modal-overlay">
+                <div className="modal-content">
+                    <h2>방 설정</h2>
+                    <label>
+                        방 이름:
+                        <input
+                            type="text"
+                            value={roomName}
+                            onChange={(e) => setRoomName(e.target.value)}
+                            disabled={isSaving || isDeleting}
+                        />
+                    </label>
+                    <label>
+                        최대 인원: {maxCount}
+                        <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            step="1"
+                            value={maxCount}
+                            onChange={(e) => setMaxCount(Number(e.target.value))}
+                            className="slider"
+                            disabled={isSaving || isDeleting}
+                        />
+                    </label>
+                    <label>
+                        비밀번호:
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            disabled={isSaving || isDeleting}
+                        />
+                    </label>
+                    <label>
+                        비공개:
+                        <input
+                            type="checkbox"
+                            checked={isPrivate}
+                            onChange={(e) => setIsPrivate(e.target.checked)}
+                            disabled={isSaving || isDeleting}
+                        />
+                    </label>
+                    <div className="modal-buttons">
+                        <button onClick={handleSave} disabled={isSaving || isDeleting}>
+                            {isSaving ? '저장 중...' : '저장'}
+                        </button>
+                        <button onClick={onClose} disabled={isSaving || isDeleting}>닫기</button>
+                        <button onClick={handleDelete} disabled={isDeleting}>
+                            {isDeleting ? '삭제 중...' : '방 삭제'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    );
+}
+
