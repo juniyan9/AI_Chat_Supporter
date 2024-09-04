@@ -7,6 +7,7 @@ import TextContainer from "./TextContainer";
 
 export default function ChatFrame({ roomName, nickName, maxCount, password, isPrivate }) {
     const [messages, setMessages] = useState([]);
+    const [onsearchtext, setonSearchText] = useState('');
     const socket = useRef(null);
 
     useEffect(() => {
@@ -29,14 +30,19 @@ export default function ChatFrame({ roomName, nickName, maxCount, password, isPr
 
     return (
         <div className="ChatFrame">
-            <InfoBar roomName={roomName} />
-            <MessageContainer messages={messages} />
+            <InfoBar
+                roomName={roomName} 
+                onsearchtext={setonSearchText}
+                />
+            <MessageContainer
+                messages={messages}
+                onsearchtext={onsearchtext} 
+                />
             <TextContainer 
                 socket={socket} 
                 setMessages={setMessages} 
                 nickName={nickName} 
                 roomName={roomName} 
-                messages={messages} 
             />
         </div>
     );
