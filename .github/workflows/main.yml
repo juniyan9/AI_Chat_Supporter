@@ -18,7 +18,7 @@ jobs:
           username: ${{ secrets.NODEJS_SERVER_USER }}
           key: ${{ secrets.NODEJS_SERVER_KEY }} 
           command:
-            cd ~/project/AI_chat_supporter_react_nodejs/nodeapp &&
+            cd ~/project/AI_chat_supporter_react_nodejs &&
             git pull origin main &&
             npm install &&
-            pm2 restart src/nodeapp/src/server.js
+            pm2 restart nodeapp/src/server.js
