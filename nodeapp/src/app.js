@@ -178,6 +178,27 @@ io.on("connection", (socket) => {
 
 
 
+
+
+import { spawn } from "child_process";
+
+const model_call = () => {
+ 
+  const result = spawn('py', ['./model_call.py', '안녕하세요']);
+  result.stdout.on('data', (data) => { 
+    console.log('model_call stdout ::::',data.toString());
+  });
+
+  result.stderr.on('data', (data) => {
+    console.log('model_call stderr ::::',data.toString());
+  });
+   
+}
+
+model_call();
+
+
+
 export { app, io };
 
 
