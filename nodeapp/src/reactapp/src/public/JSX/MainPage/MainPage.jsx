@@ -44,7 +44,7 @@ export default function MainPage() {
                 <div className="Main">
                     <input 
                         type='text' 
-                        name='nickName' 
+                        name='nickName'
                         placeholder="닉네임 입력"  
                         onChange={(e) => setNickName(e.target.value)} 
                         onKeyDown={keypress} 
