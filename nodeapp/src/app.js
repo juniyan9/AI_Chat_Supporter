@@ -53,7 +53,7 @@ app.use(session(sessionObj));
 app.use(cookieParser());
 // app.use(cors({ cors: "*" }));
 const corsOptions = {
-  origin: ['http://localhost:5000', 'http://192.168.0.113:5000/add_room'], // 노드에서 띄운 페이지에서 방 생성이 안 됨. (POST // /add_room 안 됨)
+  origin: ['http://localhost:5000', 'http://43.203.141.146:5000/add_room'], // 노드에서 띄운 페이지에서 방 생성이 안 됨. (POST // /add_room 안 됨)
   methods: ['GET', 'POST'],
   credentials: true, // 세션 쿠키를 포함시키기 위해 필요
 };
@@ -126,24 +126,6 @@ socketConnection(io);
 
 // spawnOne();
 
-
-
-import { spawn } from "child_process";
-
-const model_call = () => {
- 
-  const result = spawn('py', ['./model_call.py', '안녕하세요']);
-  result.stdout.on('data', (data) => { 
-    console.log('model_call stdout ::::',data.toString());
-  });
-
-  result.stderr.on('data', (data) => {
-    console.log('model_call stderr ::::',data.toString());
-  });
-   
-}
-
-model_call();
 
 
 
