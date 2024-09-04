@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie'; // js-cookie 라이브러리 임포트
 import '../../CSS/MainPage.css';
 
 export default function MainPage() {

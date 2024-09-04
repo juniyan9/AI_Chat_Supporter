@@ -9,12 +9,12 @@ import { useState } from "react";
     2. 
 
 */
-export default function TextContainer({ socket, setMessages, nickName, roomName, messages }) {
+export default function TextContainer({ socket, setMessages, nickName, roomName}) {
     
     
     const [message, setMessage] = useState('');
 
-    console.log('TextContainer message >>',message);
+    // console.log('TextContainer message >>',message);
 
 
     const handleLocalMessage = (event) => {
@@ -27,7 +27,7 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
         }
       };
     
-
+    
     const handleSubmit = () => {
 
         if(message !== '' && message.length !== 0){
@@ -39,7 +39,7 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
                 { 
                   nickName: nickName, 
                   text: message,
-                  user1: true
+                  user1: true,
                 }
               ]);
         }
