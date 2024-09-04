@@ -15,12 +15,11 @@ export default function ChatPage(props) {
     const [isPrivate, setIsPrivate] = useState(false); // 초기 비공개 여부 설정
 
     const currentUserName = location.state?.nickName;
-    const roomOwnerName = location.state?.ownerNickName || currentUserName;
+    const roomOwnerName = location.state?.ownerNickname || currentUserName;
 
     useEffect(() => {
         setIsOwner(currentUserName === roomOwnerName);
     }, [currentUserName, roomOwnerName]);
-
     const handleOpenModal = () => setShowModal(true);
     const handleCloseModal = () => setShowModal(false);
 
@@ -63,7 +62,7 @@ export default function ChatPage(props) {
                         maxCount: maxCount,
                         password: password,
                         isPrivate: isPrivate,
-                        ownerNickName: roomOwnerName
+                        ownerNickname: roomOwnerName
                     }}
                     onUpdate={handleUpdateRoom}
                     onDelete={handleDeleteRoom}

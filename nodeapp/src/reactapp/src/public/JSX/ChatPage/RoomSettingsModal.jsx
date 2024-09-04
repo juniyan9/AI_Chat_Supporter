@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from 'prop-types';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import '../../CSS/RoomSettingsModal.css';
+
+
 
 const SERVER_URL = 'http://192.168.0.154:5001';
 
@@ -14,6 +15,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
     const [isSaving, setIsSaving] = useState(false);
     const [count, setCount] = useState(roomDetails?.count || 0);
 
+    const location = useLocation(); // 훅을 호출해 현재 경로와 관련된 상태 정보를 얻습니다.
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,10 +25,16 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
             setPassword(roomDetails.password);
             setIsPrivate(roomDetails.isPrivate);
             setCount(roomDetails.count);
+            // 필요하다면 이 부분에서 ownerNickname을 로그로 찍어 확인
+            console.log("roomDetails:" , roomDetails.ownerNickname);
         }
     }, [roomDetails]);
 
+    console.log("roomDetails:" , roomDetails.ownerNickname);
+
     const handleSave = async () => {
+        // console.log(roomDetails.ownerNickname);
+        
         if (roomName.trim() === '') {
             alert('방 이름을 입력하세요.');
             return;
@@ -37,27 +45,31 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
         }
 
         setIsSaving(true);
-
         try {
             const response = await fetch(`${SERVER_URL}/update_room`, {
+                
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     originalName: roomDetails.name,
-                    name: roomName,
-                    count,
-                    maxCount,
-                    password,
-                    isPrivate
+                    updatedName: roomName,
+                    ownerNickname : roomDetails.ownerNickname,
+                    updatedMaxCount: maxCount,
+                    updatedPassword: password,
+                    updatedIsPrivate: isPrivate,
                 }),
+            
             });
+            // console.log(response);
 
-            const data = await response.json();
-            setIsSaving(false);
+            
+            
 
             if (response.ok) {
+                const data = await response.json();
+                setIsSaving(false);
                 alert('방 정보가 업데이트되었습니다.');
                 onUpdate({ 
                     name: roomName, 
@@ -69,8 +81,10 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
                 onClose();
             
             } else {
+                const errorData = await response.json();
                 alert('방 정보 업데이트에 실패했습니다.');
-                console.error('Failed to update room:', data.error);
+                console.error('Failed to update room:', errorData.error);
+                setIsSaving(false);
             }
         } catch (error) {
             setIsSaving(false);
@@ -92,17 +106,16 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
                     body: JSON.stringify({ roomName: roomDetails.name }),
                 });
 
-                const data = await response.json();
-                setIsDeleting(false);
-
                 if (response.ok) {
                     alert('방이 삭제되었습니다.');
                     onDelete(roomDetails.name);
                     onClose();
                     navigate('/ChatListPage');
                 } else {
+                    const errorData = await response.json();
                     alert('방 삭제에 실패했습니다.');
-                    console.error('Failed to delete room:', data.error);
+                    console.error('Failed to delete room:', errorData.error);
+                    setIsDeleting(false);
                 }
             } catch (error) {
                 setIsDeleting(false);
@@ -171,4 +184,3 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
         )
     );
 }
-
