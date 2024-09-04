@@ -12,9 +12,9 @@ jobs:
       - name: DEPLOY
         uses: favware/ssh-remote-action@v1
         with:
-          host: ${{ NODEJS_SERVER_HOST }}
-          username: ${{ NODEJS_SERVER_USER }}
-          key: ${{ NODEJS_SERVER_KEY }} 
+          host: ${{ secrets.NODEJS_SERVER_HOST }}
+          username: ${{ secrets.NODEJS_SERVER_USER }}
+          key: ${{ secrets.NODEJS_SERVER_KEY }} 
           command:
             cd /nodejs/AI_chat_supporter_react_nodejs &&
             git pull origin main &&
