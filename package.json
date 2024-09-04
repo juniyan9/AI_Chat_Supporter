@@ -1,0 +1,30 @@
+{
+  "name": "nodeapp",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "prod": "node src/server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "description": "",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "http": "^0.0.1-security",
+    "nodemon": "^3.1.4",
+    "socket.io": "^4.7.5"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.8",
+    "utf-8-validate": "^6.0.4"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  }
+}
