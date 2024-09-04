@@ -45,7 +45,7 @@ export default function MainPage() {
                     <input 
                         type='text' 
                         name='nickName' 
-                        placeholder="닉네임 입력" 
+                        placeholder="닉네임 입력"  
                         onChange={(e) => setNickName(e.target.value)} 
                         onKeyDown={keypress} 
                     />
