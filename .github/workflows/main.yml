@@ -10,11 +10,11 @@ jobs:
 
     steps:
       - name: DEPLOY
-        uses: D3rHase/ssh-command-action@v0.2.2
+        uses: favware/ssh-remote-action@v1
         with:
           host: ${{NODEJS_SERVER_HOST}}
-          user: ${{NODEJS_SERVER_HOST_USER}}
-          private_key: ${{NODEJS_SERVER_HOST_KEY}} 
+          username: ${{NODEJS_SERVER_HOST_USER}}
+          key: ${{NODEJS_SERVER_HOST_KEY}} 
           command:
             cd /nodejs/AI_chat_supporter_react_nodejs &&
             git pull origin main &&
