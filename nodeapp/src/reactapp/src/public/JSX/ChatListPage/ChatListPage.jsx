@@ -71,17 +71,19 @@ export default function ChatListPage() {
     // Handle adding a new room
     const handleAddRoom = async (newRoom) => {
         const room = {
-            name: newRoom.roomName,
-            count: 0,
+            id : '',
+            name: newRoom.name,
+            count: newRoom.count,
             maxCount: newRoom.maxCount,
-            password: newRoom.password || '',
+            password: newRoom.password || '', // 비밀번호가 없으면 빈 문자열로 설정
             isPrivate: newRoom.isPrivate,
-            nickName: location.state?.nickName
+            ownerId: '', // 서버에서는 ownerID가 필요하지만, 클라이언트에서는 제공하지 않음
+            nickName: newRoom.ownerNickname // 서버의 'ownerNickname'과 일치
         };
 
         console.log("room:", room); 
         try {
-            const response = await fetch(`${SERVER_URL}/add-room`, {
+            const response = await fetch(`${SERVER_URL}/add_room`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(room)
