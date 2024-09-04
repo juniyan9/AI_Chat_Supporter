@@ -1,0 +1,23 @@
+name: Deploy nodejs main branch
+
+on: 
+  push:
+    branches: [main]
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: DEPLOY
+        uses: D3rHase/ssh-command-action@v0.2.2
+        with:
+          host: ${{NODEJS_SERVER_HOST}}
+          user: ${{NODEJS_SERVER_HOST_USER}}
+          private_key: ${{NODEJS_SERVER_HOST_KEY}} 
+          command:
+            cd /nodejs/AI_chat_supporter_react_nodejs &&
+            git pull origin main &&
+            npm install &&
+            pm2 restart nodeapp/src/server.js
+            
