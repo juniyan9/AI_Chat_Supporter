@@ -43,9 +43,12 @@ addRoomRouter.post("/", (req, res) => {
   // }
 
   // console.log("userInfo:", userInfo);
-  if (!req.session.user) {
-    return res.status(401).send("세션이 존재하지 않습니다."); // 401(Unauthorized)는 클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값
-  }
+  // if (!req.session.user) {
+  //   return res.status(401).send("세션이 존재하지 않습니다."); // 401(Unauthorized)는 클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값
+  // }
+  //세션이 존재하는데 왜 얘가 자꾸 출력이 되는가
+  //얘를 주석처리하면 방은 만들어짐
+  //아니 세션이 있는데 왜 자꾸 이 코드가 실행되는 것인가
 
   if (!nickName) {
     return res.status(400).send("방 설정에 닉네임이 필요합니다.");

@@ -34,12 +34,6 @@ const io = new Server(httpServer, { cors: "*" });
 //   },
 // });
 
-// const corsOptions = {
-//   origin: 'http://localhost:3000', 'http://localhost:5000', // React 앱이 실행되는 URL, 리액트로 띄워야함.. 근데도 왜 세션에 담긴 사용자 정보 안 뜸..?
-//   methods: ['GET', 'POST'],
-//   credentials: true, // 세션 쿠키를 포함시키기 위해 필요
-// };
-
 /* NodeJS implementation */
 
 // Set filePath
@@ -52,7 +46,20 @@ const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 //세션 미들웨어가 express의 다른 미들웨어보다 먼저 설정돼야함
 //세션 생성해주는 미들웨어
 app.use(session(sessionObj));
-// app.use(cors(corsOptions));
+// app.use(cors({
+//   origin: true, // 출처 허용 옵션
+//   credential: true // 사용자 인증이 필요한 리소스(쿠키 ..등) 접근
+// }));
+app.use(cookieParser());
+// app.use(cors({ cors: "*" }));
+const corsOptions = {
+  origin: ['http://localhost:5000', 'http://192.168.0.113:5000/add_room'], // 노드에서 띄운 페이지에서 방 생성이 안 됨. (POST // /add_room 안 됨)
+  methods: ['GET', 'POST'],
+  credentials: true, // 세션 쿠키를 포함시키기 위해 필요
+};
+app.use(cors(corsOptions));
+
+
 
 // 세션 만료 시 유저 삭제 --> TypeError: Cannot read properties of undefined (reading 'user')
 // app.use((req, res, next) => {
@@ -71,9 +78,8 @@ app.use("/", express.static(path.join(__dirname, "reactapp/build")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors({ cors: "*" }));
 
-app.use(cookieParser());
+
 
 /* // router변수 정리 // */
 import userRegisterRouter from "./main_page/main_page.js";

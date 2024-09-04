@@ -1,5 +1,5 @@
 import express from "express";
-// import cookieParser from "cookie-parser";
+import cookieParser from "cookie-parser";
 import session from "express-session";
 import dotenv from "dotenv";
 dotenv.config();
@@ -8,13 +8,13 @@ const userRegisterRouter = express.Router();
 
 export const sessionObj = {
   secret: process.env.SECRET_KEY, // 세션을 암호화하는 데 사용되는 비밀 키
-  store: new session.MemoryStore({ checkPeriod: 120000 }), //1분; 정상 작동.
+  store: new session.MemoryStore({ checkPeriod: 3600000 }), //정상 작동.
   resave: false, // 매번 세션 강제 저장
   saveUninitialized: false, // 빈 값도 저장 - empty session obj 쌓이는 거 방지
   cookie: {
     secure: false, // 개발 환경에서는 false, 프로덕션에서는 true로 설정 (HTTPS 필요)
     httpOnly: true, // 클라이언트 측 JavaScript에서 쿠키를 읽을 수 없게 설정
-    // maxAge: 120000, //세션 만료됐을 때 세션 정보에서는 삭제되는데 userInfo에서는 삭제 안됨. 그니까 유저인포에 세션 ID와 닉네임을 넣어줘야 되지 않을까?
+    maxAge: 3600000, //세션 만료됐을 때 세션 정보에서는 삭제되는데 userInfo에서는 삭제 안됨. 
   },
 };
 
@@ -22,6 +22,7 @@ export const sessionObj = {
 //세션 생성해주는 미들웨어  --> 그래서 app.js로 옮김
 // app.use(session(sessionObj));
 
+app.use(cookieParser());
 app.use(express.json()); //json 파일 처리
 // app.use(cookieParser());
 
@@ -78,8 +79,13 @@ userRegisterRouter.post("/", (req, res) => {
       nickName: nickName,
     };
 
-    res.cookie("id", nextUserId - 1, { maxAge: 120000, httpOnly: true });
-    res.cookie("nickName", nickName, { maxAge: 120000, httpOnly: true });
+    // res.cookie("id", nextUserId - 1, { maxAge: 120000, httpOnly: true });
+    // res.cookie("nickName", nickName, { maxAge: 120000, httpOnly: true });
+    res.cookie("id", nextUserId - 1)
+    res.cookie("nickName", nickName)
+
+    //쿠키 읽기
+    console.log("쿠키 읽기:", req.cookies)
 
     console.log("세션 정보:", req.session.user);
     res.send("non-existent"); // 사용자 추가 완료
