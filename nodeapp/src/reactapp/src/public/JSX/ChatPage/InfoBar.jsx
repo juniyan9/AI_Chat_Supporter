@@ -6,20 +6,22 @@ export default function InfoBar({roomName,onsearchtext}) {
     const [search, setsearch] = useState('');
 
     const inputtext = (e)=>{
-        setsearch(e.target.value);
+        const value=(e.target.value);
+        setsearch(value)
+        onsearchtext(value);
     }
 
-    const press = (e) => {
-        if (e.key === 'Enter') {
-            searchtext();
-        }
-    };
+    // const press = (e) => {
+    //     if (e.key === 'Enter') {
+    //         searchtext();
+    //     }
+    // };
 
-    const searchtext = () =>{        
-        onsearchtext(search);
-        // console.log("infobar",onsearchtext(search));
-        setsearch('');
-    }
+    // const searchtext = () =>{        
+    //     onsearchtext(search);
+    //     // console.log("infobar",onsearchtext(search));
+    //     setsearch('');
+    // }
 
 
 
@@ -33,9 +35,9 @@ export default function InfoBar({roomName,onsearchtext}) {
                 placeholder="검색"
                 value={search}
                 onChange={inputtext}
-                onKeyDown={press}
+                // onKeyDown={press}
             />
-            <button className='barsearch' onClick={searchtext}></button>
+            <button className='barsearch'></button>
             <div className='line'></div>
         </div>
     )

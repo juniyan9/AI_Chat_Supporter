@@ -1,20 +1,27 @@
 import '../../CSS/MessageContainer.css';
 import Message from './Message';
+import React, { useEffect,useRef } from 'react';
 
 
 export default function MessageContainer({messages,onsearchtext}) {
 
+    const scrollRef=useRef();
+
+    useEffect(()=>{
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    })
+
     // console.log("MessageContainer props messages ::", messages);
 
-    const filtermsg = messages.filter(msg =>msg.text.includes(onsearchtext));
+    // const filtermsg = messages.filter(msg =>msg.text.includes(onsearchtext));
             
     return (
-        <div className="MessageContainer">
+        <div className="MessageContainer" ref={scrollRef}>
 
             {messages.map((message, index) => (
                 // const isHighlighted = message.text.includes(onsearchtext);
                     <Message
-                        css={message.text.includes(onsearchtext) == true ? 'highlighted' : ''}
+                        highlight={message.text.includes(onsearchtext) == true ? onsearchtext : ''}
                         key={index}
                         {...message}
                     />
