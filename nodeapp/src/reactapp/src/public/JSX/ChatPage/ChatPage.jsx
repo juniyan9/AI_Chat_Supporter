@@ -20,7 +20,6 @@ export default function ChatPage(props) {
     useEffect(() => {
         setIsOwner(currentUserName === roomOwnerName);
     }, [currentUserName, roomOwnerName]);
-4
     const handleOpenModal = () => setShowModal(true);
     const handleCloseModal = () => setShowModal(false);
 
