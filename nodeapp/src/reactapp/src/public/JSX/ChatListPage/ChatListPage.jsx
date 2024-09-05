@@ -15,7 +15,7 @@ export default function ChatListPage() {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const SERVER_URL = 'http://192.168.0.154:5001';
+    const SERVER_URL = 'http://43.203.141.146:5000';
 
     useEffect(() => {
         // Fetch the list of rooms
