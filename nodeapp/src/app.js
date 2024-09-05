@@ -51,13 +51,13 @@ app.use(session(sessionObj));
 //   credential: true // 사용자 인증이 필요한 리소스(쿠키 ..등) 접근
 // }));
 app.use(cookieParser());
-// app.use(cors({ cors: "*" }));
-const corsOptions = {
-  origin: ['http://localhost:5000', 'http://192.168.0.113:5000/add_room'], // 노드에서 띄운 페이지에서 방 생성이 안 됨. (POST // /add_room 안 됨)
-  methods: ['GET', 'POST'],
-  credentials: true, // 세션 쿠키를 포함시키기 위해 필요
-};
-app.use(cors(corsOptions));
+app.use(cors({ cors: "*" }));
+// const corsOptions = {
+//   origin: ['http://localhost:5000', 'http://192.168.0.113:5000/add_room'], // 노드에서 띄운 페이지에서 방 생성이 안 됨. (POST // /add_room 안 됨)
+//   methods: ['GET', 'POST'],
+//   credentials: true, // 세션 쿠키를 포함시키기 위해 필요
+// };
+// app.use(cors(corsOptions));
 
 
 
