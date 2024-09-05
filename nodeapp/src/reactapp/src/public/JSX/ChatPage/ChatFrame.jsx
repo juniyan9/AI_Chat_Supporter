@@ -11,7 +11,7 @@ export default function ChatFrame({ roomName, nickName, maxCount, password, isPr
     const socket = useRef(null);
 
     useEffect(() => {
-        socket.current = io('http://192.168.0.154:5050');
+        socket.current = io('http://43.203.141.146:5050');
         socket.current.on('connect', () => {
             socket.current.emit('enter_room', nickName, roomName);
         });

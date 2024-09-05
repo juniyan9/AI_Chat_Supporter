@@ -4,7 +4,7 @@ import '../../CSS/RoomSettingsModal.css';
 
 
 
-const SERVER_URL = 'http://192.168.0.154:5001';
+const SERVER_URL = 'http://43.203.141.146:5000';
 
 export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpdate, onDelete }) {
     const [roomName, setRoomName] = useState(roomDetails?.name || '');
@@ -26,7 +26,6 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
             setIsPrivate(roomDetails.isPrivate);
             setCount(roomDetails.count);
             // 필요하다면 이 부분에서 ownerNickname을 로그로 찍어 확인
-            console.log("roomDetails:" , roomDetails.ownerNickname);
         }
     }, [roomDetails]);
 
