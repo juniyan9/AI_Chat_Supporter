@@ -7,7 +7,7 @@ let app = express();
 const userRegisterRouter = express.Router();
 
 export const sessionObj = {
-  secret: process.env.SECRET_KEY, // 세션을 암호화하는 데 사용되는 비밀 키
+  secret: d1c853bb09fe821f89e74d5cc601b44a68f751249451ea6ad9e1269174c28259, // 세션을 암호화하는 데 사용되는 비밀 키
   store: new session.MemoryStore({ checkPeriod: 3600000 }), //정상 작동.
   resave: false, // 매번 세션 강제 저장
   saveUninitialized: false, // 빈 값도 저장 - empty session obj 쌓이는 거 방지
