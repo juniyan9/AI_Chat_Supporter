@@ -7,7 +7,7 @@ let app = express();
 const userRegisterRouter = express.Router();
 
 export const sessionObj = {
-  secret: d1c853bb09fe821f89e74d5cc601b44a68f751249451ea6ad9e1269174c28259, // 세션을 암호화하는 데 사용되는 비밀 키
+  secret: process.env.SECRET_KEY, // 세션을 암호화하는 데 사용되는 비밀 키
   store: new session.MemoryStore({ checkPeriod: 3600000 }), //정상 작동.
   resave: false, // 매번 세션 강제 저장
   saveUninitialized: false, // 빈 값도 저장 - empty session obj 쌓이는 거 방지
@@ -81,8 +81,10 @@ userRegisterRouter.post("/", (req, res) => {
 
     // res.cookie("id", nextUserId - 1, { maxAge: 120000, httpOnly: true });
     // res.cookie("nickName", nickName, { maxAge: 120000, httpOnly: true });
-    res.cookie("id", nextUserId - 1)
-    res.cookie("nickName", nickName)
+    // res.cookie("id", nextUserId - 1)
+    // res.cookie("nickName", nickName)
+    res.cookie(`userId: ${nextUserId - 1}`, `userNickname: ${nickName}`, { maxAge: 3600000, httpOnly: true });
+    // res.status(200).send('ok');
 
     //쿠키 읽기
     console.log("쿠키 읽기:", req.cookies)
