@@ -17,37 +17,37 @@ export default function ChatListPage() {
     const navigate = useNavigate();
     const SERVER_URL = 'http://43.203.141.146:5000';
 
-    useEffect(() => {
-        // Fetch the list of rooms
-        async function fetchRooms() {
-            try {
-
-                const response = await fetch(`${SERVER_URL}/rooms`);
-
-                const data = await response.json();
-                console.log("response:", response);
-                console.log("data:" ,data);
-                setRooms(data);
-                setFilteredRooms(data.filter(room => !room.isPrivate));
-            } catch (error) {
-                console.error('Failed to fetch rooms:', error);
-            }
+    // 서버에서 방 목록을 가져오는 함수
+    const fetchRooms = async () => {
+        try {
+            const response = await fetch(`${SERVER_URL}/rooms`);
+            const data = await response.json();
+            console.log("response:", response);
+            console.log("data:" ,data);
+            setRooms(data);
+            setFilteredRooms(data.filter(room => !room.isPrivate));
+        } catch (error) {
+            console.error('Failed to fetch rooms:', error);
         }
-        fetchRooms();
+    };
+
+    // 컴포넌트가 로드될 때 방 목록을 불러오기
+    useEffect(() => {
+        fetchRooms();  // 최초 방 목록 불러오기
     }, []);
 
-    // Handle room selection
+    // 방 선택 핸들러
     function handleSelectRoom(room) {
         room.isPrivate ? openPasswordModal(room) : navigateToRoom(room);
     }
 
-    // Open the password modal
+    // 비밀번호 모달 열기
     function openPasswordModal(room) {
         setSelectedRoom(room);
         setIsPasswordModalOpen(true);
     }
 
-    // Navigate to the chat room
+    // 방으로 이동
     function navigateToRoom(room) {
         if (room.count < room.maxCount) {
             navigate(`/chatPage/${room.name}`, {
@@ -58,7 +58,7 @@ export default function ChatListPage() {
         }
     }
 
-    // Handle password submission
+    // 비밀번호 제출 처리
     const handlePasswordSubmit = async (enteredPassword) => {
         if (selectedRoom?.password === enteredPassword) {
             setIsPasswordModalOpen(false);
@@ -68,7 +68,7 @@ export default function ChatListPage() {
         }
     };
 
-    // Handle adding a new room
+    // 새로운 방 추가 처리
     const handleAddRoom = async (newRoom) => {
         const room = {
             id : '',
@@ -89,8 +89,6 @@ export default function ChatListPage() {
                 body: JSON.stringify(room)
             });
 
-            // const data = await response.json();
-            // console.log("data1: ", data);
             if (!response.ok) {
                 const errorMessage = await response.text();
                 throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
@@ -101,7 +99,6 @@ export default function ChatListPage() {
                 setFilteredRooms(prevRooms => [...prevRooms, room]);
             }
 
-            // alert('방이 성공적으로 생성되었습니다.');
             return true;
         } catch (error) {
             console.error('Failed to add room', error);
@@ -110,7 +107,7 @@ export default function ChatListPage() {
         }
     };
 
-    // Handle search query change
+    // 검색어 입력 처리
     const handleSearchChange = (e) => {
         const query = e.target.value.toLowerCase();
         setSearchQuery(query);
@@ -118,6 +115,11 @@ export default function ChatListPage() {
             (!room.isPrivate && room.name.toLowerCase().includes(query)) ||
             (room.isPrivate && room.name.toLowerCase() === query)
         ));
+    };
+
+    // 채팅방 목록을 새로 불러오는 핸들러
+    const handleRefreshRooms = () => {
+        fetchRooms(); // 서버에서 방 목록을 다시 불러옴
     };
 
     return (
@@ -146,9 +148,11 @@ export default function ChatListPage() {
                 </div>
             </div>
 
-
             <div className="add-room-section">
-                {/* 버튼을 클릭하면 setIsModalOpen(true)가 실행된다. */}
+                {/* 새로고침 버튼 추가 */}
+                <button onClick={handleRefreshRooms} className="refresh-button">
+                        새로고침
+                </button>
                 <button onClick={() => setIsModalOpen(true)}>방 만들기</button>
             </div>
 

@@ -26,7 +26,6 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
             setIsPrivate(roomDetails.isPrivate);
             setCount(roomDetails.count);
             // 필요하다면 이 부분에서 ownerNickname을 로그로 찍어 확인
-            console.log("roomDetails:" , roomDetails.ownerNickname);
         }
     }, [roomDetails]);
 
