@@ -20,6 +20,4 @@ jobs:
           command:
             cd ~/project/AI_chat_supporter_react_nodejs &&
             git pull origin main &&
-            npm install &&
-            cd nodeapp/src &&
-            node server.js
+            npm install 
