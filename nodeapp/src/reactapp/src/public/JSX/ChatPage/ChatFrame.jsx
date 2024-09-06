@@ -32,7 +32,7 @@ export default function ChatFrame({ roomName, nickName, maxCount, password, isPr
         <div className="ChatFrame">
             <InfoBar
                 roomName={roomName} 
-                onsearchtext={setonSearchText}
+                setonsearchtext={setonSearchText}
                 />
             <MessageContainer
                 messages={messages}

@@ -1,16 +1,15 @@
 import '../../CSS/InfoBar.css';
 import { useState } from 'react';
 
-export default function InfoBar({roomName,onsearchtext}) {
+export default function InfoBar({roomName,setonsearchtext}) {
 
     const [search, setsearch] = useState('');
 
     const inputtext = (e)=>{
         const value=(e.target.value);
         setsearch(value)
-        onsearchtext(value);
+        setonsearchtext(value);
     }
-
     // const press = (e) => {
     //     if (e.key === 'Enter') {
     //         searchtext();
