@@ -51,7 +51,7 @@ export default function TextContainer({ socket, setMessages, nickName, roomName}
         <div className="TextContainer">
                 <AImodel/>
                 <input className="textinput"type="text" name="message" value={message} onChange={handleLocalMessage} onKeyDown={handleKeyPress} />
-                <button type="button" onClick={handleSubmit} className="test1"></button>
+                <button type="button" onClick={handleSubmit} className="forwarding"></button>
         </div>
     );
 }

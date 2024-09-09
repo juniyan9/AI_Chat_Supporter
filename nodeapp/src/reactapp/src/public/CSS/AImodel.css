@@ -1,8 +1,9 @@
-.test{
-    background-color: white;
-    margin: 0 10px;
+.Aimodel{
     width: 35px;
     height: 35px;
-    border: solid 1px #E8E6EA;
+    border: solid 0px #E8E6EA;
     border-radius: 10px;
+    margin: 0 10px;
+    color: #000;
+    cursor: pointer;
 }

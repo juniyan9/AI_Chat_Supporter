@@ -6,28 +6,33 @@ import React, { useEffect,useRef } from 'react';
 export default function MessageContainer({messages,onsearchtext}) {
 
     const scrollRef=useRef();
+    const highlightedRef = useRef(null);
 
     useEffect(()=>{
+        if(highlightedRef.current){
+            highlightedRef.current.scrollIntoView({behavior: 'auto',block:'start'});
+        }else{
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    })
+        }
+    },[messages,onsearchtext]);
 
-    // console.log("MessageContainer props messages ::", messages);
-
-    // const filtermsg = messages.filter(msg =>msg.text.includes(onsearchtext));
-            
     return (
         <div className="MessageContainer" ref={scrollRef}>
 
-            {messages.map((message, index) => (
-                // const isHighlighted = message.text.includes(onsearchtext);
-                    <Message
-                        highlight={message.text.includes(onsearchtext) == true ? onsearchtext : ''}
+            {messages.map((message, index) => {
+                const isHighlighted = message.text.includes(onsearchtext);
+                    return(
+                    <div
                         key={index}
-                        {...message}
-                    />
-            )
-            )
-            }
+                        ref={isHighlighted ? highlightedRef : null}
+                    >
+                        <Message
+                            highlight={isHighlighted ? onsearchtext : ''}
+                            {...message}
+                        />
+                    </div>
+                    )
+            })}
 
         </div>
     )
