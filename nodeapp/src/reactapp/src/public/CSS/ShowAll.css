@@ -1,0 +1,43 @@
+.text-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 배경을 어둡게 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.text-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    height: 400px;
+    overflow-y: scroll;
+}
+
+.text-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    color: #333;
+    text-align: center;
+}
+
+.closebutton1{
+    border:0px solid;
+    float: right;
+    cursor: pointer;
+}
+
+
+.closebutton2{
+    display: block;
+    margin: auto;
+    cursor: pointer;
+}
