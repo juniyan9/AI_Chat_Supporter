@@ -8,12 +8,18 @@ import TextContainer from "./TextContainer";
 export default function ChatFrame({ roomName, nickName, maxCount, password, isPrivate }) {
     const [messages, setMessages] = useState([]);
     const [onsearchtext, setonSearchText] = useState('');
+    const [roomCount, setRoomCount] = useState(0); //roomCount 상태 추가
     const socket = useRef(null);
 
     useEffect(() => {
         socket.current = io('http://43.203.141.146:5050');
         socket.current.on('connect', () => {
             socket.current.emit('enter_room', nickName, roomName);
+        });
+
+        // 서버로부터 사용자 수(roomCount) 업데이트 받기
+        socket.current.on('roomCountUpdate', (count) => {
+            setRoomCount(count); // roomCount 업데이트
         });
 
         socket.current.on('reply', (reply_message, nickName) => {
@@ -31,8 +37,9 @@ export default function ChatFrame({ roomName, nickName, maxCount, password, isPr
     return (
         <div className="ChatFrame">
             <InfoBar
-                roomName={roomName} 
+                roomName={roomName}
                 setonsearchtext={setonSearchText}
+                roomCount={roomCount}
                 />
             <MessageContainer
                 messages={messages}
