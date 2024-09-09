@@ -1,6 +1,7 @@
 import React from "react"
 import '../../CSS/TextContainer.css';
 import { useState } from "react";
+import AImodel from "./AImodel"
 
 /*
     TextContainer에서 보내기 버튼을 누르면 메세지를 서버로 전송해야함
@@ -48,6 +49,7 @@ export default function TextContainer({ socket, setMessages, nickName, roomName}
 
     return (
         <div className="TextContainer">
+                <AImodel/>
                 <input className="textinput"type="text" name="message" value={message} onChange={handleLocalMessage} onKeyDown={handleKeyPress} />
                 <button type="button" onClick={handleSubmit} className="test1"></button>
         </div>
