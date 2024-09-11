@@ -29,13 +29,13 @@ function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 �
             ownerNickname : location.state?.nickName
         };
 
-        // console.log("newRoom:" ,newRoom); 
+        console.log("newRoom:" ,newRoom); 
         try {
             const success = await onSave(newRoom); // 함수가 성공적으로 완료되면 'success'라는 변수에 그결과를 저장
 
             if (success) { // 방이 성공적으로 완료되면
                 navigate(`/chatPage/${roomName}`, { // 
-                    state: { roomName, nickName: location.state?.nickName }
+                    state: { roomName, nickName: location.state?.nickName}
                 });
                 onClose();
             }

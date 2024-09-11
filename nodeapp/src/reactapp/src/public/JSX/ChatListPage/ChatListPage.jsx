@@ -81,7 +81,7 @@ export default function ChatListPage() {
             nickName: newRoom.ownerNickname // 서버의 'ownerNickname'과 일치
         };
 
-        console.log("room:", room); 
+        console.log("현재 방정보 :", room);
         try {
             const response = await fetch(`${SERVER_URL}/add_room`, {
                 method: 'POST',
