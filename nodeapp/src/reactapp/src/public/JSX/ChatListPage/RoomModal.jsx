@@ -14,13 +14,14 @@ function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 �
     const handleSave = async () => {
         if (roomName.length < 2) {
             alert("방 제목은 2자 이상이어야 합니다.");
+            return
         }
-        if (maxCount < 1 || maxCount > 10) {
-            alert("최대 인원수는 1에서 10 사이여야 합니다.");
+        if (maxCount < 2 || maxCount > 10) {
+            alert("최대 인원수는 2에서 10 사이여야 합니다.");
+            return
         }
 
-        const newRoom = { 
-            
+        const newRoom = {            
             name : roomName,
             password,
             isPrivate : isPrivate,
