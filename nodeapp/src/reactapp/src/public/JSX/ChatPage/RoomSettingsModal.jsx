@@ -39,15 +39,15 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
             alert('방 이름을 입력하세요.');
             return;
         }
-        if (maxCount < 1 || maxCount > 10) {
-            alert('최대 인원수는 1에서 10 사이여야 합니다.');
+        if (maxCount < 2 || maxCount > 10) {
+            alert('최대 인원수는 2에서 10 사이여야 합니다.');
             return;
         }
 
         setIsSaving(true);
         try {
             const response = await fetch(`${SERVER_URL}/update_room`, {
-                
+                credentials : 'include',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
             
 
             if (response.ok) {
-                const data = await response.json();
+                // const data = await response.json();
                 setIsSaving(false);
                 alert('방 정보가 업데이트되었습니다.');
                 onUpdate({ 
@@ -99,6 +99,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
 
             try {
                 const response = await fetch(`${SERVER_URL}/delete_room`, {
+                    credentials : 'include',
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

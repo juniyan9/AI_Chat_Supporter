@@ -10,6 +10,7 @@ export default function MainPage() {
         if (nickName) {
             try {
                 const response = await fetch('http://43.203.141.146:5000/register', {
+                    credentials : 'include',
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
