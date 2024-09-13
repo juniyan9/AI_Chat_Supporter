@@ -1,24 +1,72 @@
 import '../../CSS/MessageContainer.css';
 import Message from './Message';
-import React, { useEffect,useRef } from 'react';
+import React, { useEffect,useRef,useState,useLayoutEffect } from 'react';
 
 
 export default function MessageContainer({messages,onsearchtext}) {
 
     const scrollRef=useRef();
     const highlightedRef = useRef(null);
+    const [bottom,setBottom] = useState(false);
+    const [usescrollup,setusescrollup] = useState(false);
 
     useEffect(()=>{
-        if(highlightedRef.current){
-            highlightedRef.current.scrollIntoView({behavior: 'auto',block:'start'});
-        }else{
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        const Scrollbutton = ()=>{
+            const container = scrollRef.current;
+            const Scrollup = container.scrollTop < container.scrollHeight - container.clientHeight -200 ;
+            
+            if (Scrollup) {
+                setBottom(true);
+                setusescrollup(true);
+            }else{
+                setBottom(false);
+                setusescrollup(false);
+            }
         }
-    },[messages,onsearchtext]);
+
+
+        const container = scrollRef.current;
+        container.addEventListener('scroll',Scrollbutton);
+
+        
+        console.log("Scroll Top1:", scrollRef.current.scrollTop);
+        return ()=>{
+            container.removeEventListener('scroll',Scrollbutton);
+        }
+        
+
+    },[]);
+
+
+    useLayoutEffect(()=>{
+        const scrolltoBottom = ()=>{
+            const container = scrollRef.current;
+        if(!usescrollup){
+            if(highlightedRef.current){
+                highlightedRef.current.scrollIntoView({behavior: 'auto',block:'end'});
+            }else if(!usescrollup){
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+    };
+    console.log("Scroll Top2:", scrollRef.current.scrollTop);
+    requestAnimationFrame(scrolltoBottom);
+
+    },[messages,onsearchtext,usescrollup]);
+
+    const bottombutton = () =>{
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        setusescrollup(false);
+        console.log("Scroll Top3:", scrollRef.current.scrollTop);
+    }
 
     return (
         <div className="MessageContainer" ref={scrollRef}>
-
+            {bottom&&(
+                <button className='bottombutton' onClick={bottombutton}>
+                    ▼
+                </button>
+            )}
             {messages.map((message, index) => {
                 const isHighlighted = message.text.includes(onsearchtext);
                     return(
