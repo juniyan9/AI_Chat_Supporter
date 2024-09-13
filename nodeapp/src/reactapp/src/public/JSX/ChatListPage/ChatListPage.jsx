@@ -20,10 +20,12 @@ export default function ChatListPage() {
     // 서버에서 방 목록을 가져오는 함수
     const fetchRooms = async () => {
         try {
-            const response = await fetch(`${SERVER_URL}/rooms`);
+            const response = await fetch(`${SERVER_URL}/rooms`, {
+                credentials : 'include',
+            });
             const data = await response.json();
-            console.log("response:", response);
-            console.log("data:" ,data);
+            console.log("서버의 응답 데이터:", response);
+            console.log("서버의 data:" ,data);
             setRooms(data);
             setFilteredRooms(data.filter(room => !room.isPrivate));
         } catch (error) {
@@ -71,37 +73,40 @@ export default function ChatListPage() {
     // 새로운 방 추가 처리
     const handleAddRoom = async (newRoom) => {
         const room = {
-            id : '',
+            
             name: newRoom.name,
             count: newRoom.count,
             maxCount: newRoom.maxCount,
             password: newRoom.password || '', // 비밀번호가 없으면 빈 문자열로 설정
             isPrivate: newRoom.isPrivate,
-            ownerId: '', // 서버에서는 ownerID가 필요하지만, 클라이언트에서는 제공하지 않음
+            // 서버에서는 ownerID가 필요하지만, 클라이언트에서는 제공하지 않음
             nickName: newRoom.ownerNickname // 서버의 'ownerNickname'과 일치
         };
 
-        console.log("room:", room); 
         try {
             const response = await fetch(`${SERVER_URL}/add_room`, {
+                    credentials : 'include',
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(room)
             });
+
+            const data = await response.json();
+            console.log("서버의 data:" ,data);
 
             if (!response.ok) {
                 const errorMessage = await response.text();
                 throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
             }
 
-            setRooms(prevRooms => [...prevRooms, room]);
-            if (!room.isPrivate || searchQuery && room.name.toLowerCase().includes(searchQuery)) {
-                setFilteredRooms(prevRooms => [...prevRooms, room]);
+            setRooms(prevRooms => [...prevRooms, data]);
+            if (!data.isPrivate || searchQuery && data.name.toLowerCase().includes(searchQuery)) {
+                setFilteredRooms(prevRooms => [...prevRooms, data]);
             }
 
             return true;
         } catch (error) {
-            console.error('Failed to add room', error);
+            console.error('Failed to add data', error);
             alert('방 생성에 실패했습니다.');
             return false;
         }
