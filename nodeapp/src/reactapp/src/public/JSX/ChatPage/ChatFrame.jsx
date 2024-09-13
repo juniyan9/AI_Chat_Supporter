@@ -1,48 +1,24 @@
-import React, { useEffect, useState, useRef } from "react";
+import React from 'react';
 import '../../CSS/ChatFrame.css';
-import io from 'socket.io-client';
-import InfoBar from "./InfoBar";
-import MessageContainer from "./MessageContainer";
-import TextContainer from "./TextContainer";
+import InfoBar from './InfoBar';
+import MessageContainer from './MessageContainer';
+import TextContainer from './TextContainer';
 
-export default function ChatFrame({ roomName, nickName, maxCount, password, isPrivate }) {
-    const [messages, setMessages] = useState([]);
-    const [onsearchtext, setonSearchText] = useState('');
-    const socket = useRef(null);
-
-    useEffect(() => {
-        socket.current = io('http://43.203.141.146:5050');
-        socket.current.on('connect', () => {
-            socket.current.emit('enter_room', nickName, roomName);
-        });
-
-        socket.current.on('reply', (reply_message, nickName) => {
-            setMessages(prevMessages => [
-                ...prevMessages,
-                { nickName, text: reply_message },
-            ]);
-        });
-
-        return () => {
-            socket.current.disconnect();
-        };
-    }, [nickName, roomName]);
-
+export default function ChatFrame({ roomName, nickName,setMessages, maxCount, password, isPrivate, messages, roomCount, socket }) {
     return (
         <div className="ChatFrame">
             <InfoBar
-                roomName={roomName} 
-                onsearchtext={setonSearchText}
-                />
+                roomName={roomName}
+                roomCount={roomCount} // 사용자 수 표시
+            />
             <MessageContainer
-                messages={messages}
-                onsearchtext={onsearchtext} 
-                />
-            <TextContainer 
-                socket={socket} 
-                setMessages={setMessages} 
-                nickName={nickName} 
-                roomName={roomName} 
+                messages={messages} // 메시지 목록 표시
+            />
+            <TextContainer
+                setMessages={setMessages}
+                nickName={nickName}
+                roomName={roomName}
+                socket={socket}
             />
         </div>
     );
