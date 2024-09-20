@@ -85,7 +85,7 @@ export default function ChatListPage() {
 
         try {
             const response = await fetch(`${SERVER_URL}/add_room`, {
-                    credentials : 'include',
+                credentials : 'include',
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(room)
