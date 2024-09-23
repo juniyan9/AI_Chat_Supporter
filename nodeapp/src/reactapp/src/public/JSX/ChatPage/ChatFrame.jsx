@@ -20,7 +20,7 @@ export default function ChatFrame({ roomName, nickName, setOwnerNickName}) {
 
     useEffect(() => {
         
-        socket.current = io('http://43.203.141.146:5050');
+        socket.current = io('http://localhost:5050');
         
 
         socket.current.on('connect', () => {
@@ -44,15 +44,10 @@ export default function ChatFrame({ roomName, nickName, setOwnerNickName}) {
 
         socket.current.on('roomDeleted', (data) => {
             console.log("서버에게 받은 roomDeleted 정보 :",data);
-            if (data.ownerNickname === nickName) {
-                // 방장이 나갈 때만 ChatListPage로 이동
-                alert(data.message); 
-                navigate('/ChatListPage');
-            } else {
-                // 방장이 아닌 사용자가 나갈 때는 방을 나가는 동작만 처리
-                console.log('다른 사용자가 나갔습니다.');
-            }
-        });
+            socket.current.disconnect();
+        })
+
+
 
         // console.log("chatFrame 방장닉네임 :", ownerNickname)
     
