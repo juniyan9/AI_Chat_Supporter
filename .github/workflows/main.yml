@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
+    
       - name: DEPLOY
         uses: favware/ssh-remote-action@v1
         with:
@@ -16,7 +18,6 @@ jobs:
           username: ${{ secrets.NODEJS_SERVER_USER }}
           key: ${{ secrets.NODEJS_SERVER_KEY }} 
           command:
-            cd ~/nodejs/AI_chat_supporter_react_nodejs &&
+            cd ~/project/AI_chat_supporter_react_nodejs/nodeapp &&
             git pull origin main &&
-            npm install &&
-            pm2 restart nodeapp/src/server.js
+            npm install 

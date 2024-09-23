@@ -67,3 +67,6 @@
     background-color: #A1C4FD;
 }
 
+.chatFrameContainer{
+    position: relative;
+}

@@ -1,21 +1,31 @@
 import React from "react"
 import '../../CSS/TextContainer.css';
-import { useState } from "react";
+import { useState,useEffect,useRef } from "react";
 import AImodel from "./AImodel"
 
-/*
-    TextContainer에서 보내기 버튼을 누르면 메세지를 서버로 전송해야함
-    이 때 
-    1. 보낸 메세지는 공백처리 > TextContainer 리렌더링
-    2. 
-
-*/
 export default function TextContainer({ socket, setMessages, nickName, roomName}) {
     
-    
     const [message, setMessage] = useState('');
+    const [scrollon,setscrollon] = useState(false);
+    const textareaRef = useRef(null);
 
-    // console.log('TextContainer message >>',message);
+    useEffect(()=>{
+        const textarea = textareaRef.current;
+        if(textarea){
+            textarea.style.height = 'auto';
+            textarea.style.height = `${textarea.scrollHeight}px`;
+
+            const maxHeight = 72;
+            if(textarea.scrollHeight > maxHeight){
+                textarea.style.height = `${maxHeight}px`;
+                textarea.style.overflowY = 'auto';
+                setscrollon(true);
+            }else{
+                textarea.style.overflowY = 'hidden';
+                setscrollon(false);
+            }
+        }
+    },[message])
 
 
     const handleLocalMessage = (event) => {
@@ -50,7 +60,16 @@ export default function TextContainer({ socket, setMessages, nickName, roomName}
     return (
         <div className="TextContainer">
                 <AImodel/>
-                <input className="textinput"type="text" name="message" value={message} onChange={handleLocalMessage} onKeyDown={handleKeyPress} />
+                <textarea
+                    className="textinput"
+                    name="message"
+                    value={message}
+                    onChange={handleLocalMessage}
+                    onKeyDown={handleKeyPress}
+                    ref={textareaRef}
+                    style={{overflowY: scrollon ? 'auto' : 'hidden'}}
+                
+                />
                 <button type="button" onClick={handleSubmit} className="forwarding"></button>
         </div>
     );

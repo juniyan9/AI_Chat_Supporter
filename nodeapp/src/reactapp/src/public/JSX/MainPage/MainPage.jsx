@@ -1,15 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import '../../CSS/MainPage.css';
+import ModalAlert from "./ModalAlert";
 
 export default function MainPage() {
     const [nickName, setNickName] = useState('');
     const navigate = useNavigate();
+    const inputRef = useRef(null);
+    const [ShowModal,setShowModal] =useState(false);
+
+    useEffect(()=>{
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+    },[]);
 
     const handleNickNameSubmit = async () => {
         if (nickName) {
             try {
-                const response = await fetch('http://43.203.141.146:5000/register', {
+                const response = await fetch('http://localhost:5000/register', {
                     credentials : 'include',
                     method: 'POST',
                     headers: {
@@ -21,8 +30,12 @@ export default function MainPage() {
                 const result = await response.text();
 
                 if (result === 'exist') {
-                    alert('이미 존재하는 닉네임입니다.');
-                    window.location.reload();
+                    // alert('중복');
+                    setShowModal(true);
+                    // window.location.reload();
+                    // setTimeout(() => {
+                    //     window.location.reload();
+                    // }, 0);
                 } else if (result === 'non-existent') {
                     navigate('/chatListPage', { state: { nickName: nickName } });
                 }
@@ -38,6 +51,8 @@ export default function MainPage() {
             handleNickNameSubmit();
         }
     };
+    console.log("1",nickName);
+    
 
     return (
         <div className="pullpage">
@@ -46,12 +61,21 @@ export default function MainPage() {
                     <input 
                         type='text' 
                         name='nickName'
-                        placeholder="닉네임 입력"  
-                        onChange={(e) => setNickName(e.target.value)} 
+                        placeholder="닉네임 입력"
+                        value={nickName}
+                        ref={inputRef}
+                        onChange={(e) => setNickName(e.target.value)}
                         onKeyDown={keypress} 
                     />
                     <button onClick={handleNickNameSubmit}>Login</button>
                 </div>
+                {ShowModal && (
+                    <ModalAlert
+                        setNickName={setNickName}
+                        isOpen={ShowModal}
+                        onClose={()=>setShowModal(false)}
+                    />
+                )}
             </div>
         </div>
     );

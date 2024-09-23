@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import MainPage from './public/JSX/MainPage/MainPage';
 import ChatListPage from './public/JSX/ChatListPage/ChatListPage';
