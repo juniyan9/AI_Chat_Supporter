@@ -81,8 +81,10 @@ userRegisterRouter.post("/", (req, res) => {
 
     // res.cookie("id", nextUserId - 1, { maxAge: 120000, httpOnly: true });
     // res.cookie("nickName", nickName, { maxAge: 120000, httpOnly: true });
-    res.cookie("id", nextUserId - 1)
-    res.cookie("nickName", nickName)
+    // res.cookie("id", nextUserId - 1)
+    // res.cookie("nickName", nickName)
+    res.cookie(`userId: ${nextUserId - 1}`, `userNickname: ${nickName}`, { maxAge: 3600000, httpOnly: true });
+    // res.status(200).send('ok');
 
     //쿠키 읽기
     console.log("쿠키 읽기:", req.cookies)
