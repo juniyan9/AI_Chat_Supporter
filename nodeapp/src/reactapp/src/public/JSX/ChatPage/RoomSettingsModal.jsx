@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import '../../CSS/RoomSettingsModal.css';
 
 
 
-const SERVER_URL = 'http://43.203.141.146:5000';
+const SERVER_URL = 'http://localhost:5000';
 
 export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpdate, onDelete }) {
     const [roomName, setRoomName] = useState(roomDetails?.name || '');
@@ -15,7 +15,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
     const [isSaving, setIsSaving] = useState(false);
     const [count, setCount] = useState(roomDetails?.count || 0);
 
-    const location = useLocation(); // 훅을 호출해 현재 경로와 관련된 상태 정보를 얻습니다.
+    // const location = useLocation(); // 훅을 호출해 현재 경로와 관련된 상태 정보를 얻습니다.
     const navigate = useNavigate();
 
     useEffect(() => {

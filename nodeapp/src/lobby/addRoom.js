@@ -1,18 +1,12 @@
 import express from "express";
-import cookieParser from "cookie-parser";
-import userRegisterRouter from "../main_page/main_page.js";
-// import session from "express-session";
-// import { sessionObj } from "../main_page/main_page.js";
+import { removeUser } from "../main_page/sessionUtils.js";
+import session from "express-session";
 
 let app = express();
+app.use(express.json()); // JSON 파서 추가
 const addRoomRouter = express.Router();
 
-// addRoomRouter.use(session(sessionObj));
-
-app.use(express.json()); //json 파일 처리
-app.use(cookieParser());
-
-import { removeUser, userInfo } from "../main_page/main_page.js"; //let userInfo = [];
+import { userInfo } from "../main_page/main_page.js"; //let userInfo = [];
 
 export let rooms = [];
 let nextRoomId = 1;
@@ -21,34 +15,30 @@ let nextRoomId = 1;
 addRoomRouter.post("/", (req, res) => {
   const { name, count, maxCount, password, isPrivate, nickName } = req.body;
 
-  // console.log(req.session.user.nickName)
+   // 방 이름 중복 확인
+   const existingRoom = rooms.find(room => room.name === name);
+   if (existingRoom) {
+     return res.status(400).json({ message: "이미 존재하는 방 이름입니다." });
+   }
+   console.log("addRoomRouter, 방 이름 중복 에러 메시지 보냄")
 
-  // const cookie_id = req.cookies.id;
-  // const cookie_nickName = req.cookies.nickName;
+  console.log("addRoomRouter, 방 만들 때 session.user 정보:", req.session.user); //못 가져옴
 
-  // if (cookie_id && cookie_nickName) {
-  //   const userInfoArray = userInfo.find(
-  //     (user) =>
-  //       user.user.id !== cookie_id && user.user.nickName == cookie_nickName
-  //   );
+  console.log("!req.session.user", !req.session.user)
+  if (!req.session.user) {
+    return res
+      .status(401)
+      .send("세션이 유효하지 않습니다. 유저 정보가 삭제되었습니다.");
+  }
 
-  //   if (userInfoArray) {
-  //     removeUser(cookie_nickName);
-  //     res
-  //       .status(401)
-  //       .send("세션 정보가 유효하지 않음. userInfo에서 해당 닉네임 객체 삭제.");
-  //   }
-  // } else {  //cookie_id와 닉네임이 없는 경우
-  //   console.log("쿠키 ID:", cookie_id, "쿠키 닉네임:", cookie_nickName);
-  // }
+  const sessionUser = req.session.user;
 
-  // console.log("userInfo:", userInfo);
-  // if (!req.session.user) {
-  //   return res.status(401).send("세션이 존재하지 않습니다."); // 401(Unauthorized)는 클라이언트가 인증되지 않았거나, 유효한 인증 정보가 부족하여 요청이 거부되었음을 의미하는 상태값
-  // }
-  //세션이 존재하는데 왜 얘가 자꾸 출력이 되는가
-  //얘를 주석처리하면 방은 만들어짐
-  //아니 세션이 있는데 왜 자꾸 이 코드가 실행되는 것인가
+  // 세션의 닉네임과 요청한 닉네임이 일치하는지 확인
+  if (sessionUser.nickName !== nickName) {
+    return res
+      .status(403)
+      .send("세션 정보와 일치하지 않는 닉네임입니다. 방을 생성할 수 없습니다.");
+  }
 
   if (!nickName) {
     return res.status(400).send("방 설정에 닉네임이 필요합니다.");
@@ -63,7 +53,19 @@ addRoomRouter.post("/", (req, res) => {
       .send("해당 닉네임을 가진 사용자를 찾을 수 없습니다.");
   }
 
+  const sessionExpiresAt = new Date(sessionUser.sessionExpiresAt).getTime();
+  const now = Date.now();
+  // console.log("addRoomRouter, 세션 만료 후 지난 시간:", now - sessionExpiresAt) 
+
+  if (now - sessionExpiresAt > 3600000) {
+    removeUser(nickName);
+    return res.status(401).send("세션이 만료 후 한 시간이 지나 유저 정보가 삭제되었습니다.");
+  }
+
   const ownerID = userCheck.user.id;
+
+  const cookieNickName = req.cookies.nickName;
+  const cookieId = req.cookies.id;
 
   const room = {
     id: nextRoomId++, // 자동 증가하는 방 ID
@@ -81,10 +83,9 @@ addRoomRouter.post("/", (req, res) => {
   //rooms 배열에 푸시
   rooms.push(room);
 
-  // console.log("현재 방 배열:", rooms);
-
   // 방 성공적으로 등록됨을 전송.
-  res.send("방_성공적으로_저장됨");
+  res.status(200).json({ message: "방_성공적으로_저장됨" });
+  console.log("addRoom 방 저장 정보 잘 보냄")
 });
 
 export default addRoomRouter;

@@ -24,7 +24,7 @@ export default function ChatPage() {
 
     useEffect(() => {
         // 소켓 연결 설정
-        socket.current = io('http://43.203.141.146:5050');
+        socket.current = io('http://localhost:5050');
         
         // 서버에 방 입장 요청
         socket.current.on('connect', () => {
@@ -33,12 +33,12 @@ export default function ChatPage() {
 
         // 서버로부터 방 정보를 받는 이벤트 처리
         socket.current.on('room_details', (roomDetails) => {
-            console.log(roomDetails.room.ownerNickname);
-            setOwnerNickname(roomDetails.room.ownerNickname); // 서버에서 받은 방장 닉네임 업데이트
-            setRoomName(roomDetails.room.name); // 방 이름이 변경되었을 수 있음
-            setMaxCount(roomDetails.room.maxCount);
-            setPassword(roomDetails.room.password);
-            setIsPrivate(roomDetails.room.isPrivate);
+            console.log(roomDetails.ownerNickname);
+            setOwnerNickname(roomDetails.ownerNickname); // 서버에서 받은 방장 닉네임 업데이트
+            setRoomName(roomDetails.name); // 방 이름이 변경되었을 수 있음
+            setMaxCount(roomDetails.maxCount);
+            setPassword(roomDetails.password);
+            setIsPrivate(roomDetails.isPrivate);
         });
 
         // 서버로부터 사용자 수(roomCount) 업데이트 받기

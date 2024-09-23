@@ -15,7 +15,7 @@ export default function ChatListPage() {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const SERVER_URL = 'http://43.203.141.146:5000';
+    const SERVER_URL = 'http://localhost:5000';
 
     // 서버에서 방 목록을 가져오는 함수
     const fetchRooms = async () => {
@@ -85,7 +85,7 @@ export default function ChatListPage() {
 
         try {
             const response = await fetch(`${SERVER_URL}/add_room`, {
-                    credentials : 'include',
+                credentials : 'include',
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(room)
