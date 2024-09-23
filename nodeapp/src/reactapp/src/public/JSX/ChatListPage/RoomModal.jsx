@@ -7,32 +7,36 @@ function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 �
     const [password, setPassword] = useState('');
     const [isPrivate, setIsPrivate] = useState(false);
     const [maxCount, setMaxCount] = useState(1);
-    const navigate = useNavigate();
-    const location = useLocation();
+    // 네 가지 상태 변수를 정의하고 초기값을 설정합니다. 각각 방의 이름, 비밀번호, 방의 공개 여부, 최대 인원수 관리
+    const navigate = useNavigate(); // 훅을 호출해 페이지를 이동할 때 사용하는 navigate 함수를 얻음
+    const location = useLocation(); // 훅을 호출해 현재 경로와 관련된 상태 정보를 얻습니다.
 
     const handleSave = async () => {
         if (roomName.length < 2) {
             alert("방 제목은 2자 이상이어야 합니다.");
+            return
         }
-        if (maxCount < 1 || maxCount > 10) {
-            alert("최대 인원수는 1에서 10 사이여야 합니다.");
+        if (maxCount < 2 || maxCount > 10) {
+            alert("최대 인원수는 2에서 10 사이여야 합니다.");
+            return
         }
 
-        const newRoom = { 
-            roomName,
+        const newRoom = {            
+            name : roomName,
             password,
-            isPrivate,
+            isPrivate : isPrivate,
             maxCount,
-            nickName: location.state?.nickName
+            count : 0, //현재 인원수 초기값 설정
+            ownerNickname : location.state?.nickName
         };
 
-        console.log("newRoom:" ,newRoom);
+        console.log("newRoom:" ,newRoom); 
         try {
-            const success = await onSave(newRoom);
+            const success = await onSave(newRoom); // 함수가 성공적으로 완료되면 'success'라는 변수에 그결과를 저장
 
-            if (success) {
-                navigate(`/chatPage/${roomName}`, {
-                    state: { roomName, nickName: location.state?.nickName }
+            if (success) { // 방이 성공적으로 완료되면
+                navigate(`/chatPage/${roomName}`, { // 
+                    state: { roomName, nickName: location.state?.nickName}
                 });
                 onClose();
             }

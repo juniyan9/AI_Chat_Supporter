@@ -14,12 +14,15 @@
     width: 200px;
     height: 30px;
     font-size: 13px;
+    overflow-y: hidden;
+    resize: none;
+    z-index: 500;
 }
 
 .textinput:focus{
     border-radius: 0.5px;
 }
-.test1{
+.forwarding{
     background: url(../IMG/Icon.png) no-repeat 7px;
     margin: 0 10px;
     width: 35px;
@@ -28,10 +31,3 @@
     border-radius: 10px;
 
 }
-/* .test2{
-    background: url(../IMG/Icon.png) no-repeat 7px;
-    width: 35px;
-    height: 35px;
-    border: solid 1px #E8E6EA;
-    border-radius: 10px;
-} */

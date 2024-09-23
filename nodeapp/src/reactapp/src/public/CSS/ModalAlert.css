@@ -1,0 +1,26 @@
+.main_modal{
+    position: fixed;
+    z-index: 1000;
+    top: -24px;
+}
+
+.main_modal_content {
+    background: #1d1a20;;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.main_modal_content p{
+    color: #fff;
+    font-size: 18px;
+}
+
+.main_modal_button{
+    position: relative;
+    left: 390px;
+    top: 131px;
+}

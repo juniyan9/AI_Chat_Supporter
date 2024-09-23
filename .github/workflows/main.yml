@@ -1,0 +1,23 @@
+name: Deploy nodejs main branch
+
+on: 
+  push:
+    branches: [main]
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+    
+      - name: DEPLOY
+        uses: favware/ssh-remote-action@v1
+        with:
+          host: ${{ secrets.NODEJS_SERVER_HOST }}
+          username: ${{ secrets.NODEJS_SERVER_USER }}
+          key: ${{ secrets.NODEJS_SERVER_KEY }} 
+          command:
+            cd ~/project/AI_chat_supporter_react_nodejs/nodeapp &&
+            git pull origin main &&
+            npm install 

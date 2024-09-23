@@ -8,14 +8,9 @@
   display: none;
   
 }
-.user1 p{
-  padding: 7px;
-  border-radius: 10px 10px 0px 10px;
-  margin: auto;
-  font-size: 13px;
-  text-overflow: ellipsis;
-  word-break: break-all;
+.user1 .usetext{
   background: #CAF3FC;
+  border-radius: 10px 10px 0px 10px;
 }
 
 .username2{
@@ -30,13 +25,59 @@
   margin: 5px 0px 0px 13px;
 }
 
-.user2 p{
+.user2 .usetext{
+  background: #F4F3F2;
+  border-radius: 10px 10px 10px 0px;
+}
+
+.usetext{
   padding: 7px;
-  border-radius: 10px;
   margin: auto;
   font-size: 13px;
-  text-overflow: ellipsis;
-  word-break: break-all;
+  text-align: justify;
+  word-break: break-word;
+  max-height: 393px;
+  overflow: hidden;
+  position: relative;
+}
+
+.highlighttext{
+  background-color: #000; 
+  color: #fff;
+  white-space: nowrap;
+  padding: 0;
+  margin: 0;
+}
+
+.alltext{
+  height: 312px;
+  text-align: justify;
+  font-size: 13px;
+  overflow: hidden;
+  word-break: break-word;
+  white-space: normal;
+}
+
+
+.buttontext{
+  width: 180px;
+}
+
+.buttonstyle{
+  width: 173px;
+  height: 25px;
+  border: 0px solid;
+  border-top: 1px solid;
+  border-radius: 0px 0px 0px 10px;
+  cursor: pointer;
+  position: absolute;
+  top: 382px;
+  left: 3px;
+}
+.user1 .buttonstyle{
+  background: #CAF3FC;
+}
+.user2 .buttonstyle{
   background: #F4F3F2;
 }
 
