@@ -96,7 +96,7 @@ export function socketConnection() {
           "현재 방 사용자 정보(roomUsers) [방에 있는 사용자 ID]:",
           roomUsers
         );
-
+        console.log('hychoi::::',room);
         // console.log("방 정보:", room );
         socket.emit("room_details", room);
         io.to(roomName).emit("room_details", room);
