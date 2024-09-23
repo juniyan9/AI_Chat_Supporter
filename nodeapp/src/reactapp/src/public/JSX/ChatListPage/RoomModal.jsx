@@ -94,7 +94,7 @@ function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 �
                     방 제목:
                     <input 
                         type="text" 
-                        value={roomName} 
+                        value={roomName.replace(/\s+/g,'')} 
                         onChange={(e) => setRoomName(e.target.value)}
                         placeholder="방 제목을 입력하세요"
                     />
