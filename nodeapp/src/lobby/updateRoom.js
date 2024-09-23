@@ -8,6 +8,9 @@ import { rooms } from "./addRoom.js";
 
 // export function updateRoomData(app){
 updateRoomDataRouter.post("/", (req, res) => {
+
+  console.log("updateRoomDataRouter, session check:", req.session.user)
+
   // if (!req.session.nickName || !req.session.userId) {
   //   userInfo = userInfo.filter(
   //     (user) => user.user.nickName != req.session.nickName
@@ -58,6 +61,7 @@ updateRoomDataRouter.post("/", (req, res) => {
 
     //roomUpdate를 인덱스로 해서 그 위치에 업데이트한 방 정보 덮어씌우기
     rooms[roomIndex] = updatedRoomData;
+    // console.log(updatedRoomData)
 
     console.log("방 정보 업데이트 성공");
 
