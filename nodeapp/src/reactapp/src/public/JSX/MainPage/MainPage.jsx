@@ -30,12 +30,7 @@ export default function MainPage() {
                 const result = await response.text();
 
                 if (result === 'exist') {
-                    // alert('중복');
                     setShowModal(true);
-                    // window.location.reload();
-                    // setTimeout(() => {
-                    //     window.location.reload();
-                    // }, 0);
                 } else if (result === 'non-existent') {
                     navigate('/chatListPage', { state: { nickName: nickName } });
                 }
@@ -51,7 +46,11 @@ export default function MainPage() {
             handleNickNameSubmit();
         }
     };
-    console.log("1",nickName);
+    const modalClose = () =>{
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+    }
     
 
     return (
@@ -74,6 +73,7 @@ export default function MainPage() {
                         setNickName={setNickName}
                         isOpen={ShowModal}
                         onClose={()=>setShowModal(false)}
+                        modalClose={modalClose}
                     />
                 )}
             </div>

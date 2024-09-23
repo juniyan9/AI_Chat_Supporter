@@ -5,22 +5,27 @@
 }
 
 .main_modal_content {
-    background: #1d1a20;;
+    background: #fff;
     padding: 20px;
     border-radius: 8px;
     width: 400px;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.main_modal_content p{
-    color: #fff;
-    font-size: 18px;
+    height: 90px;
+    border: 1px solid #000;
 }
 
 .main_modal_button{
     position: relative;
     left: 390px;
-    top: 131px;
+    top: 124px;
+}
+.num1p{
+    font-size: 17px;
+    font-weight: bold;
+    padding: 0px 0px 10px 0px;
+}
+.num2p{
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+    padding: 10px;
 }
