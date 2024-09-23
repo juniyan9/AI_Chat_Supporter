@@ -21,6 +21,9 @@ let nextRoomId = 1;
 addRoomRouter.post("/", (req, res) => {
   const { name, count, maxCount, password, isPrivate, nickName } = req.body;
 
+  const cookies = req.cookies;
+  console.log("쿠키 정보:", cookies)
+
   // console.log(req.session.user.nickName)
 
   // const cookie_id = req.cookies.id;
