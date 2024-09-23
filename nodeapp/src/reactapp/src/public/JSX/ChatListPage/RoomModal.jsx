@@ -46,7 +46,7 @@ function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 �
         }
     
         // 최대 인원수 검증
-        if (maxCount <= 2 || maxCount >= 10) {
+        if (maxCount < 2 || maxCount > 10) {
             alert("최대 인원수는 2에서 10 사이여야 합니다.");
             return;
         }
