@@ -1,5 +1,5 @@
 import '../../CSS/InfoBar.css';
-import useState from 'react';
+import {useState} from 'react';
 import userIcon from '../../IMG/multiple_user_icon.png';
 // import { io } from 'socket.io-client';
 
