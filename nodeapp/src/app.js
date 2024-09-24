@@ -34,7 +34,7 @@ const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 //app.use('요청 경로', express.static('실제 경로'));
 
 
-const sessionDurationMin = 0.5
+const sessionDurationMin = 15
 
 export const sessionObj = {
   secret: process.env.SECRET_KEY, // 세션을 암호화하는 데 사용되는 비밀 키
