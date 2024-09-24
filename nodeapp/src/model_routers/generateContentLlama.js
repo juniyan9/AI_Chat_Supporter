@@ -1,6 +1,6 @@
 // function generateContent(prompt){
 // console.log("prompt:", prompt)
-//     return fetch('http://localhost:11434/api/chat', {
+//     return fetch('http://43.203.141.146:11434/api/chat', {
 //         // "model": "llama3.1",
 //         method: "POST",
 //         headers: {

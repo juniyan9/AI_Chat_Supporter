@@ -96,7 +96,7 @@ export function socketConnection() {
           "현재 방 사용자 정보(roomUsers) [방에 있는 사용자 ID]:",
           roomUsers
         );
-        console.log('hychoi::::',room);
+
         // console.log("방 정보:", room );
         socket.emit("room_details", room);
         io.to(roomName).emit("room_details", room);
@@ -148,9 +148,10 @@ export function socketConnection() {
             code: "SESSION_EXPIRED",
             message: "세션이 만료되어 메시지를 입력할 수 없습니다.",
           });
-          return;
+        } else {
+            socket.to(roomName).emit('reply', message, userCheck.user.nickName);
         }
-      }
+        }
 
       // // socket.on('message', (messageData) => {
       //   // const { socketId, messageId, message, roomName, date } = messageData;
@@ -220,41 +221,44 @@ export function socketConnection() {
               // roomUsers[roomName]이 배열이 아닐 경우, 빈 배열로 초기화
               roomUsers[roomName] = [];
               console.log("roomUsers[roomName] 배열 만들기 완료");
-              console.warn(
-                `${roomName} 방의 사용자 목록이 배열이 아니어서 빈 배열로 초기화`
-              );
+              console.warn(`${roomName} 방의 사용자 목록이 배열이 아니어서 빈 배열로 초기화`);
             }
 
-            //채팅방 실 사용자 관리 배열 업데이트
-            roomUsers[roomName] = roomUsers[roomName].filter(
-              (id) => id !== user.id
-            );
-            room.count = roomUsers[roomName].length;
-
-            console.log("Rooms Array:", rooms);
-            console.log("방 나감 확인 - roomUsers", roomUsers);
-
-            const userIds = roomUsers[roomName].join(",");
-            console.log(`${roomName} 방의 사용자 목록: 유저 ID: ${userIds}`);
-            console.log(
-              `${roomName}에 남아있는 사람 수: ${room.count || 0} 명`
-            );
-            io.to(roomName).emit("roomCountUpdate", room.count);
-
+            // 방장인지 확인
             if (user.nickName == room.ownerNickname) {
-              io.to(roomName).emit("deleteRoom", "방장이 방을 삭제했습니다.");
+              io.to(roomName).emit("roomDeleted", "방장이 방을 삭제했습니다.");
+              
+          
+              // 받은 roomName으로 rooms 배열에서 해당 방을 찾습니다.
+              const roomIndex = rooms.findIndex((room) => room.name === roomName);
+
+
+              // 방이 존재하는 경우, rooms 배열에서 삭제합니다.
+              if (roomIndex !== -1) {
+                  rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
+                  console.log("방 삭제 후 rooms 배열:", rooms);
+              }
+
+              console.log('hycoih::::', roomUsers);
+              roomUsers = rooms.filter((room) => room.name !== roomName);
+              console.log('hycoih::::', roomUsers);
+
+            } else {
+              //채팅방 실 사용자 관리 배열 업데이트
+              roomUsers[roomName] = roomUsers[roomName].filter((id) => id !== user.id);
+              room.count = roomUsers[roomName].length;
+              console.log("Rooms Array:", rooms);
+              console.log("방 나감 확인 - roomUsers", roomUsers);
+              const userIds = roomUsers[roomName].join(",");
+              console.log(`${roomName} 방의 사용자 목록: 유저 ID: ${userIds}`);
+              console.log(`${roomName}에 남아있는 사람 수: ${room.count || 0} 명`);
+
+              io.to(roomName).emit("roomCountUpdate", room.count);
+             
+            //  socket.emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");
+              socket.broadcast.to(roomName).emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");
             }
           }
-
-          socket.emit(
-            "reply",
-            `${user.nickName}님이 방을 나갔습니다.`,
-            "알리미"
-          );
-          socket.broadcast
-            .to(roomName)
-            .emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");
-
           user.socketId = null;
           user.roomName = null;
 
@@ -270,6 +274,32 @@ export function socketConnection() {
       } else {
         console.error("socket.id가 없어 사용자를 찾을 수 없습니다.");
       }
+    });
+
+    socket.on("delete_room", (roomName) => {
+
+      const room = rooms.find((room) => room.name === roomName);
+
+      let userCheck = userInfo.find(
+        (check) => check.user.roomName === roomName
+      );
+
+      user = userCheck.user
+    
+        // 받은 roomName으로 rooms 배열에서 해당 방을 찾습니다.
+      const roomIndex = rooms.findIndex((room) => room.name === roomName);
+
+
+        // 방이 존재하는 경우, rooms 배열에서 삭제합니다.
+        if (roomIndex !== -1) {
+            rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
+            console.log("방 삭제 후 rooms 배열:", rooms);
+        }
+
+        // roomUsers = rooms.filter((room) => room.name !== roomName);
+        delete roomUsers[roomName]
+
+        io.to(roomName).emit("roomDeleted", "방장이 방을 삭제했습니다.");
     });
   });
 }
