@@ -26,11 +26,11 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
             setIsPrivate(roomDetails.isPrivate);
             setCount(roomDetails.count);
             // 필요하다면 이 부분에서 ownerNickname을 로그로 찍어 확인
-            console.log("roomDetails:" , roomDetails.ownerNickname);
-
         }
     }, [roomDetails]);
 
+    console.log("roomDetails:" , roomDetails.ownerNickname);
+    console.log(roomDetails);
 
     const handleSave = async () => {
         // console.log(roomDetails.ownerNickname);
@@ -47,7 +47,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
         setIsSaving(true);
         try {
             const response = await fetch(`${SERVER_URL}/update_room`, {
-                credentials : 'include',
+                
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,24 +59,27 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
                     updatedMaxCount: maxCount,
                     updatedPassword: password,
                     updatedIsPrivate: isPrivate,
+                    count : count, // 현재 인원 수 포함
                 }),
             
             });
-            // console.log(response);
+            const data = await response.json();
+            console.log("서버에게 받은 업데이트 된 방 정보 :", data.data);
 
             
-            
-
             if (response.ok) {
-                // const data = await response.json();
                 setIsSaving(false);
                 alert('방 정보가 업데이트되었습니다.');
+
                 onUpdate({ 
-                    name: roomName, 
+                    name: roomName,
                     maxCount, 
                     password, 
-                    isPrivate, 
-                    count 
+                    isPrivate,
+                    count : data.data.count, // 여기서 받은 count를 포함
+                    ownerNickname : roomDetails.ownerNickname, //소유자 닉네임
+                    id : data.data.id,
+                    
                 });
                 onClose();
             
@@ -99,7 +102,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
 
             try {
                 const response = await fetch(`${SERVER_URL}/delete_room`, {
-                    credentials : 'include',
+                    // credentials : 'include',
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -111,7 +114,14 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
                     alert('방이 삭제되었습니다.');
                     onDelete(roomDetails.name);
                     onClose();
-                    navigate('/ChatListPage');
+                    
+                    // 닉네임과 관련된 정보도 함께 전달하여 ChatListPage로 이동
+                    navigate('/ChatListPage', {
+                        state: {
+                            nickName : roomDetails.ownerNickname, // 닉네임 전달
+                            
+                        }
+                    });
                 } else {
                     const errorData = await response.json();
                     alert('방 삭제에 실패했습니다.');

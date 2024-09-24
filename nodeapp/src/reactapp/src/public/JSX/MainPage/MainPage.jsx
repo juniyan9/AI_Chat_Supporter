@@ -28,17 +28,15 @@ export default function MainPage() {
                 });
 
                 const result = await response.text();
+                // const trimnickname = nickName.replace(/\s+/g,'');
 
                 if (result === 'exist') {
-                    // alert('중복');
                     setShowModal(true);
-                    // window.location.reload();
-                    // setTimeout(() => {
-                    //     window.location.reload();
-                    // }, 0);
                 } else if (result === 'non-existent') {
-                    navigate('/chatListPage', { state: { nickName: nickName } });
+                    navigate('/chatListPage', { state: {nickName:nickName} });
                 }
+                // console.log(trimnickname);
+                
             } catch (error) {
                 console.log(error);
                 alert('요청을 처리하는 도중 오류가 발생했습니다.');
@@ -51,7 +49,11 @@ export default function MainPage() {
             handleNickNameSubmit();
         }
     };
-    console.log("1",nickName);
+    const modalClose = () =>{
+        if(inputRef.current){
+            inputRef.current.focus();
+        }
+    }
     
 
     return (
@@ -62,7 +64,7 @@ export default function MainPage() {
                         type='text' 
                         name='nickName'
                         placeholder="닉네임 입력"
-                        value={nickName}
+                        value={nickName.replace(/\s+/g,'')}
                         ref={inputRef}
                         onChange={(e) => setNickName(e.target.value)}
                         onKeyDown={keypress} 
@@ -74,6 +76,7 @@ export default function MainPage() {
                         setNickName={setNickName}
                         isOpen={ShowModal}
                         onClose={()=>setShowModal(false)}
+                        modalClose={modalClose}
                     />
                 )}
             </div>

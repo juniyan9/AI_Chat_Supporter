@@ -3,15 +3,12 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import '../../CSS/ChatListPage.css';
 import '../../CSS/FilteredRoom.css';
 import RoomModal from './RoomModal';
-import PasswordModal from './PasswordModal';
 
 export default function ChatListPage() {
     const [rooms, setRooms] = useState([]);
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-    const [selectedRoom, setSelectedRoom] = useState(null);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -22,12 +19,14 @@ export default function ChatListPage() {
         try {
             const response = await fetch(`${SERVER_URL}/rooms`, {
                 credentials : 'include',
+                nickName : location.state?.nickName
             });
             const data = await response.json();
             console.log("서버의 응답 데이터:", response);
             console.log("서버의 data:" ,data);
+            console.log("닉네임", location.state?.nickName);
             setRooms(data);
-            setFilteredRooms(data.filter(room => !room.isPrivate));
+            setFilteredRooms(data); // 모든 방을 필터링 없이 설정
         } catch (error) {
             console.error('Failed to fetch rooms:', error);
         }
@@ -40,40 +39,31 @@ export default function ChatListPage() {
 
     // 방 선택 핸들러
     function handleSelectRoom(room) {
-        room.isPrivate ? openPasswordModal(room) : navigateToRoom(room);
-    }
-
-    // 비밀번호 모달 열기
-    function openPasswordModal(room) {
-        setSelectedRoom(room);
-        setIsPasswordModalOpen(true);
+        navigateToRoom(room);
     }
 
     // 방으로 이동
     function navigateToRoom(room) {
         if (room.count < room.maxCount) {
-            navigate(`/chatPage/${room.name}`, {
-                state: { roomName: room.name, nickName: location.state?.nickName }
+            navigate(`/chatPage/${room.id}`, {
+                state: { roomId: room.id,
+                         nickName: location.state?.nickName,
+                         // state를 룸아이와 닉네임만 가지고 방으로 이동하면 유저들에겐 방설정이 바껴도 타격이 없지않을까?
+                         roomName: room.name,
+                        //  maxCount: room.maxCount,
+                        //  isPrivate: room.isPrivate,
+                        //  password: room.password 
+                        } // 비밀번호도 전달
             });
+            console.log("방 id:", room.id);
         } else {
             alert('방이 꽉 찼습니다.');
         }
     }
 
-    // 비밀번호 제출 처리
-    const handlePasswordSubmit = async (enteredPassword) => {
-        if (selectedRoom?.password === enteredPassword) {
-            setIsPasswordModalOpen(false);
-            navigateToRoom(selectedRoom);
-        } else {
-            alert('비밀번호가 틀렸습니다.');
-        }
-    };
-
     // 새로운 방 추가 처리
     const handleAddRoom = async (newRoom) => {
         const room = {
-            
             name: newRoom.name,
             count: newRoom.count,
             maxCount: newRoom.maxCount,
@@ -82,6 +72,7 @@ export default function ChatListPage() {
             // 서버에서는 ownerID가 필요하지만, 클라이언트에서는 제공하지 않음
             nickName: newRoom.ownerNickname // 서버의 'ownerNickname'과 일치
         };
+
 
         try {
             const response = await fetch(`${SERVER_URL}/add_room`, {
@@ -100,9 +91,7 @@ export default function ChatListPage() {
             }
 
             setRooms(prevRooms => [...prevRooms, data]);
-            if (!data.isPrivate || searchQuery && data.name.toLowerCase().includes(searchQuery)) {
-                setFilteredRooms(prevRooms => [...prevRooms, data]);
-            }
+            setFilteredRooms(prevRooms => [...prevRooms, data]); // 모든 방을 필터링 없이 설정
 
             return true;
         } catch (error) {
@@ -117,9 +106,9 @@ export default function ChatListPage() {
         const query = e.target.value.toLowerCase();
         setSearchQuery(query);
         setFilteredRooms(rooms.filter(room =>
-            (!room.isPrivate && room.name.toLowerCase().includes(query)) ||
-            (room.isPrivate && room.name.toLowerCase() === query)
+            room.name.toLowerCase().includes(query)
         ));
+        // console.log(rooms);
     };
 
     // 채팅방 목록을 새로 불러오는 핸들러
@@ -134,7 +123,7 @@ export default function ChatListPage() {
                 <div className="search-section">
                     <input
                         value={searchQuery}
-                        onChange={handleSearchChange}
+                        onChange={handleSearchChange} // 검색어 치면 그때 한번 딱 렌더링 해주는 기능으로 개선 해보자. 지금은 효율이 떨어진다.
                         placeholder="방 제목 검색"
                         className="search-input"
                     />
@@ -147,7 +136,11 @@ export default function ChatListPage() {
                             className={`room ${room.count >= room.maxCount ? 'full' : ''}`}
                         >
                             <h3>{room.name}</h3>
-                            <p>{room.isPrivate && <span className="lock-icon">🔒</span>} {room.count}/{room.maxCount}, {room.count}명 접속중</p>
+                            <p>
+                                <span className="people-icon">👥</span>
+                                {room.isPrivate && <span className="lock-icon">🔒</span>} 
+                                {room.count}/{room.maxCount}, {room.count}명 접속중
+                            </p>
                         </div>
                     ))}
                 </div>
@@ -156,7 +149,7 @@ export default function ChatListPage() {
             <div className="add-room-section">
                 {/* 새로고침 버튼 추가 */}
                 <button onClick={handleRefreshRooms} className="refresh-button">
-                        새로고침
+                    새로고침
                 </button>
                 <button onClick={() => setIsModalOpen(true)}>방 만들기</button>
             </div>
@@ -166,14 +159,6 @@ export default function ChatListPage() {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     onSave={handleAddRoom}
-                />
-            )}
-
-            {isPasswordModalOpen && (
-                <PasswordModal
-                    isOpen={isPasswordModalOpen}
-                    onClose={() => setIsPasswordModalOpen(false)}
-                    onSubmit={handlePasswordSubmit}
                 />
             )}
         </div>

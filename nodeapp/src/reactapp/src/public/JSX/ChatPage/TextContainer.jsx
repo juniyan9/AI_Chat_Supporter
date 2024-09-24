@@ -28,12 +28,14 @@ export default function TextContainer({ socket, setMessages, nickName, roomName}
     },[message])
 
 
-    const handleLocalMessage = (event) => {
-        setMessage(event.target.value);
+    const handleLocalMessage = (e) => {
+        setMessage(e.target.value);
     }
 
     const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && message.trim() === '') {
+            e.preventDefault();
+        }else if (e.key === 'Enter') {
             handleSubmit();
         }
       };
@@ -41,7 +43,7 @@ export default function TextContainer({ socket, setMessages, nickName, roomName}
     
     const handleSubmit = () => {
 
-        if(message !== '' && message.length !== 0){
+        if(message.trim() !== '' && message.length !== 0){
             socket.current.emit('message', message, roomName);
             
             setMessage('');
