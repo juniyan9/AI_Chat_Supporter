@@ -146,7 +146,7 @@ export function socketConnection() {
       // logger.info("Received message from client: " + message);
       // logger.info("Received message from client room: " + roomName);
       // }
-      
+
       // messages.push(message);
       //   // console.log('Updated messages array:', messages);
 
@@ -274,7 +274,11 @@ export function socketConnection() {
         (check) => check.user.roomName === roomName
       );
 
-      user = userCheck.user
+      let user;
+
+      if (userCheck) {
+      user = userCheck.user; 
+      }
     
         // 받은 roomName으로 rooms 배열에서 해당 방을 찾습니다.
       const roomIndex = rooms.findIndex((room) => room.name === roomName);
