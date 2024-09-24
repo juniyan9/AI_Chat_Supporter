@@ -8,10 +8,6 @@ const deleteRoomRouter = express.Router();
 deleteRoomRouter.post("/", (req, res) => {
     const { roomName } = req.body;
 
-    if (!roomName) {
-        return res.status(400).json({ error: '방 이름이 제공되지 않았습니다.' });
-    }
-
     // 받은 roomName으로 rooms 배열에서 해당 방을 찾습니다.
     const roomIndex = rooms.findIndex((room) => room.name === roomName);
 

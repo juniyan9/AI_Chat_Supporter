@@ -11,13 +11,9 @@ updateRoomDataRouter.post("/", (req, res) => {
 
   console.log("updateRoomDataRouter, session check:", req.session.user)
 
-  // if (!req.session.nickName || !req.session.userId) {
-  //   userInfo = userInfo.filter(
-  //     (user) => user.user.nickName != req.session.nickName
-  //   );
-  //   console.log("세션 없음. userInfo에서 유저 객체 삭제 완료.");
-  //   res.status(401).send("세션이 유효하지 않습니다.");
-  // }
+  if (!req.session.user) {
+    return res.status(401).send("세션이 유효하지 않습니다. 유저 정보가 삭제되었습니다.");
+  }
 
   const {
     originalName,

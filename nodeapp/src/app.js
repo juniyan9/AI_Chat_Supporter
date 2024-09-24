@@ -33,15 +33,18 @@ const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 /* middleware */
 //app.use('요청 경로', express.static('실제 경로'));
 
+
+const sessionDurationMin = 0.5
+
 export const sessionObj = {
   secret: process.env.SECRET_KEY, // 세션을 암호화하는 데 사용되는 비밀 키
-  store: new session.MemoryStore({ checkPeriod: 60000 * 15 }), //정상 작동.
+  store: new session.MemoryStore({ checkPeriod: 60000 * sessionDurationMin }), //정상 작동.
   resave: false, // 매번 세션 강제 저장
   saveUninitialized: false, // 빈 값도 저장 - empty session obj 쌓이는 거 방지
   cookie: {
     secure: false, // 개발 환경에서는 false, 프로덕션에서는 true로 설정 (HTTPS 필요) true로 하면 방 생성 안 됨
     httpOnly: true, // 클라이언트 측 JavaScript에서 쿠키를 읽을 수 없게 설정
-    maxAge: 60000 * 15, //sameSite: 'none' --> 방 생성 안 됨
+    maxAge: 60000 * sessionDurationMin, //sameSite: 'none' --> 방 생성 안 됨
   },
 };
 app.use(session(sessionObj));
@@ -75,9 +78,12 @@ import geminiPostRouter from "./model_routers/geminiPostRouter.js";
 import geminiGetRouter from "./model_routers/geminiGetRouter.js";
 import llamaPostRouter from "./model_routers/llamaPostRouter.js";
 
+
 // 유저 세션 연장 처리
+const extendPrd = 17
 setInterval(() => {
   const now = new Date();
+
   // console.log("세션연장처리 userInfo 배열 내용:", userInfo);  //잘 가져옴
 
   userInfo.forEach((userCheck) => {
@@ -91,9 +97,10 @@ setInterval(() => {
       console.log("세션 연장 처리 완료");
     }
   });
-}, 17 * 60000); //17분마다 연장
+}, extendPrd * 60000); //17분마다 연장
 
 // 유저 세션 삭제 처리
+const delPrd = 5
 setInterval(() => {
   const now = new Date();
 
@@ -105,7 +112,7 @@ setInterval(() => {
       removeUser(user);
     }
   });
-}, 5 * 60000); //5분마다 삭제작업
+}, delPrd * 60000); //5분마다 삭제작업
 
 /*main page*/
 app.get("/", (req, res) => {

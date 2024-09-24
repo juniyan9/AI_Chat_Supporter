@@ -140,30 +140,17 @@ export function socketConnection() {
         (check) => check.user.socketId === socket.id
       );
 
-      // userCheck가 존재하는지 확인
-      if (userCheck) {
-        if (new Date() > new Date(userCheck.user.sessionExpiresAt)) {
-          console.log("세션 만료됨:", userCheck.user.sessionExpiresAt);
-          socket.emit("error", {
-            code: "SESSION_EXPIRED",
-            message: "세션이 만료되어 메시지를 입력할 수 없습니다.",
-          });
-        } else {
-            socket.to(roomName).emit('reply', message, userCheck.user.nickName);
-        }
-        }
-
-      // // socket.on('message', (messageData) => {
-      //   // const { socketId, messageId, message, roomName, date } = messageData;
-      logger.info("Received message from client: " + message);
-      logger.info("Received message from client room: " + roomName);
-
-      //   // messages.push(message);
+      // socket.to(roomName).emit('reply', message, userCheck.user.nickName);
+      // if (userCheck) {
+      // io.to(roomName).emit('reply', message, userCheck.user.nickName);
+      // logger.info("Received message from client: " + message);
+      // logger.info("Received message from client room: " + roomName);
+      // }
+      
+      // messages.push(message);
       //   // console.log('Updated messages array:', messages);
 
-      //   // socket.to(roomName).emit('reply', message);
-
-      //   // userInfo 배열에서 socket.id에 해당하는 사용자 객체 찾기
+      socket.to(roomName).emit('reply', message);
     });
 
     // socket.on("update_messages", (updatedMessages) => {
@@ -229,11 +216,11 @@ export function socketConnection() {
               io.to(roomName).emit("roomDeleted", "방장이 방을 삭제했습니다.");
               
           
-              // 받은 roomName으로 rooms 배열에서 해당 방을 찾습니다.
+              // 받은 roomName으로 rooms 배열에서 해당 방을 찾음
               const roomIndex = rooms.findIndex((room) => room.name === roomName);
 
 
-              // 방이 존재하는 경우, rooms 배열에서 삭제합니다.
+              // 방이 존재하는 경우, rooms 배열에서 삭제함
               if (roomIndex !== -1) {
                   rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
                   console.log("방 삭제 후 rooms 배열:", rooms);
@@ -257,6 +244,9 @@ export function socketConnection() {
              
             //  socket.emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");
               socket.broadcast.to(roomName).emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");
+
+              const min = 15
+              user.sessionExpiresAt = new Date(Date.now() + min * 60000);
             }
           }
           user.socketId = null;
@@ -291,9 +281,9 @@ export function socketConnection() {
 
 
         // 방이 존재하는 경우, rooms 배열에서 삭제합니다.
-        if (roomIndex !== -1) {
-            rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
-            console.log("방 삭제 후 rooms 배열:", rooms);
+      if (roomIndex !== -1) {
+          rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
+          console.log("방 삭제 후 rooms 배열:", rooms);
         }
 
         // roomUsers = rooms.filter((room) => room.name !== roomName);
