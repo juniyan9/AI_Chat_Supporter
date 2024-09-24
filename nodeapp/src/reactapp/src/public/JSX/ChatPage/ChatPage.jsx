@@ -9,7 +9,7 @@ import io from 'socket.io-client'; // 소켓 연결 추가
 export default function ChatPage() {
     const location = useLocation();
     const [showModal, setShowModal] = useState(false);
-    const [ownerNickname, setOwnerNickname] = useState(''); // 방장 이름을 상태로 관리
+    const [ownerNickname, setOwnerNickName] = useState(''); // 방장 이름을 상태로 관리
     const [isOwner, setIsOwner] = useState(false); // 방장 여부 상태 추가
     const [roomName, setRoomName] = useState(location.state?.roomName || '기본 방 이름');
     const [maxCount, setMaxCount] = useState(10); // 초기 최대 인원 설정
@@ -17,6 +17,7 @@ export default function ChatPage() {
     const [isPrivate, setIsPrivate] = useState(false); // 초기 비공개 여부 설정
     const [messages, setMessages] = useState([]); // 메시지 상태
     const [roomCount, setRoomCount] = useState(0); // 사용자 수 상태
+    const [updatedRoomName, setUpdatedRoomName] = useState(roomName); // 방 이름 상태
 
     let socket = useRef(null); // 소켓 연결을 위한 ref
     const [isSocketConnected, setIsSocketConnected] = useState(false);
@@ -33,6 +34,37 @@ export default function ChatPage() {
                 socket.current.emit('enter_room', currentUserName, roomName);
             })
             
+            socket.current.on('roomCountUpdate', (count) => {
+                setRoomCount(count); // roomCount 업데이트
+            });
+            // 서버에서 방장 정보를 받아오는 이벤트 리스너
+            socket.current.on('room_details', ( roomDetails ) => {
+                console.log("서버에서 받은 roomDetails", roomDetails);
+                console.log("서버에서 받은 roomDetails.room.ownerNickName:", roomDetails.ownerNickname);
+                setOwnerNickName(roomDetails.ownerNickname);  // 부모 컴포넌트로 ownerNickname 전달
+                setMaxCount(roomDetails.maxCount);
+            });
+            socket.current.on('roomDeleted', (data) => {
+                console.log("서버에게 받은 roomDeleted 정보 :",data);
+                return () => {
+                    socket.current.disconnect();
+                };
+            })
+            // console.log("chatFrame 방장닉네임 :", ownerNickname)
+            // 서버에서 업데이트된 방 정보 받아오는 이벤트 리스너
+            socket.current.on('room_updated', (updatedSettings) => {
+                console.log('Room settings updated :', updatedSettings);
+                setUpdatedRoomName(updatedSettings.name); // 변경된 방 이름 업데이트
+                setMaxCount(updatedSettings.maxCount);   // 변경된 최대 인원수 업데이트
+                setIsPrivate(updatedSettings.isPrivate); //변경된 비공개 여부 업데이트
+                setPassword(updatedSettings.password); //변경된 비밀번호 업데이트
+            })
+            socket.current.on('reply', (reply_message, nickName) => {
+                setMessages(prevMessages => [
+                    ...prevMessages,
+                    { nickName, text: reply_message },
+                ]);
+            });
 
         }
         // 소켓 연결 해제
@@ -77,7 +109,7 @@ export default function ChatPage() {
                     roomCount={roomCount} // 방의 사용자 수 전달
                     setMessages={setMessages} // setMessages 전달
                     socket={socket}
-                    setOwnerNickName={setOwnerNickname}
+                    setOwnerNickName={setOwnerNickName}
                 />
                 ) : (<p>Connecting to WebSocket...</p>)}
             </div>
