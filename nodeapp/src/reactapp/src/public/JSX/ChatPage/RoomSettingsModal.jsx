@@ -6,7 +6,7 @@ import '../../CSS/RoomSettingsModal.css';
 
 const SERVER_URL = 'http://localhost:5000';
 
-export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpdate, onDelete }) {
+export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpdate, onDelete, socket, isSocketConnected}) {
     const [roomName, setRoomName] = useState(roomDetails?.name || '');
     const [maxCount, setMaxCount] = useState(roomDetails?.maxCount || 10);
     const [password, setPassword] = useState(roomDetails?.password || '');

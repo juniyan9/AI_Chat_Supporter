@@ -19,7 +19,7 @@ function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 �
     useEffect(() => {
         if (isOpen) {
             // 서버에서 방 목록을 가져오는 API 호출
-            fetch('http://43.203.141.146:5000/rooms')  // 서버의 API 주소로 변경
+            fetch('http://localhost:5000/rooms')  // 서버의 API 주소로 변경
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Room list 불러오기 실패');
