@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import '../../CSS/ChatPage.css';
 import ChatFrame from './ChatFrame';
 import LogFrame from './LogFrame';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import RoomSettingsModal from './RoomSettingsModal';
 import io from 'socket.io-client'; // 소켓 연결 추가
 
@@ -18,13 +18,14 @@ export default function ChatPage() {
     const [messages, setMessages] = useState([]); // 메시지 상태
     const [roomCount, setRoomCount] = useState(0); // 사용자 수 상태
     const [updatedRoomName, setUpdatedRoomName] = useState(roomName); // 방 이름 상태
+    const navigate = useNavigate();
 
     let socket = useRef(null); // 소켓 연결을 위한 ref
     const [isSocketConnected, setIsSocketConnected] = useState(false);
 
     const roomId = location.state?.roomId; // roomId를 사용
     const currentUserName = location.state?.nickName;
-
+console.log('socket:::::::::::::::::::::::::',socket)
     useEffect(() => {
         if(!socket.current){
             socket.current = io('http://localhost:5050');
@@ -46,9 +47,18 @@ export default function ChatPage() {
             });
             socket.current.on('roomDeleted', (data) => {
                 console.log("서버에게 받은 roomDeleted 정보 :",data);
-                return () => {
-                    socket.current.disconnect();
-                };
+                if (data) {
+                    alert("방장이 방을 삭제하였습니다.");
+                    // 삭제 요청 후 바로 ChatListPage로 이동
+                    navigate('/ChatListPage', {
+                        state: {
+                            nickName: currentUserName,  // 삭제 후 닉네임 정보 전달
+                        },
+                    });
+                }
+            
+                
+
             })
             // console.log("chatFrame 방장닉네임 :", ownerNickname)
             // 서버에서 업데이트된 방 정보 받아오는 이벤트 리스너
@@ -65,6 +75,9 @@ export default function ChatPage() {
                     { nickName, text: reply_message },
                 ]);
             });
+
+
+
 
         }
         // 소켓 연결 해제
@@ -124,7 +137,8 @@ export default function ChatPage() {
                         maxCount: maxCount,
                         password: password,
                         isPrivate: isPrivate,
-                        ownerNickname: ownerNickname
+                        ownerNickname: ownerNickname,
+                        nickName: currentUserName
                     }}
                     onUpdate={handleUpdateRoom}
                     socket={socket}

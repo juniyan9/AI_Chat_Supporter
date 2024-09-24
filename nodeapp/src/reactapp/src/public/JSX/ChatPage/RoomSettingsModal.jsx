@@ -101,7 +101,19 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
             setIsDeleting(true);
 
             console.log("roomName", roomName)
-           socket.current.emit('delete_room',roomName)
+
+           
+
+            socket.current.emit('delete_room',roomName)
+
+                       // 삭제 요청 후 바로 ChatListPage로 이동
+                    navigate('/ChatListPage', {
+                        state: {
+                            nickName: roomDetails.nickName,  // 삭제 후 닉네임 정보 전달
+                        },
+                    });
+            
+                    setIsDeleting(false);  // 삭제 상태 리셋
         }
     };
 

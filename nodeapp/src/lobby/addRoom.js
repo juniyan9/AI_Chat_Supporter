@@ -1,6 +1,7 @@
 import express from "express";
 import { removeUser } from "../main_page/sessionUtils.js";
 import session from "express-session";
+import { logger } from "../app.js";
 
 let app = express();
 app.use(express.json()); // JSON 파서 추가
@@ -41,9 +42,7 @@ addRoomRouter.post("/", (req, res) => {
 
   const ownerID = userCheck.user.id;
 
-  const room = {
-    id: nextRoomId++, // 자동 증가하는 방 ID
-    name,
+  const room = {id: nextRoomId++, name,
     count,
     maxCount,
     password,

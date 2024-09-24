@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import { logger } from "../app.js";
 dotenv.config();
 let app = express();
 const userRegisterRouter = express.Router();
@@ -29,10 +30,7 @@ function isNickNameExist(nickName) {
 
 // 사용자 추가 함수
 function addUser(nickName) {
-  let newUser = {
-    id: nextUserId,
-    nickName: nickName,
-  };
+  let newUser = {id: nextUserId, nickName: nickName,};
 
   // userInfo 배열에 새로운 사용자 추가
   userInfo.push({ user: newUser });
@@ -45,12 +43,12 @@ function addUser(nickName) {
 // 쿠키 보내줘야 세션 ID로 관리 가능
 userRegisterRouter.post("/", (req, res) => {
   // /register로 해버리면 프론트에서 /register/register로 요청한 게 됨.
-  // console.log("inside userRegisterRouter")
+  // logger.info("inside userRegisterRouter")
   const { nickName } = req.body;
 
   if (isNickNameExist(nickName)) {
     res.send("exist"); // 닉네임이 중복됨, 위 isNickNameExist 함수 호출해서 true일 경우 이렇게 프론트에 보내는 거
-    console.log("사용자가 중복된 닉네임 입력");
+    logger.info("사용자가 중복된 닉네임 입력");
   } else {
     addUser(nickName); // 사용자 추가
 
@@ -60,24 +58,21 @@ userRegisterRouter.post("/", (req, res) => {
 
     const SID = req.sessionID;
     // const connectSid = req.cookies['connect.sid']; 
-    console.log("userRegisterRouter, req.sessionID:", SID);
-    // console.log("userRegisterRouter, connectSid:", connectSid);
+    logger.info(`req.sessionID from userRegisterRouter: ${SID}`,'main_page.js');
+    // logger.info("userRegisterRouter, connectSid:", connectSid);
 
     // 세션 만료 시간 출력
     const sessionExpiresAt = new Date(req.session.cookie.expires);  //date 객체로 관리
     const sessionMaxAge = req.session.cookie.maxAge; // 설정된 maxAge 확인
-    console.log("세션 만료 시간:", sessionExpiresAt);
-    console.log("세션 유효 시간 (maxAge):", sessionMaxAge);
+    logger.info(`세션 만료 시간 from userRegisterRouter: ${sessionExpiresAt}`,'main_page.js');
 
-    req.session.user = {
-      id: nextUserId - 1,
-      nickName: nickName,
-      reqSessionID: SID,
-      sessionExpiresAt: sessionExpiresAt,
-      // connectSid: connectSid,
-    };
+    logger.info(`세션 유효 시간 from userRegisterRouter: ${sessionMaxAge}`,'main_page.js');
 
-    console.log("userRegisterRouter, 세션 정보:", req.session.user);
+
+    req.session.user = {id: nextUserId - 1, nickName: nickName, reqSessionID: SID, sessionExpiresAt: sessionExpiresAt,};
+
+    logger.info(`세션 정보 from userRegisterRouter: ${req.session.user}`,'main_page.js');
+
 
     const userIndex = userInfo.findIndex(user => user.user.id === nextUserId - 1);
     if (userIndex !== -1) {
@@ -85,8 +80,8 @@ userRegisterRouter.post("/", (req, res) => {
       userInfo[userIndex].user.sessionExpiresAt = sessionExpiresAt;
       // userInfo[userIndex].user.connectSid = connectSid;
     }
+    logger.info(`userInfo from userRegisterRouter: ${JSON.stringify(userInfo)}`,'main_page.js');
 
-    console.log("userRegisterRouter, userInfo:", userInfo);
     
     res.send("non-existent"); // 사용자 추가 완료
   }

@@ -1,7 +1,9 @@
 class logger {
-  
-    info(message, level='Info') {
-        console.log('[' + this.getFullYmdStr() + '] [Log Level:'+ level +'] >>>> (' + message +')');
+  constructor(level='debug'){
+    this.level=level
+  }
+    info(message, filename) {
+        console.log('[' + this.getFullYmdStr() + '] [Log Level:'+ this.level +'] ['+ filename+ ']>>>> (' + message +')');
     }
 
     getFullYmdStr(){

@@ -94,7 +94,7 @@ setInterval(() => {
 
     if (user.socketId && now > sessionExpiresAt) {
       extendSession(user);
-      console.log("세션 연장 처리 완료");
+      logger.info("세션 연장 처리 완료");
     }
   });
 }, extendPrd * 60000); //17분마다 연장

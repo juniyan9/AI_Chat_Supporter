@@ -19,7 +19,9 @@ export function socketConnection() {
   //events
   io.on("connection", (socket) => {
     logger.info("A Client has connected.");
-
+    console.log("socket:", socket)
+    console.log("socket.id:", socket.id)
+    
     // 방에 들어갈 때 socketId와 roomName이 userInfo의 user에 업데이트 돼야함.
     socket.on("enter_room", (nickName, roomName) => {
       console.log("소켓 연결");
