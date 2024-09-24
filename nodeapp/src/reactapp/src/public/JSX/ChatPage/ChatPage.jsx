@@ -18,48 +18,26 @@ export default function ChatPage() {
     const [messages, setMessages] = useState([]); // 메시지 상태
     const [roomCount, setRoomCount] = useState(0); // 사용자 수 상태
 
-    const socket = useRef(null); // 소켓 연결을 위한 ref
+    let socket = useRef(null); // 소켓 연결을 위한 ref
+    const [isSocketConnected, setIsSocketConnected] = useState(false);
+
     const roomId = location.state?.roomId; // roomId를 사용
     const currentUserName = location.state?.nickName;
 
     useEffect(() => {
-        // 소켓 연결 설정
-        socket.current = io('http://localhost:5050');
-        
-        // 서버에 방 입장 요청
-        socket.current.on('connect', () => {
-            socket.current.emit('enter_room', currentUserName, roomName);
-        });
+        if(!socket.current){
+            socket.current = io('http://localhost:5050');
 
-        // 서버로부터 방 정보를 받는 이벤트 처리
-        socket.current.on('room_details', (roomDetails) => {
-            console.log(roomDetails.ownerNickname);
-            setOwnerNickname(roomDetails.ownerNickname); // 서버에서 받은 방장 닉네임 업데이트
-            setRoomName(roomDetails.name); // 방 이름이 변경되었을 수 있음
-            setMaxCount(roomDetails.maxCount);
-            setPassword(roomDetails.password);
-            setIsPrivate(roomDetails.isPrivate);
-        });
+            socket.current.on('connect', () => {
+                setIsSocketConnected(true);
+                socket.current.emit('enter_room', currentUserName, roomName);
+            })
+            
 
-        // 서버로부터 사용자 수(roomCount) 업데이트 받기
-        socket.current.on('roomCountUpdate', (count) => {
-            setRoomCount(count); // roomCount 업데이트
-        });
-
-        // 서버로부터 메시지(reply) 받기
-        socket.current.on('reply', (reply_message, senderNickName) => {
-            setMessages(prevMessages => [
-                ...prevMessages,
-                { nickName: senderNickName, text: reply_message },
-            ]);
-        });
-
+        }
         // 소켓 연결 해제
         return () => {
-            if (socket.current) {
-                socket.current.disconnect();
-                socket.current = null;
-            }
+            socket.current.close();
         };
     }, [currentUserName, roomId]);
 
@@ -81,12 +59,14 @@ export default function ChatPage() {
 
     return (
         <div className="chatPage">
+            
             <div className="chatFrameContainer">
                 {isOwner && (
                     <button onClick={handleOpenModal} className="settingsButton">
                         방 설정
                     </button>
                 )}
+                {isSocketConnected ? (
                 <ChatFrame 
                     roomName={roomName} 
                     nickName={currentUserName} 
@@ -97,10 +77,13 @@ export default function ChatPage() {
                     roomCount={roomCount} // 방의 사용자 수 전달
                     setMessages={setMessages} // setMessages 전달
                     socket={socket}
+                    setOwnerNickName={setOwnerNickname}
                 />
+                ) : (<p>Connecting to WebSocket...</p>)}
             </div>
             <LogFrame />
-            {isOwner && (
+            
+           {isOwner && (
                 <RoomSettingsModal
                     isOpen={showModal}
                     onClose={handleCloseModal}
@@ -112,8 +95,12 @@ export default function ChatPage() {
                         ownerNickname: ownerNickname
                     }}
                     onUpdate={handleUpdateRoom}
+                    socket={socket}
+                    isSocketConnected={isSocketConnected}
                 />
+        
             )}
+            
         </div>
     );
 }
