@@ -12,7 +12,7 @@ export default function ChatListPage() {
 
     const location = useLocation();
     const navigate = useNavigate();
-    const SERVER_URL = 'http://localhost:5000';
+    const SERVER_URL = 'http://192.168.0.113:5000';
 
     // 서버에서 방 목록을 가져오는 함수
     const fetchRooms = async () => {

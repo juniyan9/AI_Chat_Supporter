@@ -56,7 +56,7 @@ export default function ChatPage() {
         setPassword(updatedRoomDetails.password);
         setIsPrivate(updatedRoomDetails.isPrivate);
     };
-
+ 
     return (
         <div className="chatPage">
             

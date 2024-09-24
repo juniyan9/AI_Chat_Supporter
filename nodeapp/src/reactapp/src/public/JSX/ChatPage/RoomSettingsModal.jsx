@@ -4,7 +4,7 @@ import '../../CSS/RoomSettingsModal.css';
 
 
 
-const SERVER_URL = 'http://localhost:5000';
+const SERVER_URL = 'http://192.168.0.113:5000';
 
 export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpdate, onDelete, socket, isSocketConnected}) {
     const [roomName, setRoomName] = useState(roomDetails?.name || '');
@@ -100,39 +100,8 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
         if (window.confirm("정말로 방을 삭제하시겠습니까?")) {
             setIsDeleting(true);
 
-            try {
-                const response = await fetch(`${SERVER_URL}/delete_room`, {
-                    // credentials : 'include',
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ roomName: roomDetails.name }),
-                });
-
-                if (response.ok) {
-                    alert('방이 삭제되었습니다.');
-                    onDelete(roomDetails.name);
-                    onClose();
-                    
-                    // 닉네임과 관련된 정보도 함께 전달하여 ChatListPage로 이동
-                    navigate('/ChatListPage', {
-                        state: {
-                            nickName : roomDetails.ownerNickname, // 닉네임 전달
-                            
-                        }
-                    });
-                } else {
-                    const errorData = await response.json();
-                    alert('방 삭제에 실패했습니다.');
-                    console.error('Failed to delete room:', errorData.error);
-                    setIsDeleting(false);
-                }
-            } catch (error) {
-                setIsDeleting(false);
-                alert('서버와의 통신 중 오류가 발생했습니다.');
-                console.error('Failed to delete room:', error);
-            }
+            console.log("roomName", roomName)
+           socket.current.emit('delete_room',roomName)
         }
     };
 
