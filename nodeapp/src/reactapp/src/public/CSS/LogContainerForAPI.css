@@ -1,0 +1,30 @@
+.LogContainerForAPI {
+    color: black;
+    background: white;
+    border: 3px solid #d9d9d9;
+    width: 400px;
+    height: 600px;
+}
+
+.LogContainerForAPI h1{
+    font-size: 25px;
+    border-bottom: 1px solid #828282;
+    padding: 10px 0px 10px 10px;
+    font-weight: bold;
+}
+
+.button1, .button2, .button3{
+    width: 33.3%;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: medium;
+    color: #828282;
+    padding: 10px 0px;
+}
+
+.active{
+    border-bottom: 1px solid #000;
+    font-weight: bold;
+    color: #000;
+}

@@ -1,0 +1,57 @@
+.pullpage{
+    background-image: url(../IMG/mainimg.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.MainFrame {
+    color: rgb(250, 240, 230);
+    background: rgb(250, 240, 230);
+    border: 2px solid #2e2e2e;
+    line-height: 1.5;
+    width: 1920px;
+    height: 1080px;
+    margin: 3%;
+    justify-content: space-around;
+}
+
+.MainPage{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.Maintext{
+    font-size: 70px;
+    width: 1200px;
+    text-align: center;
+    position: relative;
+    bottom: 40px;
+}
+
+.Main{
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.Main input{
+    border-radius: 20px;
+    padding: 10px;
+}
+
+.Main button{
+    position: relative;
+    background: #45484A;
+    border-radius: 20px;
+    bottom: 38px;
+    left: 50px;
+    padding: 11px 30px 11px 30px;
+    border: solid 0px;
+    color: #fff;
+    cursor: pointer;
+}
