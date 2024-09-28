@@ -34,7 +34,7 @@ export default function ChatPage() {
 console.log('socket:::::::::::::::::::::::::',socket)
     useEffect(() => {
         if(!socket.current){
-            socket.current = io('http://192.168.0.113:5050');
+            socket.current = io('http://42.203.141.146:5050');
 
             socket.current.on('connect', () => {
                 setIsSocketConnected(true);
@@ -47,12 +47,6 @@ console.log('socket:::::::::::::::::::::::::',socket)
                     setTimeoutId(0) 
                     console.log("소켓에서 timeoutId 만료 후 timeoutId:", timeoutId)
                 }
-                // if (timeoutId) {
-                //     console.log("clearTimeout 전 timeoutId:", timeoutId);
-                //     clearTimeout(timeoutId);
-                //     console.log("소켓에서 timeoutId 지웠습니다.");
-                //     setTimeoutId(null); // null로 초기화
-                // }
             })
             
             socket.current.on('roomCountUpdate', (count) => {
@@ -77,13 +71,6 @@ console.log('socket:::::::::::::::::::::::::',socket)
                     });
                 }
             });
-            // socket.current.on('timeout_cancelled', ({ timeoutId }) => {
-            //     console.log("타임아웃 해제됨");
-            //     if (timeoutId) {
-            //         clearTimeout(timeoutId); // 타임아웃 해제
-            //         setTimeoutId(null); // timeoutId 상태 초기화
-            //     }
-            // });
 
             // console.log("chatFrame 방장닉네임 :", ownerNickname)
             // 서버에서 업데이트된 방 정보 받아오는 이벤트 리스너

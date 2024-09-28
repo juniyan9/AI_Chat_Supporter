@@ -18,7 +18,7 @@ export default function MainPage() {
     const handleNickNameSubmit = async () => {
         if (nickName) {
             try {
-                const response = await fetch('http://192.168.0.113:5000/register', {
+                const response = await fetch('http://42.203.141.146:5000/register', {
                     credentials : 'include',
                     method: 'POST',
                     headers: {
