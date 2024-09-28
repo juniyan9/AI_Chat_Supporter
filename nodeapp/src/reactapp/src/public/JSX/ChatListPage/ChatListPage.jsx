@@ -9,33 +9,51 @@ export default function ChatListPage() {
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const [timeoutId, setTimeoutId] = useState(0);
+    // const [timeoutId, setTimeoutId] = useState(null);
+    // const [timeoutmin, setTimeoutmin] = useState(1000);
     const location = useLocation();
     const navigate = useNavigate();
     const SERVER_URL = 'http://192.168.0.113:5000';
 
     // 서버에서 방 목록을 가져오는 함수
+
     const fetchRooms = async () => {
         try {
             const response = await fetch(`${SERVER_URL}/rooms`, {
-                credentials : 'include',
-                nickName : location.state?.nickName
+                credentials: 'include',
+                nickName: location.state?.nickName,
             });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP 오류! 상태: ${response.status}`);
+            }
+    
             const data = await response.json();
-            console.log("서버의 응답 데이터:", response);
-            console.log("서버의 data:" ,data);
-            console.log("닉네임", location.state?.nickName);
-            setRooms(data);
-            setFilteredRooms(data); // 모든 방을 필터링 없이 설정
+            console.log(data);
+            setRooms(data.rooms);
+            setFilteredRooms(data.rooms); // 모든 방을 필터링 없이 설정
+    
+            // timeoutId를 설정하는 부분
+            if (data.timeoutmin) {
+                console.log("timeout 생성됩니다.");
+                setTimeoutId(setTimeout(() => {
+                    console.log("timeout 됐습니다.")
+                    setTimeoutId(0);
+                    navigate('/');
+                }, data.timeoutmin));
+            }
+    
         } catch (error) {
-            console.error('Failed to fetch rooms:', error);
+            console.error('방 목록을 가져오는 데 실패했습니다:', error);
         }
     };
-
-    // 컴포넌트가 로드될 때 방 목록을 불러오기
+    
+    // useEffect에서 fetchRooms 호출
     useEffect(() => {
         fetchRooms();  // 최초 방 목록 불러오기
     }, []);
+    
 
     // 방 선택 핸들러
     function handleSelectRoom(room) {
@@ -50,12 +68,14 @@ export default function ChatListPage() {
                          nickName: location.state?.nickName,
                          // state를 룸아이와 닉네임만 가지고 방으로 이동하면 유저들에겐 방설정이 바껴도 타격이 없지않을까?
                          roomName: room.name,
+                         timeoutId: timeoutId
                         //  maxCount: room.maxCount,
                         //  isPrivate: room.isPrivate,
                         //  password: room.password 
                         } // 비밀번호도 전달
             });
             console.log("방 id:", room.id);
+            // console.log("navigateToRoom에서 timeoutId:", timeoutId);
         } else {
             alert('방이 꽉 찼습니다.');
         }
@@ -159,6 +179,7 @@ export default function ChatListPage() {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     onSave={handleAddRoom}
+                    timeoutId={timeoutId}
                 />
             )}
         </div>
