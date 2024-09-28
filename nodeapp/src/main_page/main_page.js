@@ -58,20 +58,20 @@ userRegisterRouter.post("/", (req, res) => {
 
     const SID = req.sessionID;
     // const connectSid = req.cookies['connect.sid']; 
-    logger.info(`req.sessionID from userRegisterRouter: ${SID}`,'main_page.js');
+    // logger.info(`req.sessionID from userRegisterRouter: ${SID}`,'main_page.js');
     // logger.info("userRegisterRouter, connectSid:", connectSid);
 
     // 세션 만료 시간 출력
     const sessionExpiresAt = new Date(req.session.cookie.expires);  //date 객체로 관리
     const sessionMaxAge = req.session.cookie.maxAge; // 설정된 maxAge 확인
-    logger.info(`세션 만료 시간 from userRegisterRouter: ${sessionExpiresAt}`,'main_page.js');
+    // logger.info(`세션 만료 시간 from userRegisterRouter: ${sessionExpiresAt}`,'main_page.js');
 
-    logger.info(`세션 유효 시간 from userRegisterRouter: ${sessionMaxAge}`,'main_page.js');
+    // logger.info(`세션 유효 시간 from userRegisterRouter: ${sessionMaxAge}`,'main_page.js');
 
 
     req.session.user = {id: nextUserId - 1, nickName: nickName, reqSessionID: SID, sessionExpiresAt: sessionExpiresAt,};
 
-    logger.info(`세션 정보 from userRegisterRouter: ${req.session.user}`,'main_page.js');
+    // logger.info(`세션 정보 from userRegisterRouter: ${JSON.stringify(req.session.user)}`,'main_page.js');
 
 
     const userIndex = userInfo.findIndex(user => user.user.id === nextUserId - 1);
@@ -81,7 +81,6 @@ userRegisterRouter.post("/", (req, res) => {
       // userInfo[userIndex].user.connectSid = connectSid;
     }
     logger.info(`userInfo from userRegisterRouter: ${JSON.stringify(userInfo)}`,'main_page.js');
-
     
     res.send("non-existent"); // 사용자 추가 완료
   }

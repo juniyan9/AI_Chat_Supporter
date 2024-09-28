@@ -4,7 +4,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios"; //서버와 통신을 위한 axios 패키지
 // import { response } from "express";
 
-function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 전달받는 props이다.
+// function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 전달받는 props이다.
+    function RoomModal({ isOpen, onClose, onSave, timeoutId }) { // 부모 컴포넌트에서 전달받는 props이다.
+
     const [roomName, setRoomName] = useState('');
     const [password, setPassword] = useState('');
     const [isPrivate, setIsPrivate] = useState(false);
@@ -18,8 +20,9 @@ function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 �
     // useEffect를 사용하여 모달이 열릴 때 기존 방 목록을 서버에서 가져옴
     useEffect(() => {
         if (isOpen) {
+            console.log("RoomModal, 받은 timeoutId:", timeoutId);
             // 서버에서 방 목록을 가져오는 API 호출
-            fetch('http://192.168.0.113:5000/rooms')  // 서버의 API 주소로 변경
+            fetch('http://172.30.1.92:5000/rooms')  // 서버의 API 주소로 변경
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Room list 불러오기 실패');
@@ -52,10 +55,15 @@ function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 �
         }
     
         // 중복 방 제목 체크
-        const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
+        // const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
+        // if (isDuplicate) {
+        //     alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
+        //     return;
+        // }
+        const isDuplicate = Array.isArray(existingRooms) && existingRooms.some(room => room.name === trimmedRoomName);
         if (isDuplicate) {
-            alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
-            return;
+        alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
+        return;
         }
     
         // 새로운 방 정보 생성
@@ -70,12 +78,15 @@ function RoomModal({ isOpen, onClose, onSave }) { // 부모 컴포넌트에서 �
     
         console.log("newRoom:", newRoom);
         try {
-            const success = await onSave(newRoom); // 함수가 성공적으로 완료되면 'success'라는 변수에 그 결과를 저장
+            const success = await onSave(newRoom, timeoutId); // 함수가 성공적으로 완료되면 'success'라는 변수에 그 결과를 저장
     
             if (success) { // 방이 성공적으로 생성되면
                 navigate(`/chatPage/${trimmedRoomName}`, {
-                    state: { roomName: trimmedRoomName, nickName: location.state?.nickName }
+                    // state: { roomName: trimmedRoomName, nickName: location.state?.nickName }
+                    state: { roomName: trimmedRoomName, nickName: location.state?.nickName, timeoutId }
+
                 });
+                // console.log("방 만들 때 timeoutId 넘겨줌:", timeoutId)
                 onClose();
             }
         } catch (error) {

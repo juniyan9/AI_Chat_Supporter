@@ -16,7 +16,7 @@ export function removeUser(user) {
   const index = userInfo.findIndex((userCheck) => userCheck.user.socketId === user.socketId);
   if (index !== -1) {
     userInfo.splice(index, 1);
-    console.log(`removeUser 함수:${user.nickName} 정보를 userInfo에서 잘 지웠습니다.`)
+    console.log(`removeUser:${user.nickName} 정보를 userInfo에서 잘 지웠습니다.`)
     console.log(`유저: ${user.nickName} 정보 삭제 후 userInfo:`, userInfo)
   }
 }

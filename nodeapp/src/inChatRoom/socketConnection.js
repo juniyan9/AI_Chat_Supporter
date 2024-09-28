@@ -13,18 +13,18 @@ export function socketConnection() {
 
   const WS_port = 5050;
   httpServer.listen(WS_port, () => {
-    console.log("WebSocket listening at port %d", WS_port);
+    logger.info("WebSocket listening at port %d", WS_port);
   });
 
   //events
   io.on("connection", (socket) => {
     logger.info("A Client has connected.");
-    console.log("socket:", socket)
-    console.log("socket.id:", socket.id)
-    
+    // console.log("socket:", socket) //잘 찍음
+    // console.log("socket.id:", socket.id) //잘 찍음
+
     // 방에 들어갈 때 socketId와 roomName이 userInfo의 user에 업데이트 돼야함.
     socket.on("enter_room", (nickName, roomName) => {
-      console.log("소켓 연결");
+      logger.info('소켓연결','socketConnection.js');
 
       let user = null; //아래 if (userCheck) 밖에서도 user에 접근하기 위함.
 
@@ -39,7 +39,7 @@ export function socketConnection() {
         //세션이 있어야 소켓 입장할 수 있도록 세션 체크
         //세션 체크
         if (new Date() > new Date(user.sessionExpiresAt)) {
-          console.log("세션 만료됨:", user.sessionExpiresAt);
+          logger.info(`세션 만료 여부: ${user.sessionExpiresAt}`,'socketConnection.js');
           socket.emit("error", {
             code: "SESSION_EXPIRED",
             message: "세션이 만료되었습니다. 방에 입장할 수 없습니다.",
@@ -47,11 +47,25 @@ export function socketConnection() {
           return; // 세션이 만료되었으므로 추가 작업을 수행하지 않음
         }
 
+        // logger.info("타임아웃id 보낼 때 timeoutId"+user.timeoutId,22222222222222 )
+        console.log("타임아웃 전")
+        if (user.timeoutId) {
+          // logger.info("타임아웃id 보낼 때 timeoutId"+user.timeoutId,11111111111 )
+          // socket.emit("timeout_cancelled",  { timeoutId: user.timeoutId })
+          clearTimeout(user.timeoutId);
+          logger.info(`소켓에서 User ${user.nickName}의 timeout을 지웠습니다 .`,'socketconnection.js');
+          // logger.info("소켓에서 타임아웃 해제됨:"+user.timeoutId,11111111111);
+
+          user.timeoutId = null;
+          // logger.info("timeoutId 클라이언트에 보냄:");
+        }
+
         user.socketId = socket.id;
         user.roomName = roomName;
         // const roomName = user.roomName;
 
         logger.info(`Client (${user.nickName}) called 'enter_room'.`);
+        
 
         const ipAddress =
           socket.request.headers["x-forwarded-for"] ||
@@ -66,53 +80,52 @@ export function socketConnection() {
           ipAddress: ipAddress,
         });
 
+        // logger.info(`ip주소: ${ipAddress}`,'socketConnection.js');
+
         logger.info(`${user.nickName} has joined ${user.roomName}`);
 
         //방이 없을 경우 방을 새로 만들어서 rooms 배열에 업데이트
         let room = rooms.find((room) => room.name === roomName);
-        if (!room) {
-          room = { name: roomName, count: 0 };
-          rooms.push(room);
-          console.log(`${roomName} 방이 생성되었고, rooms 배열에 입력 완료.`);
-        }
+        // if (!room) {
+        //   room = { name: roomName, count: 0 };
+        //   rooms.push(room);
+        //   console.log(`${roomName} 방이 생성되었고, rooms 배열에 입력 완료.`);
+        // }
 
         if (!Array.isArray(roomUsers[roomName])) {
           roomUsers[roomName] = []; // 배열로 만들어주고, 빈 배열로 초기화
         }
 
         // 사용자 ID를 배열에 추가
+        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.1")
         roomUsers[roomName].push(user.id);
+        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.2")
 
+        logger.info(`소켓에서 user.roomName: ${user.roomName}`, 'socketConnection.js')
         socket.join(user.roomName); //해당 소켓을 특정 방에 추가
 
         room.count = roomUsers[roomName].length;
-        // }
-        console.log(
-          `${roomName}에 있는 사람 수: ${roomUsers[roomName].length} 명`
-        );
+      
+        logger.info(`enter_room 때 ${roomName}에 있는 사람 수: ${roomUsers[roomName].length} 명`, 'socketConnection.js')
 
-        // socket.emit("roomCountUpdate", room.count);
+        // logger.info(`세션 만료 여부: ${user.sessionExpiresAt}`,'socketConnection.js');
         io.to(roomName).emit("roomCountUpdate", room.count);
 
-        console.log(
-          "현재 방 사용자 정보(roomUsers) [방에 있는 사용자 ID]:",
-          roomUsers
-        );
+        logger.info(`현재 방 사용자 정보(roomUsers) [방에 있는 사용자 ID]:${JSON.stringify(roomUsers[roomName])}`,'socketConnection.js')
+
 
         // console.log("방 정보:", room );
         socket.emit("room_details", room);
         io.to(roomName).emit("room_details", room);
-
         // console.log("업데이트된 방 정보 전달:", room)
         // socket.emit('update_room', room)
-        io.to(roomName).emit("update_room", room);
+        io.to(roomName).emit("newRoomInfo", room);
 
         const userIds = roomUsers[roomName].join(",");
         // console.log(`${roomName} 방의 유저 ID 목록: 유저 ID: ${userIds}`);
       } else {
         console.error("사용자를 찾을 수 없습니다.");
       }
-
       //웰컴 메시지
       if (user) {
         //userCheck의 user
@@ -134,6 +147,33 @@ export function socketConnection() {
       } //위에서는 if(user)로 user를 걸어줘서 user.nickName / user.roomName 이런 식으로 안 해줘도 됨.
     });
 
+    socket.on('update_room', (data) => {
+      const { originalName, updatedName, updatedMaxCount, updatedPassword, updatedIsPrivate } = data;
+
+      let roomIndex = rooms.findIndex(
+        (room) => room.name === originalName
+      );
+    
+      if (roomIndex !== -1) {
+        const updatedRoomData = {
+          id: rooms[roomIndex].id,
+          name: updatedName,
+          count: rooms[roomIndex].count,
+          maxCount: updatedMaxCount,
+          password: updatedPassword,
+          isPrivate: updatedIsPrivate,
+          ownerID: rooms[roomIndex].ownerID,
+          ownerNickname: ownerNickname,
+        };
+        //roomUpdate를 인덱스로 해서 그 위치에 업데이트한 방 정보 덮어씌우기
+        rooms[roomIndex] = updatedRoomData;
+
+        logger.info(`업데이트된 방 정보 받은 후 방 정보: ${JSON.stringify(updatedRoomData)}`,'socketConnection.js');
+
+        io.to(originalName).emit('newRoomInfo', updatedRoomData);
+    }
+  })
+
     // //유저 메시지 접수 및 소켓들에 보내주기
     //socket id, message id, roomName, message, date 받아오기
     socket.on("message", (message, roomName) => {
@@ -145,14 +185,14 @@ export function socketConnection() {
       // socket.to(roomName).emit('reply', message, userCheck.user.nickName);
       // if (userCheck) {
       // io.to(roomName).emit('reply', message, userCheck.user.nickName);
-      // logger.info("Received message from client: " + message);
-      // logger.info("Received message from client room: " + roomName);
       // }
 
       // messages.push(message);
       //   // console.log('Updated messages array:', messages);
 
       socket.to(roomName).emit('reply', message);
+      logger.info("Received message from client: " + message);
+      logger.info("Received message from client room: " + roomName);
     });
 
     // socket.on("update_messages", (updatedMessages) => {
@@ -192,6 +232,7 @@ export function socketConnection() {
     //소켓 연결 해제 처리
     // socket.on("disconnect", (roomName) => {  //소켓 끊어질 때 자동으로 발생하는 이벤트이므로 클라에서 관련 코드를 굳이 수동으로 호출할 필요 없고, 따라서 여기서도 roomName 넣어줄 필요가 없게 됨.
     socket.on("disconnect", () => {
+      logger.info("disconnect: 소켓연결이 끊어졌습니다.", "socketConnection.js")
       const userCheck = userInfo.find(
         (check) => check.user.socketId === socket.id
       );
@@ -201,7 +242,7 @@ export function socketConnection() {
         logger.info("A client has disconnected");
         const roomName = user.roomName; // 사용자 객체에서 방 이름 찾기
 
-        console.log("Room Name:", roomName);
+        // console.log("Room Name:", roomName);
 
         if (roomName) {
           const room = rooms.find((room) => room.name === roomName);
@@ -209,15 +250,12 @@ export function socketConnection() {
             if (!Array.isArray(roomUsers[roomName])) {
               // roomUsers[roomName]이 배열이 아닐 경우, 빈 배열로 초기화
               roomUsers[roomName] = [];
-              console.log("roomUsers[roomName] 배열 만들기 완료");
-              console.warn(`${roomName} 방의 사용자 목록이 배열이 아니어서 빈 배열로 초기화`);
             }
 
             // 방장인지 확인
             if (user.nickName == room.ownerNickname) {
               io.to(roomName).emit("roomDeleted", "방장이 방을 삭제했습니다.");
-              
-          
+
               // 받은 roomName으로 rooms 배열에서 해당 방을 찾음
               const roomIndex = rooms.findIndex((room) => room.name === roomName);
 
@@ -227,30 +265,21 @@ export function socketConnection() {
                   rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
                   console.log("방 삭제 후 rooms 배열:", rooms);
               }
-
-              console.log('hycoih::::', roomUsers);
-              roomUsers = rooms.filter((room) => room.name !== roomName);
-              console.log('hycoih::::', roomUsers);
-
             } else {
               //채팅방 실 사용자 관리 배열 업데이트
-              roomUsers[roomName] = roomUsers[roomName].filter((id) => id !== user.id);
-              room.count = roomUsers[roomName].length;
-              console.log("Rooms Array:", rooms);
-              console.log("방 나감 확인 - roomUsers", roomUsers);
-              const userIds = roomUsers[roomName].join(",");
-              console.log(`${roomName} 방의 사용자 목록: 유저 ID: ${userIds}`);
-              console.log(`${roomName}에 남아있는 사람 수: ${room.count || 0} 명`);
-
-              io.to(roomName).emit("roomCountUpdate", room.count);
-             
-            //  socket.emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");
               socket.broadcast.to(roomName).emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");
-
-              const min = 15
-              user.sessionExpiresAt = new Date(Date.now() + min * 60000);
             }
+            //방장이든 일반유저든 상관없이 공통으로
+            roomUsers[roomName] = roomUsers[roomName].filter((id) => id !== user.id);
+            room.count = roomUsers[roomName].length;
+            logger.info(`방에 남아있는 사람 ID - roomUsers:${JSON.stringify(roomUsers)}`, 'socketConnection.js');
+            logger.info(`${roomName}에 남아있는 사람 수: ${room.count || 0} 명`, 'socketConnection.js');
+            io.to(roomName).emit("roomCountUpdate", room.count);
           }
+
+          const extendMin = 15
+          user.sessionExpiresAt = new Date(Date.now() + extendMin * 60000);
+
           user.socketId = null;
           user.roomName = null;
 
@@ -260,6 +289,7 @@ export function socketConnection() {
             socketId: user.socketId,
             roomName: user.roomName,
           });
+
         } else {
           console.error("사용자의 방 정보가 없습니다.");
         }
@@ -289,7 +319,7 @@ export function socketConnection() {
         // 방이 존재하는 경우, rooms 배열에서 삭제합니다.
       if (roomIndex !== -1) {
           rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
-          console.log("방 삭제 후 rooms 배열:", rooms);
+          logger.info(`방 삭제 후 rooms 배열:${rooms}`, 'socketConnection.js')
         }
 
         // roomUsers = rooms.filter((room) => room.name !== roomName);

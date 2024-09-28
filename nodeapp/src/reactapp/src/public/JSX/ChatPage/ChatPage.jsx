@@ -18,6 +18,9 @@ export default function ChatPage() {
     const [messages, setMessages] = useState([]); // 메시지 상태
     const [roomCount, setRoomCount] = useState(0); // 사용자 수 상태
     const [updatedRoomName, setUpdatedRoomName] = useState(roomName); // 방 이름 상태
+    // const [roomName, setRoomName] = useState(location.state?.roomName || '기본 방 이름');
+
+    const [timeoutId, setTimeoutId] = useState(location.state?.timeoutId);
     const navigate = useNavigate();
 
     let socket = useRef(null); // 소켓 연결을 위한 ref
@@ -25,14 +28,31 @@ export default function ChatPage() {
 
     const roomId = location.state?.roomId; // roomId를 사용
     const currentUserName = location.state?.nickName;
+    // const timeoutId = location.state?.timeoutId;
+
+    // const [timeoutId, setTimeoutId] = useState(location.state?.timeoutId); // 사용자 수 상태 = location.state?.timeoutId;
 console.log('socket:::::::::::::::::::::::::',socket)
     useEffect(() => {
         if(!socket.current){
-            socket.current = io('http://localhost:5050');
+            socket.current = io('http://172.30.1.92:5050');
 
             socket.current.on('connect', () => {
                 setIsSocketConnected(true);
                 socket.current.emit('enter_room', currentUserName, roomName);
+                // console.log("timeoutId 상태:", timeoutId);
+                if (timeoutId) {
+                    // console.log("clearTimeout 전 timeoutId:", timeoutId)
+                    clearTimeout(timeoutId); // 타이머 해제
+                    console.log("소켓에서 timeoutId 지웠습니다.")
+                    setTimeoutId(0) 
+                    console.log("소켓에서 timeoutId 만료 후 timeoutId:", timeoutId)
+                }
+                // if (timeoutId) {
+                //     console.log("clearTimeout 전 timeoutId:", timeoutId);
+                //     clearTimeout(timeoutId);
+                //     console.log("소켓에서 timeoutId 지웠습니다.");
+                //     setTimeoutId(null); // null로 초기화
+                // }
             })
             
             socket.current.on('roomCountUpdate', (count) => {
@@ -56,10 +76,16 @@ console.log('socket:::::::::::::::::::::::::',socket)
                         },
                     });
                 }
+            });
             
-                
+            // socket.current.on('timeout_cancelled', ({ timeoutId }) => {
+            //     console.log("타임아웃 해제됨");
+            //     if (timeoutId) {
+            //         clearTimeout(timeoutId); // 타임아웃 해제
+            //         setTimeoutId(null); // timeoutId 상태 초기화
+            //     }
+            // });
 
-            })
             // console.log("chatFrame 방장닉네임 :", ownerNickname)
             // 서버에서 업데이트된 방 정보 받아오는 이벤트 리스너
             socket.current.on('room_updated', (updatedSettings) => {
@@ -75,16 +101,14 @@ console.log('socket:::::::::::::::::::::::::',socket)
                     { nickName, text: reply_message },
                 ]);
             });
-
-
-
-
-        }
+        };
         // 소켓 연결 해제
         return () => {
             socket.current.close();
         };
     }, [currentUserName, roomId]);
+// }, [currentUserName, roomId, timeoutId]);
+
 
     useEffect(() => {
         // 방장 여부 설정
