@@ -34,7 +34,7 @@ export default function ChatPage() {
 console.log('socket:::::::::::::::::::::::::',socket)
     useEffect(() => {
         if(!socket.current){
-            socket.current = io('http://172.30.1.92:5050');
+            socket.current = io('http://43.203.141.146:5050');
 
             socket.current.on('connect', () => {
                 setIsSocketConnected(true);

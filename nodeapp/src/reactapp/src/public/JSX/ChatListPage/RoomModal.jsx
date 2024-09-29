@@ -22,7 +22,7 @@ import axios from "axios"; //서버와 통신을 위한 axios 패키지
         if (isOpen) {
             console.log("RoomModal, 받은 timeoutId:", timeoutId);
             // 서버에서 방 목록을 가져오는 API 호출
-            fetch('http://172.30.1.92:5000/rooms')  // 서버의 API 주소로 변경
+            fetch('http://43.203.141.146:5000/rooms')  // 서버의 API 주소로 변경
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Room list 불러오기 실패');

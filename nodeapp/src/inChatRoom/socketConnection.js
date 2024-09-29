@@ -97,9 +97,7 @@ export function socketConnection() {
         }
 
         // 사용자 ID를 배열에 추가
-        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.1")
         roomUsers[roomName].push(user.id);
-        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.2")
 
         logger.info(`소켓에서 user.roomName: ${user.roomName}`, 'socketConnection.js')
         socket.join(user.roomName); //해당 소켓을 특정 방에 추가
@@ -265,6 +263,7 @@ export function socketConnection() {
                   rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
                   console.log("방 삭제 후 rooms 배열:", rooms);
               }
+              
             } else {
               //채팅방 실 사용자 관리 배열 업데이트
               socket.broadcast.to(roomName).emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");

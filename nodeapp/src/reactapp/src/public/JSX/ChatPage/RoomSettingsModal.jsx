@@ -4,7 +4,7 @@ import '../../CSS/RoomSettingsModal.css';
 
 
 
-const SERVER_URL = 'http://172.30.1.92:5000';
+const SERVER_URL = 'http://43.203.141.146:5000';
 
 export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpdate, onDelete, socket, isSocketConnected}) {
     const [roomName, setRoomName] = useState(roomDetails?.name || '');
