@@ -2,7 +2,6 @@ import { createServer } from "http";
 const httpServer = createServer();
 import { Server } from "socket.io";
 const io = new Server(httpServer, { cors: "*" });
-import cors from "cors";
 
 import { logger } from "../app.js";
 import { userInfo } from "../main_page/main_page.js";
@@ -51,7 +50,6 @@ export function socketConnection() {
         console.log("타임아웃 전")
         if (user.timeoutId) {
           // logger.info("타임아웃id 보낼 때 timeoutId"+user.timeoutId,11111111111 )
-          // socket.emit("timeout_cancelled",  { timeoutId: user.timeoutId })
           clearTimeout(user.timeoutId);
           logger.info(`소켓에서 User ${user.nickName}의 timeout을 지웠습니다 .`,'socketconnection.js');
           // logger.info("소켓에서 타임아웃 해제됨:"+user.timeoutId,11111111111);
@@ -62,7 +60,6 @@ export function socketConnection() {
 
         user.socketId = socket.id;
         user.roomName = roomName;
-        // const roomName = user.roomName;
 
         logger.info(`Client (${user.nickName}) called 'enter_room'.`);
         
@@ -70,7 +67,6 @@ export function socketConnection() {
         const ipAddress =
           socket.request.headers["x-forwarded-for"] ||
           socket.request.connection.remoteAddress;
-        // const ipAddress = socket.request.headers['x-forwarded-for'] || req.connection.remoteAddress; //이거 안됨
 
         console.log(`방에 들어온 사용자 정보:`, {
           id: user.id,
@@ -85,19 +81,14 @@ export function socketConnection() {
         logger.info(`${user.nickName} has joined ${user.roomName}`);
 
         //방이 없을 경우 방을 새로 만들어서 rooms 배열에 업데이트
-        let room = rooms.find((room) => room.name === roomName);
-        // if (!room) {
-        //   room = { name: roomName, count: 0 };
-        //   rooms.push(room);
-        //   console.log(`${roomName} 방이 생성되었고, rooms 배열에 입력 완료.`);
-        // }
-
         if (!Array.isArray(roomUsers[roomName])) {
           roomUsers[roomName] = []; // 배열로 만들어주고, 빈 배열로 초기화
         }
 
         // 사용자 ID를 배열에 추가
+        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.1")
         roomUsers[roomName].push(user.id);
+        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.2")
 
         logger.info(`소켓에서 user.roomName: ${user.roomName}`, 'socketConnection.js')
         socket.join(user.roomName); //해당 소켓을 특정 방에 추가
@@ -132,7 +123,6 @@ export function socketConnection() {
           `${nickName}님이 입장하셨습니다. 반갑습니다.`,
           "알리미"
         ); // 나도 웰컴 메시지 확인할 수 있게 수정.
-        // res.send("웰컴메시지 보냄.")
 
         //broadcast: 현재 소켓(클라이언트)을 제외한 다른 소켓들에게만 메시지 보냄.
         socket.broadcast
@@ -263,7 +253,6 @@ export function socketConnection() {
                   rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
                   console.log("방 삭제 후 rooms 배열:", rooms);
               }
-              
             } else {
               //채팅방 실 사용자 관리 배열 업데이트
               socket.broadcast.to(roomName).emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");

@@ -14,7 +14,7 @@ export default function ChatListPage() {
     // const [timeoutmin, setTimeoutmin] = useState(1000);
     const location = useLocation();
     const navigate = useNavigate();
-    const SERVER_URL = 'http://43.203.141.146:5000';
+    const SERVER_URL = 'http://43.203.141.146:9000';
 
     // 서버에서 방 목록을 가져오는 함수
 
