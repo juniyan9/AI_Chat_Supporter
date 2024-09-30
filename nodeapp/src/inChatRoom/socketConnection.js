@@ -12,7 +12,7 @@ export function socketConnection() {
 
   const WS_port = 5050;
   httpServer.listen(WS_port, () => {
-    logger.info(`WebSocket listening at port ${WS_port}`, 'socketConnection.js');
+    logger.info("WebSocket listening at port %d", WS_port);
   });
 
   //events
@@ -60,6 +60,7 @@ export function socketConnection() {
 
         user.socketId = socket.id;
         user.roomName = roomName;
+        // const roomName = user.roomName;
 
         logger.info(`Client (${user.nickName}) called 'enter_room'.`);
         
@@ -81,6 +82,8 @@ export function socketConnection() {
         logger.info(`${user.nickName} has joined ${user.roomName}`);
 
         //방이 없을 경우 방을 새로 만들어서 rooms 배열에 업데이트
+        let room = rooms.find((room) => room.name === roomName);
+
         if (!Array.isArray(roomUsers[roomName])) {
           roomUsers[roomName] = []; // 배열로 만들어주고, 빈 배열로 초기화
         }
@@ -107,7 +110,6 @@ export function socketConnection() {
         socket.emit("room_details", room);
         io.to(roomName).emit("room_details", room);
         // console.log("업데이트된 방 정보 전달:", room)
-        // socket.emit('update_room', room)
         io.to(roomName).emit("newRoomInfo", room);
 
         const userIds = roomUsers[roomName].join(",");
@@ -267,7 +269,6 @@ export function socketConnection() {
 
           const extendMin = 15
           user.sessionExpiresAt = new Date(Date.now() + extendMin * 60000);
-          logger.info(`방을 나간 ${user.nickName}의 세션을 연장하였습니다.`, 'socketConnection.js')
 
           user.socketId = null;
           user.roomName = null;
