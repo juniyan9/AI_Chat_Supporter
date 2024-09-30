@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import '../../CSS/ChatFrame.css';
 import io from 'socket.io-client';
 import InfoBar from "./InfoBar";
@@ -13,11 +13,6 @@ export default function ChatFrame({setIsSocketConnected, UserName, room, socket,
     const [ownerNickname, setOwnerNickName] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [messages, setMessages] = useState([]);
-    
-    
-
-    
-    console.log("ChatFrame,useeffect");
     
     useEffect(() => {
         if(room && !socket.current){
@@ -43,6 +38,7 @@ export default function ChatFrame({setIsSocketConnected, UserName, room, socket,
             socket.current.on('room_details', ( roomDetails ) => {
                 setOwnerNickName(roomDetails.ownerNickname);  // 부모 컴포넌트로 ownerNickname 전달
                 setMaxCount(roomDetails.maxCount);
+                setRoomName(roomDetails.roomName);
             });
 
 
@@ -61,7 +57,8 @@ export default function ChatFrame({setIsSocketConnected, UserName, room, socket,
                 console.log('Room settings updated :', updatedSettings);
                 setMaxCount(updatedSettings.maxCount);   // 변경된 최대 인원수 업데이트
                 setIsPrivate(updatedSettings.isPrivate); //변경된 비공개 여부 업데이트
-                setPassword(updatedSettings.password); //변경된 비밀번호 업데이트
+                setPassword(updatedSettings.password);
+                setRoomName(updatedSettings.name);
             })
 
 
@@ -139,9 +136,7 @@ export default function ChatFrame({setIsSocketConnected, UserName, room, socket,
                         ownerNickname: ownerNickname,
                         nickName: UserName
                     }}
-                    
                 />
-        
             )}
         </div>
     );

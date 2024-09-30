@@ -47,10 +47,10 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         // 새로운 방 정보 생성
         const newRoom = {
             name: trimmedRoomName,
+            count: 0,
+            maxCount,
             password,
             isPrivate,
-            maxCount,
-            count: 0,
             ownerNickname: UserName,
         };
     
@@ -76,7 +76,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
                     방 제목:
                     <input 
                         type="text" 
-                        value={roomName} 
+                        value={roomName}
                         onChange={(e) => setRoomName(e.target.value)}
                         placeholder="방 제목을 입력하세요"
                     />

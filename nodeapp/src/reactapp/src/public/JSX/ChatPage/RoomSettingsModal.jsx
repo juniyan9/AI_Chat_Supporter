@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import '../../CSS/RoomSettingsModal.css';
 
 
@@ -14,9 +13,6 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
     const [isDeleting, setIsDeleting] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [count, setCount] = useState(roomDetails?.count || 0);
-
-    // const location = useLocation(); // 훅을 호출해 현재 경로와 관련된 상태 정보를 얻습니다.
-    const navigate = useNavigate();
 
     useEffect(() => {
         if (roomDetails) {
@@ -37,10 +33,6 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
         
         if (roomName.trim() === '') {
             alert('방 이름을 입력하세요.');
-            return;
-        }
-        if (maxCount < 2 || maxCount > 10) {
-            alert('최대 인원수는 2에서 10 사이여야 합니다.');
             return;
         }
 
@@ -99,21 +91,8 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
     const handleDelete = async () => {
         if (window.confirm("정말로 방을 삭제하시겠습니까?")) {
             setIsDeleting(true);
-
-            console.log("roomName", roomName)
-
-           
-
             socket.current.emit('delete_room',roomName)
-
-                       // 삭제 요청 후 바로 ChatListPage로 이동
-                    navigate('/ChatListPage', {
-                        state: {
-                            nickName: roomDetails.nickName,  // 삭제 후 닉네임 정보 전달
-                        },
-                    });
-            
-                    setIsDeleting(false);  // 삭제 상태 리셋
+            setIsDeleting(false);  // 삭제 상태 리셋
         }
     };
 
@@ -135,7 +114,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
                         최대 인원: {maxCount}
                         <input
                             type="range"
-                            min="1"
+                            min="2"
                             max="10"
                             step="1"
                             value={maxCount}
