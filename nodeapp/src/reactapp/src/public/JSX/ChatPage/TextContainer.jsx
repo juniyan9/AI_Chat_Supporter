@@ -1,9 +1,8 @@
 import React from "react"
 import '../../CSS/TextContainer.css';
 import { useState,useEffect,useRef } from "react";
-import AImodel from "./AImodel"
 
-export default function TextContainer({ socket, setMessages, nickName, roomName}) {
+export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner,setShowModal}) {
     
     const [message, setMessage] = useState('');
     const [scrollon,setscrollon] = useState(false);
@@ -57,11 +56,16 @@ export default function TextContainer({ socket, setMessages, nickName, roomName}
               ]);
         }
     }
+    const handleOpenModal = () => setShowModal(true);
     
 
     return (
         <div className="TextContainer">
-                <AImodel/>
+                {isOwner ? (
+                    <button onClick={handleOpenModal} className="settingsButton">
+                        방 설정
+                    </button>
+                ) : <button>노방장</button>}
                 <textarea
                     className="textinput"
                     name="message"

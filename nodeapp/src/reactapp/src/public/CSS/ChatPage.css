@@ -1,8 +1,5 @@
 .chatPage {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
 }
 
 .chatListPage {
@@ -68,5 +65,5 @@
 }
 
 .chatFrameContainer{
-    position: relative;
+    width: 45%;
 }
