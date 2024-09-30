@@ -10,7 +10,7 @@ import { rooms } from "../lobby/addRoom.js";
 export function socketConnection() {
   let roomUsers = {};
 
-  const WS_port = 9090;
+  const WS_port = 5050;
   httpServer.listen(WS_port, () => {
     logger.info(`WebSocket listening at port ${WS_port}`, 'socketConnection.js');
   });
