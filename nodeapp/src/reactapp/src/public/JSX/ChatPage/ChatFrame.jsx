@@ -7,7 +7,7 @@ import TextContainer from "./TextContainer";
 import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({setIsSocketConnected,location, UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount}) {
+export default function ChatFrame({setIsSocketConnected, UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount}) {
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
     const [ownerNickname, setOwnerNickName] = useState('');
@@ -16,7 +16,6 @@ export default function ChatFrame({setIsSocketConnected,location, UserName, room
     
     
 
-    const roomId = location.state?.roomId; // roomId를 사용
     
     console.log("ChatFrame,useeffect");
     
@@ -84,7 +83,7 @@ export default function ChatFrame({setIsSocketConnected,location, UserName, room
                 socket.current =null;
             }
         };
-    }, [UserName, roomId, room]);
+    }, [UserName, room]);
 
     useEffect(() => {
         // 방장 여부 설정

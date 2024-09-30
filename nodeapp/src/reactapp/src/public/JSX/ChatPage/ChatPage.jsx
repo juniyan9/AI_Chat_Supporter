@@ -45,7 +45,7 @@ export default function ChatPage() {
             <div className="chatFrameContainer">
                 <ChatFrame
                     UserName={UserName}
-                    location={location}
+                    // roomId={roomId}
                     room={selectedRoom}
                     socket={socket}
                     roomCount={roomCount}

@@ -8,6 +8,8 @@ export default function ChatListPage({setIsSocketConnected,isSocketConnected,onS
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [timeoutId, setTimeoutId] = useState(0);
+
     const SERVER_URL = 'http://localhost:5000';
     console.log('rooms',rooms);
 
@@ -29,8 +31,17 @@ export default function ChatListPage({setIsSocketConnected,isSocketConnected,onS
             // console.log("서버의 응답 데이터:", response);
             // console.log("서버의 data:" ,data);
             // console.log("닉네임", UserName);
-            setRooms(data);
-            setFilteredRooms(data); // 모든 방을 필터링 없이 설정
+            setRooms(data.rooms);
+            setFilteredRooms(data.rooms); // 모든 방을 필터링 없이 설정
+            
+            if (data.timeoutmin) {
+                console.log("timeout 생성됩니다.");
+                setTimeoutId(setTimeout(() => {
+                    console.log("timeout 됐습니다.")
+                    setTimeoutId(0);
+                }, data.timeoutmin));
+            }
+
         } catch (error) {
             console.error('Failed to fetch rooms:', error);
         }
@@ -149,6 +160,7 @@ export default function ChatListPage({setIsSocketConnected,isSocketConnected,onS
                     maxCount={maxCount}
                     setMaxCount={setMaxCount}
                     UserName={UserName}
+                    timeoutId={timeoutId}
                 />
             )}
         </div>
