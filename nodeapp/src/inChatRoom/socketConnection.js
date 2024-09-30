@@ -10,9 +10,9 @@ import { rooms } from "../lobby/addRoom.js";
 export function socketConnection() {
   let roomUsers = {};
 
-  const WS_port = 5050;
+  const WS_port = 9090;
   httpServer.listen(WS_port, () => {
-    logger.info("WebSocket listening at port %d", WS_port);
+    logger.info(`WebSocket listening at port ${WS_port}`, 'socketConnection.js');
   });
 
   //events
@@ -267,6 +267,7 @@ export function socketConnection() {
 
           const extendMin = 15
           user.sessionExpiresAt = new Date(Date.now() + extendMin * 60000);
+          logger.info(`방을 나간 ${user.nickName}의 세션을 연장하였습니다.`, 'socketConnection.js')
 
           user.socketId = null;
           user.roomName = null;

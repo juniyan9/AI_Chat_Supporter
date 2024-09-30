@@ -73,7 +73,6 @@ import getRoomListRouter from "./lobby/roomList.js";
 import addRoomRouter from "./lobby/addRoom.js";
 import updateRoomDataRouter from "./lobby/updateRoom.js";
 import deleteRoomRouter from "./inChatRoom/deleteRoom.js";
-import geminiAPIrouter from "./model_routers/gemini.js";
 import geminiPostRouter from "./model_routers/geminiPostRouter.js";
 import geminiGetRouter from "./model_routers/geminiGetRouter.js";
 import llamaPostRouter from "./model_routers/llamaPostRouter.js";
@@ -164,5 +163,6 @@ app.use("/gemini/:id", geminiGetRouter);
 
 // llama POST route
 app.use("/api/chat", llamaPostRouter);
+
 
 export { app, io };
