@@ -6,6 +6,8 @@ const io = new Server(httpServer, { cors: "*" });
 import { logger } from "../app.js";
 import { userInfo } from "../main_page/main_page.js";
 import { rooms } from "../lobby/addRoom.js";
+import { analyzeEmotion } from "../model_function/analyzeEmotion.js";
+import { analyzeSentiment } from "../model_function/analyzeSentiment.js";
 
 export function socketConnection() {
   let roomUsers = {};
@@ -20,6 +22,10 @@ export function socketConnection() {
     logger.info("A Client has connected.");
     // console.log("socket:", socket) //잘 찍음
     // console.log("socket.id:", socket.id) //잘 찍음
+
+    // socket.on('emotion_result', (result) => {
+    //   console.log(`Python에서 받은 감정 분석 결과: ${result}`);
+    // });
 
     // 방에 들어갈 때 socketId와 roomName이 userInfo의 user에 업데이트 돼야함.
     socket.on("enter_room", (nickName, roomName) => {
@@ -89,9 +95,7 @@ export function socketConnection() {
         }
 
         // 사용자 ID를 배열에 추가
-        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.1")
         roomUsers[roomName].push(user.id);
-        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.2")
 
         logger.info(`소켓에서 user.roomName: ${user.roomName}`, 'socketConnection.js')
         socket.join(user.roomName); //해당 소켓을 특정 방에 추가
@@ -166,23 +170,37 @@ export function socketConnection() {
 
     // //유저 메시지 접수 및 소켓들에 보내주기
     //socket id, message id, roomName, message, date 받아오기
-    socket.on("message", (message, roomName) => {
+    socket.on("message", async (message, roomName) => {
 
       const userCheck = userInfo.find(
         (check) => check.user.socketId === socket.id
       );
 
-      // socket.to(roomName).emit('reply', message, userCheck.user.nickName);
-      // if (userCheck) {
-      // io.to(roomName).emit('reply', message, userCheck.user.nickName);
-      // }
+      try {
+        //감정분석
+        const result = await analyzeEmotion(message);
+        const emotionMatch = result.match(/(공포|놀람|분노|슬픔|중립|행복|혐오)/);
+        const emotion = emotionMatch ? emotionMatch[0] : "감정 분석 실패"; // 매칭된 감정이 없으면 기본 메시지 사용
 
-      // messages.push(message);
-      //   // console.log('Updated messages array:', messages);
+        //감성분석
+        const sentimentResult = await analyzeSentiment(message);
+        const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
+        const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패"; // 긍정/부정 결과
+        const score = sentimentMatch ? sentimentMatch[1] : "N/A"; // 확률 점수
 
-      socket.to(roomName).emit('reply', message);
-      logger.info("Received message from client: " + message);
-      logger.info("Received message from client room: " + roomName);
+        // 분석된 감정을 클라이언트에 전송
+        // logger.info(`emit 전, 분석된 감정: ${emotion}`, 'socketConnection.js')
+        logger.info(`emit 전, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
+        socket.to(roomName).emit('reply', message, userCheck.user.nickName, emotion, sentiment, score);
+        // logger.info(`emit 후, 분석된 감정: ${emotion}`, 'socketConnection.js')
+        logger.info(`emit 후, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
+
+        
+        logger.info("Received message from client: " + message);
+        logger.info("Received message from client room: " + roomName);
+    } catch (error) {
+        console.error("Error during emotion analysis:", error);
+    }
     });
 
     // socket.on("update_messages", (updatedMessages) => {

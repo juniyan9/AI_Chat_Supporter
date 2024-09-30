@@ -47,7 +47,7 @@ getRoomListRouter.get("/", (req, res) => {
   }
   // logger.info('rooms 정보 보내기 전 rooms:', rooms, 'roomList.js')
   const roomsAndTimeout = {rooms: rooms, timeoutmin: timeoutmin}
-  res.json(roomsAndTimeout);
+  res.json(roomsAndTimeout)
 });
 
 export default getRoomListRouter;
