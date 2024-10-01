@@ -8,6 +8,7 @@ import RoomSettingsModal from './RoomSettingsModal';
 
 
 export default function ChatFrame({setIsSocketConnected, UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount}) {
+    console.log("Room Name in TextContainer:", roomName);
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
     const [ownerNickname, setOwnerNickName] = useState('');

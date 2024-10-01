@@ -39,6 +39,7 @@ export default function ChatListPage({setIsSocketConnected,isSocketConnected,onS
                 setTimeoutId(setTimeout(() => {
                     console.log("timeout 됐습니다.")
                     setTimeoutId(0);
+                    // navigate('/');
                 }, data.timeoutmin));
             }
 

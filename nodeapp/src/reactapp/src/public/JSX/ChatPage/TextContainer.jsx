@@ -44,6 +44,8 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
 
         if(message.trim() !== '' && message.length !== 0){
             socket.current.emit('message', message, roomName);
+            console.log(`message보낼 때 ${roomName} 잘 받아옴`)
+
             
             setMessage('');
             setMessages((prevMessages) => [
