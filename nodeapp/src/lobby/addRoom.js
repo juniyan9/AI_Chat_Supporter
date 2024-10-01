@@ -23,7 +23,7 @@ addRoomRouter.post("/", (req, res) => {
      return res.status(400).json({ message: "이미 존재하는 방 이름입니다." });
    }
 
-  // logger.info(`session.user 정보 from addRoomRouter: ${JSON.stringify(req.session.user)}`,'addRoom.js');
+  logger.info(`session.user 정보 from addRoomRouter: ${JSON.stringify(req.session.user)}`,'addRoom.js');
 
 
   if (!req.session.user) {

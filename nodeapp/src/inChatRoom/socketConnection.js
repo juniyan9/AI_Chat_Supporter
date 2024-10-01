@@ -23,10 +23,6 @@ export function socketConnection() {
     // console.log("socket:", socket) //잘 찍음
     // console.log("socket.id:", socket.id) //잘 찍음
 
-    // socket.on('emotion_result', (result) => {
-    //   console.log(`Python에서 받은 감정 분석 결과: ${result}`);
-    // });
-
     // 방에 들어갈 때 socketId와 roomName이 userInfo의 user에 업데이트 돼야함.
     socket.on("enter_room", (nickName, roomName) => {
       logger.info('소켓연결','socketConnection.js');
@@ -170,37 +166,39 @@ export function socketConnection() {
 
     // //유저 메시지 접수 및 소켓들에 보내주기
     //socket id, message id, roomName, message, date 받아오기
-    socket.on("message", async (message, roomName) => {
+    socket.on("message", (message, roomName) => {
 
       const userCheck = userInfo.find(
         (check) => check.user.socketId === socket.id
       );
 
-      try {
+      socket.to(roomName).emit('reply', message, userCheck.user.nickName);
+      // try {
         //감정분석
-        const result = await analyzeEmotion(message);
-        const emotionMatch = result.match(/(공포|놀람|분노|슬픔|중립|행복|혐오)/);
-        const emotion = emotionMatch ? emotionMatch[0] : "감정 분석 실패"; // 매칭된 감정이 없으면 기본 메시지 사용
+    //     const result = analyzeEmotion(message);
+    //     const emotionMatch = result.match(/(공포|놀람|분노|슬픔|중립|행복|혐오)/);
+    //     const emotion = emotionMatch ? emotionMatch[0] : "감정 분석 실패"; // 매칭된 감정이 없으면 기본 메시지 사용
 
-        //감성분석
-        const sentimentResult = await analyzeSentiment(message);
-        const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
-        const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패"; // 긍정/부정 결과
-        const score = sentimentMatch ? sentimentMatch[1] : "N/A"; // 확률 점수
+    //     // //감성분석
+    //     const sentimentResult = analyzeSentiment(message);
+    //     const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
+    //     const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패"; // 긍정/부정 결과
+    //     const score = sentimentMatch ? sentimentMatch[1] : "N/A"; // 확률 점수
 
-        // 분석된 감정을 클라이언트에 전송
-        // logger.info(`emit 전, 분석된 감정: ${emotion}`, 'socketConnection.js')
-        logger.info(`emit 전, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
-        socket.to(roomName).emit('reply', message, userCheck.user.nickName, emotion, sentiment, score);
-        // logger.info(`emit 후, 분석된 감정: ${emotion}`, 'socketConnection.js')
-        logger.info(`emit 후, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
+    //     // 분석된 감정을 클라이언트에 전송
+    //     // logger.info(`emit 전, 분석된 감정: ${emotion}`, 'socketConnection.js')
+    //     logger.info(`emit 전, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
+    //     socket.to(roomName).emit('reply', message, userCheck.user.nickName, emotion, sentiment, score);
+    //     // socket.to(roomName).emit('reply', message);
+    //     // logger.info(`emit 후, 분석된 감정: ${emotion}`, 'socketConnection.js')
+    //     logger.info(`emit 후, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
 
         
-        logger.info("Received message from client: " + message);
-        logger.info("Received message from client room: " + roomName);
-    } catch (error) {
-        console.error("Error during emotion analysis:", error);
-    }
+    //     logger.info("Received message from client: " + message);
+    //     logger.info("Received message from client room: " + roomName);
+    // // } catch (error) {
+    //     console.error("Error during emotion analysis:", error);
+    // // }
     });
 
     // socket.on("update_messages", (updatedMessages) => {
