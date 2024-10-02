@@ -29,7 +29,6 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
     const handleSave = async () => {
         // 공백 제거 후 방 제목 만들기
         const trimmedRoomName = roomName.trim();
-        setRoomName('');
     
         // 방 제목이 2자 이상인지 확인
         if (trimmedRoomName.length < 2) {
@@ -47,10 +46,10 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         // 새로운 방 정보 생성
         const newRoom = {
             name: trimmedRoomName,
+            count: 0,
+            maxCount,
             password,
             isPrivate,
-            maxCount,
-            count: 0,
             ownerNickname: UserName,
         };
     
@@ -76,7 +75,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
                     방 제목:
                     <input 
                         type="text" 
-                        value={roomName} 
+                        value={roomName}
                         onChange={(e) => setRoomName(e.target.value)}
                         placeholder="방 제목을 입력하세요"
                     />

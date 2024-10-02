@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import '../../CSS/ChatListPage.css';
 import '../../CSS/FilteredRoom.css';
 import RoomModal from './RoomModal';
+import { useNavigate} from 'react-router-dom';
 
 export default function ChatListPage({setIsSocketConnected,isSocketConnected,onSelectedRoom, UserName, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount}) {
     const [rooms, setRooms] = useState([]);
@@ -9,15 +10,22 @@ export default function ChatListPage({setIsSocketConnected,isSocketConnected,onS
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [timeoutId, setTimeoutId] = useState(0);
+    
+    const navigate = useNavigate();
 
+    console.log('listpage16',roomName);
+    
     const SERVER_URL = 'http://localhost:5000';
-    console.log('rooms',rooms);
-
+    // console.log('rooms1',rooms);
+    //rooms : 현재 존재하는 방배열 및 정보 conut,id,private,roomname,ownerid,ownernickname,password 등
     const handleSelectedRoom = (room) => {
+        //console.log('chatlistpage룸',room);//conut,id,private,maxcount,name(roomname),ownerid,ownernickname,password
         onSelectedRoom(room);
+        setTimeoutId(null);
         if(isSocketConnected){
             setIsSocketConnected(false);
         }
+        fetchRooms();
     }
 
     // 서버에서 방 목록을 가져오는 함수
@@ -28,17 +36,19 @@ export default function ChatListPage({setIsSocketConnected,isSocketConnected,onS
                 nickName : UserName
             });
             const data = await response.json();
-            // console.log("서버의 응답 데이터:", response);
-            // console.log("서버의 data:" ,data);
-            // console.log("닉네임", UserName);
             setRooms(data.rooms);
             setFilteredRooms(data.rooms); // 모든 방을 필터링 없이 설정
+            //console.log("서버의 응답 데이터:", response); // 
+            //console.log("서버의 data:" ,data); // rooms,timeoutmin
+            //console.log("닉네임", UserName); //유저 닉네임
+            // console.log("data.rooms", data.rooms); //rooms랑 같음
             
             if (data.timeoutmin) {
                 console.log("timeout 생성됩니다.");
                 setTimeoutId(setTimeout(() => {
                     console.log("timeout 됐습니다.")
                     setTimeoutId(0);
+                    // navigate('/');
                 }, data.timeoutmin));
             }
 
@@ -65,7 +75,9 @@ export default function ChatListPage({setIsSocketConnected,isSocketConnected,onS
             isPrivate: newRoom.isPrivate,
             nickName: newRoom.ownerNickname
         };
-
+        
+        console.log('새로운방방만들기',room);// 새로운 방 데이터 넘겨주는데 닉네임을 넘겨주기
+        console.log('새로운방만들기2',newRoom); // 새로운 방데이터 넘겨주는데 ownernickname추가
 
         try {
             const response = await fetch(`${SERVER_URL}/add_room`, {
@@ -118,7 +130,7 @@ export default function ChatListPage({setIsSocketConnected,isSocketConnected,onS
                     </button>   
                     <input
                         value={searchQuery}
-                        onChange={handleSearchChange} // 검색어 치면 그때 한번 딱 렌더링 해주는 기능으로 개선 해보자. 지금은 효율이 떨어진다.
+                        onChange={handleSearchChange}
                         placeholder="방 제목 검색"
                         className="search-input"
                     />
