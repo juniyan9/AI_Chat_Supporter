@@ -5,8 +5,8 @@
 
 .bottombutton{
     position: absolute;
-    top: 520px;
-    left: 180px;
+    top: 90%;
+    left: 50%;
     cursor: pointer;
     border-radius: 50%;
     background-color: #ababab;

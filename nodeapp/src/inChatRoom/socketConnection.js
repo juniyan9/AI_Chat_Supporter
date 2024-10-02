@@ -122,7 +122,7 @@ export function socketConnection() {
         //userCheck의 user
         socket.emit(
           "reply",
-          `${nickName}님이 입장하셨습니다. 반갑습니다.`,
+          `${nickName}님이 ${roomName} 에 입장하셨습니다. 반갑습니다.`,
           "알리미"
         ); // 나도 웰컴 메시지 확인할 수 있게 수정.
 
@@ -131,7 +131,7 @@ export function socketConnection() {
           .in(roomName)
           .emit(
             "reply",
-            `${nickName}님이 입장하셨습니다. 반갑습니다.`,
+            `${nickName}님이 ${roomName} 에 입장하셨습니다. 반갑습니다.`,
             "알리미"
           );
       } //위에서는 if(user)로 user를 걸어줘서 user.nickName / user.roomName 이런 식으로 안 해줘도 됨.

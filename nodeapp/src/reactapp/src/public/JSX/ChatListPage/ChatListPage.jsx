@@ -21,10 +21,10 @@ export default function ChatListPage({setIsSocketConnected,isSocketConnected,onS
     const handleSelectedRoom = (room) => {
         //console.log('chatlistpage룸',room);//conut,id,private,maxcount,name(roomname),ownerid,ownernickname,password
         onSelectedRoom(room);
-        setTimeoutId(null);
         if(isSocketConnected){
             setIsSocketConnected(false);
         }
+        setTimeoutId(null);
         fetchRooms();
     }
 
