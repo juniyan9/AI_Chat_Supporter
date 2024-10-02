@@ -19,33 +19,35 @@ export default function ChatPage() {
     const UserName = location.state?.nickName;
 
     let socket = useRef(null); // 소켓 연결을 위한 ref
+    // console.log("chatpage룸네임22",roomName);
 
 
     const handleSelectRoom = (room) =>{
-        setSelectedRoom(room)
+        setSelectedRoom(room);
+        setRoomName(room.name);
     }
+    
     
     return (
         <div className="chatPage">
-        <Chatlistpage
-            onSelectedRoom={handleSelectRoom}
-            UserName={UserName}
-            socket={socket}
-            roomName={roomName}
-            setRoomName={setRoomName}
-            password={password}
-            setPassword={setPassword}
-            isPrivate={isPrivate}
-            setIsPrivate={setIsPrivate}
-            maxCount={maxCount}
-            setMaxCount={setMaxCount}
-            setIsSocketConnected={setIsSocketConnected}
-            isSocketConnected={isSocketConnected}
-        />
+            <Chatlistpage
+                onSelectedRoom={handleSelectRoom}
+                UserName={UserName}
+                roomName={roomName}
+                setRoomName={setRoomName}
+                password={password}
+                setPassword={setPassword}
+                isPrivate={isPrivate}
+                setIsPrivate={setIsPrivate}
+                roomCount={roomCount}
+                maxCount={maxCount}
+                setMaxCount={setMaxCount}
+                setIsSocketConnected={setIsSocketConnected}
+                isSocketConnected={isSocketConnected}
+            />
             <div className="chatFrameContainer">
                 <ChatFrame
                     UserName={UserName}
-                    // roomId={roomId}
                     room={selectedRoom}
                     socket={socket}
                     roomCount={roomCount}

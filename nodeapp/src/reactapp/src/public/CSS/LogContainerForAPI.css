@@ -1,8 +1,7 @@
 .LogContainerForAPI {
     color: black;
     background: #FAF4F4;
-    border: 3px solid #d9d9d9;
-    width: 100%;
+    border-left: 3px solid #d9d9d9;
     height: 100%;
 }
 

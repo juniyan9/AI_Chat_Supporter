@@ -137,7 +137,7 @@ export function socketConnection() {
       } //위에서는 if(user)로 user를 걸어줘서 user.nickName / user.roomName 이런 식으로 안 해줘도 됨.
     });
 
-    socket.on('update_room', (data) => {
+    socket.on('room_updated', (data) => {
       const { originalName, updatedName, updatedMaxCount, updatedPassword, updatedIsPrivate } = data;
 
       let roomIndex = rooms.findIndex(

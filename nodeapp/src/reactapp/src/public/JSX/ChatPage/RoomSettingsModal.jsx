@@ -25,8 +25,8 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
         }
     }, [roomDetails]);
 
-    console.log("roomDetails:" , roomDetails.ownerNickname);
-    console.log(roomDetails);
+    //console.log("룸디테일즈 방장닉네임" , roomDetails.ownerNickname); //방장 닉네임뜸
+    //console.log(roomDetails); isprivate,maxCount,name,nickName,ownerNickname,password
 
     const handleSave = async () => {
         // console.log(roomDetails.ownerNickname);
