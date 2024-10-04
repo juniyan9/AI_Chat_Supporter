@@ -1,7 +1,9 @@
 .user1 {
-  width: 180px;
+  width: 51%;
   background: #fff;
-  margin :5px 0px 0px 197px;
+  float: right;
+  margin-top: 10px;
+  margin-right: 3px;
 }
 
 .username1{
@@ -20,9 +22,11 @@
   margin-bottom: 2px;
 }
 .user2 {
-  width: 180px;
+  width: 51%;
   background: #fff;
-  margin: 5px 0px 0px 13px;
+  float: left;
+  margin-top: 10px;
+  margin-left: 8px;
 }
 
 .user2 .usetext{
@@ -64,7 +68,7 @@
 }
 
 .buttonstyle{
-  width: 173px;
+  width: 97%;
   height: 25px;
   border: 0px solid;
   border-top: 1px solid;

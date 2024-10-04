@@ -41,7 +41,9 @@ addRoomRouter.post("/", (req, res) => {
 
   const ownerID = userCheck.user.id;
 
-  const room = {id: nextRoomId++, name,
+  const room = {
+    id: nextRoomId++,
+    name,
     count,
     maxCount,
     password,

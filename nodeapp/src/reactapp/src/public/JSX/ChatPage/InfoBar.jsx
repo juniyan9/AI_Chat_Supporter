@@ -1,7 +1,6 @@
 import '../../CSS/InfoBar.css';
 import {useState, useEffect} from 'react';
 import userIcon from '../../IMG/multiple_user_icon.png';
-// import { io } from 'socket.io-client';
 
 export default function InfoBar({ roomName, setonsearchtext, roomCount, maxCount }) {
     const [search, setSearch] = useState('');
@@ -29,7 +28,7 @@ export default function InfoBar({ roomName, setonsearchtext, roomCount, maxCount
                 value={search}
                 onChange={inputText}
             />
-            <button className='barsearch'></button>
+            {/* <button className='barsearch'></button> */}
             <div className='line'></div>
         </div>
     );

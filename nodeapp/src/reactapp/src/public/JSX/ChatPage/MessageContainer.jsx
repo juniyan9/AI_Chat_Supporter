@@ -29,7 +29,7 @@ export default function MessageContainer({messages,onsearchtext}) {
         container.addEventListener('scroll',Scrollbutton);
 
         
-        console.log("Scroll Top1:", scrollRef.current.scrollTop);
+
         return ()=>{
             container.removeEventListener('scroll',Scrollbutton);
         }
@@ -49,7 +49,6 @@ export default function MessageContainer({messages,onsearchtext}) {
             }
         }
     };
-    console.log("Scroll Top2:", scrollRef.current.scrollTop);
     requestAnimationFrame(scrolltoBottom);
 
     },[messages,onsearchtext,usescrollup]);
@@ -57,7 +56,6 @@ export default function MessageContainer({messages,onsearchtext}) {
     const bottombutton = () =>{
         scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         setusescrollup(false);
-        console.log("Scroll Top3:", scrollRef.current.scrollTop);
     }
 
     return (
