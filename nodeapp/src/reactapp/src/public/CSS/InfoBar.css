@@ -1,27 +1,27 @@
 .InfoBar {
     color: #000;
     background: #fff;
-    height: 60px;
+    height: 8%;
 }
 
 .InfoBar h3{
-    width: 360px;
-    padding: 14px;
-    font-size: 20px;
+    width: 40%;
+    padding: 10px;
+    font-size: 18px;
+    float: left;
 }
 
 .line{
     border-top: 1px solid #444444;
     width: 70%;
-    margin: -35px auto;
+    margin: 19px auto;
 }
 
 .searchtext{
-    width: 120px;
-    height: 20px;
-    position: relative;
-    bottom: 50px;
-    left: 260px;
+    width: 30%;
+    height: 30%;
+    float: right;
+    margin-top: 2%;
 }
 .barsearch{
     background: url(../IMG/Vector.png)no-repeat 6px;

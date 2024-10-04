@@ -18,7 +18,7 @@ getRoomListRouter.get("/", (req, res) => {
 
   //  logger.info(`getRoomListRouter, session check: ${JSON.stringify(req.session.user)}`, 'roomList.js')
   
-  if (!req.session) {
+  if (!req.session || !req.session.user) {
     return res.status(401).send("세션이 유효하지 않습니다.")
   }
 
@@ -28,6 +28,10 @@ getRoomListRouter.get("/", (req, res) => {
 
   // 사용자 정보 업데이트
   const userIndex = userInfo.findIndex(user => user.user.id === req.session.user.id);
+  
+  if (userIndex === -1) {
+    return res.status(404).send("사용자를 찾을 수 없습니다.");
+  }
 
   const user = userInfo[userIndex].user;
   // console.log("roomlist, if문 위에서:", user.timeoutId)

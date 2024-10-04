@@ -80,7 +80,13 @@ userRegisterRouter.post("/", (req, res) => {
       userInfo[userIndex].user.sessionExpiresAt = sessionExpiresAt;
       // userInfo[userIndex].user.connectSid = connectSid;
     }
-    logger.info(`userInfo from userRegisterRouter: ${JSON.stringify(userInfo)}`,'main_page.js');
+
+    const userInfoWithoutTimeout = userInfo.map(user => {
+      const { timeoutId, ...rest } = user.user;  // timeoutId를 제외한 나머지 속성만 사용
+      return { user: rest };
+    });
+
+    logger.info(`userInfo from userRegisterRouter: ${JSON.stringify(userInfoWithoutTimeout)}`,'main_page.js');
     
     res.send("non-existent"); // 사용자 추가 완료
   }
