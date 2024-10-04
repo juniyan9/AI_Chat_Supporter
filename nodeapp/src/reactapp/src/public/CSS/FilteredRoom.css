@@ -1,6 +1,5 @@
 .search-section {
     width: 100%;
-    max-width: 1200px;
     margin-bottom: 20px;
     display: flex;
     justify-content: flex-end;
@@ -12,7 +11,8 @@
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    width: 200px;
+    width: 50%;
+    margin-bottom: 5px;
 }
 
 .search-input:focus {
