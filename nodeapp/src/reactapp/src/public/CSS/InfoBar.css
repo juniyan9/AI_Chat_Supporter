@@ -1,27 +1,32 @@
 .InfoBar {
     color: #000;
     background: #fff;
-    height: 60px;
+    height: 8%;
+    position: relative;
 }
 
 .InfoBar h3{
-    width: 360px;
-    padding: 14px;
-    font-size: 20px;
+    padding: 2%;
+    font-size: 17px;
+    float: inline-start;
+    margin-top: 6px;
 }
 
 .line{
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     border-top: 1px solid #444444;
-    width: 300px;
-    margin: -35px auto;
+    width: 70%;
 }
 
 .searchtext{
-    width: 120px;
-    height: 20px;
-    position: relative;
-    bottom: 50px;
-    left: 260px;
+    width: 30%;
+    height: 30%;
+    float: inline-end;
+    margin-top: 4%;
+    margin-right: 2%;
 }
 .barsearch{
     background: url(../IMG/Vector.png)no-repeat 6px;
@@ -35,6 +40,6 @@
 
 .userIcon{
     background: url('../IMG/multiple_user_icon.png');
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
 }

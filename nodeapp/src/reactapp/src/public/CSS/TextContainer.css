@@ -4,7 +4,7 @@
     font-size: 1rem;
     display: flex;
     justify-content: center;
-    height: 60px;
+    height: 6%;
     align-items: center;
 }
 
@@ -29,5 +29,5 @@
     height: 35px;
     border: solid 1px #E8E6EA;
     border-radius: 10px;
-
+    cursor: pointer;
 }

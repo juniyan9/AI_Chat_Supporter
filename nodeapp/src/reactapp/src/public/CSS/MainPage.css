@@ -1,5 +1,5 @@
 .pullpage{
-    background-image: url(../IMG/mainimg.jpg);
+    background-image: url(../IMG/mainimg.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -17,7 +17,7 @@
 
 .MainPage{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     height: 100vh;
 }
@@ -31,27 +31,37 @@
 }
 
 .Main{
-    width: 300px;
-    height: 300px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     flex-direction: column;
-    justify-content: center;
+    position: relative;
+    left: 200px;
 }
 
 .Main input{
-    border-radius: 20px;
-    padding: 10px;
+    border-radius: 10px;
+    border: 0 solid;
+    padding: 14px;
+    width: 400px;
 }
 
 .Main button{
     position: relative;
     background: #45484A;
-    border-radius: 20px;
-    bottom: 38px;
-    left: 50px;
-    padding: 11px 30px 11px 30px;
+    border-radius: 10px;
+    bottom: 37px;
+    left: 313px;
+    padding: 8px 38px;
     border: solid 0px;
     color: #fff;
     cursor: pointer;
+}
+
+.Main h1 {
+    font-weight: bold;
+    font-size: 58px;
+}
+
+.Main h2{
+    font-size: 40px;
 }
