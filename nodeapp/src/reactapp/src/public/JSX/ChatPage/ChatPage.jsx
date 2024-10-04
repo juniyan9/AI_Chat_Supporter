@@ -1,9 +1,11 @@
 import React, { useState,useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../../CSS/ChatPage.css';
+import chaticon  from '../../IMG/chaticon.png';
 import ChatFrame from './ChatFrame';
 import LogFrame from './LogFrame';
 import ChatListFrame from './ChatListFrame';
+
 
 
 export default function ChatPage() {
@@ -67,7 +69,10 @@ export default function ChatPage() {
                         setMaxCount={setMaxCount}
                         timeoutId={timeoutId}
                         setTimeoutId={setTimeoutId}
-                    />:<div>대기중</div>
+                    />:<div className='WaitingFrame'>
+                        <img src={chaticon}/>
+                        여러 사람들과 소통해보세요.
+                    </div>
                 }                
             </div>
             <LogFrame />
