@@ -34,7 +34,7 @@ llamaPostRouter.post("/", (req, res) => {
 
     // 로컬 Llama API에 POST 요청 보내기
     const options = {
-        hostname: 'localhost',
+        hostname: '43.203.141.146',
         port: 11434, // Llama API가 실행되는 포트
         path: '/api/chat',
         method: 'POST',
