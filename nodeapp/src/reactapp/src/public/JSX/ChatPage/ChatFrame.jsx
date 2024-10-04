@@ -7,18 +7,18 @@ import TextContainer from "./TextContainer";
 // import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({setIsSocketConnected, UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId}) {
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
     const [ownerNickname, setOwnerNickName] = useState('');
-    // const [showModal, setShowModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [messages, setMessages] = useState([]);
     
     // console.log('chatframe유저네임props',UserName); //유저닉네임
     // console.log('chatframe룸props',room); //count,id,isprivate,maxcount,name(roomname),ownerid,ownernickname,password
     // console.log('chatframe소켓props',socket);//이미 연결되있음 effect가 먼저 동작이 끝난후 페이지가 랜더링 되니깐 누르는 방 순간 들어가지는게 맞음
     // console.log('chatframe룸카운트props',roomCount); //들어온 사람숫자
-    console.log('chatframe룸이름21',roomName); //뜨다가 소켓이 연결되면서 사라짐
+    // console.log('chatframe룸이름21',roomName); //뜨다가 소켓이 연결되면서 사라짐
     // console.log('chatframe비밀번호props',password); //비밀번호 없으면 null
     // console.log('chatframe비공개props',isPrivate); //비밀방 설정 여부
     // console.log('chatframe맥스카운트props',maxCount); // 최대인원수
@@ -27,12 +27,19 @@ export default function ChatFrame({setIsSocketConnected, UserName, room, socket,
     
     useEffect(() => {
         if(room && !socket.current){
-            console.log('chatframe룸이름30',roomName);
+            // console.log('chatframe룸이름30',roomName);
             if(room.count < room.maxCount){
                 socket.current = io('http://localhost:5050');
                 socket.current.on('connect', () => {
                 socket.current.emit('enter_room', UserName, room.name);
-                setIsSocketConnected(true);
+                setMessages([]);
+                if (timeoutId) {
+                    // console.log("clearTimeout 전 timeoutId:", timeoutId)
+                    clearTimeout(timeoutId); // 타이머 해제
+                    console.log("소켓에서 timeoutId 지웠습니다.")
+                    setTimeoutId(0)
+                    console.log("소켓에서 timeoutId 만료 후 timeoutId:", timeoutId)
+                }
                 //console.log('룸',room); //count,룸id,private,maxcount,name(roomname),ownerid,ownernickname,password
             })
             }else{
@@ -60,12 +67,12 @@ export default function ChatFrame({setIsSocketConnected, UserName, room, socket,
             // });
 
 
-            // socket.current.on('roomDeleted', (data) => {
-            //     // console.log("chatframe딜리티드속 데이터 :",data); //방장닉네임
-            //     if (data) {
-            //         alert("방장이 방을 삭제하였습니다.");
-            //     }
-            // })
+            socket.current.on('roomDeleted', (data) => {
+                // console.log("chatframe딜리티드속 데이터 :",data); //방장닉네임
+                if (data) {
+                    alert("방장이 방을 삭제하였습니다.");
+                }
+            })
             
 
             // 서버에서 업데이트된 방 정보 받아오는 이벤트 리스너
@@ -100,14 +107,14 @@ export default function ChatFrame({setIsSocketConnected, UserName, room, socket,
 
 
     // 방 정보 업데이트 핸들러
-    // const handleUpdateRoom = (updatedRoomDetails) => {
-    //     setRoomName(updatedRoomDetails.name);
-    //     setMaxCount(updatedRoomDetails.maxCount);
-    //     setPassword(updatedRoomDetails.password);
-    //     setIsPrivate(updatedRoomDetails.isPrivate);
-    //     console.log('chatframe업데이트룸디테일즈',updatedRoomDetails);
-    // };
-    // const handleCloseModal = () => setShowModal(false);
+    const handleUpdateRoom = (updatedRoomDetails) => {
+        setRoomName(updatedRoomDetails.name);
+        setMaxCount(updatedRoomDetails.maxCount);
+        setPassword(updatedRoomDetails.password);
+        setIsPrivate(updatedRoomDetails.isPrivate);
+        console.log('chatframe업데이트룸디테일즈',updatedRoomDetails);
+    };
+    const handleCloseModal = () => setShowModal(false);
 
     
 

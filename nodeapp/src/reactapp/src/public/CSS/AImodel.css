@@ -1,9 +1,29 @@
-.Aimodel{
-    width: 35px;
-    height: 35px;
-    border: solid 0px #E8E6EA;
-    border-radius: 10px;
-    margin: 0 10px;
-    color: #000;
+.AImodel {
+    color: black;
+    background: #FAF4F4;
+    border-left: 3px solid #d9d9d9;
+    height: 100%;
+}
+
+.AImodel h1{
+    font-size: 25px;
+    border-bottom: 1px solid #828282;
+    padding: 10px 0px 10px 10px;
+    font-weight: bold;
+}
+
+.button1, .button2, .button3{
+    width: 33.3%;
+    background-color: #fff;
+    border: none;
     cursor: pointer;
+    font-size: medium;
+    color: #828282;
+    padding: 10px 0px;
+}
+
+.active{
+    border-bottom: 1px solid #000;
+    font-weight: bold;
+    color: #000;
 }
