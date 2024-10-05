@@ -137,8 +137,9 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 socket={socket} 
                 setMessages={setMessages} 
                 nickName={UserName} 
-                roomName={roomName} // 변경된 방 이름 전달
+                roomName={roomName}
                 IsOwner={isOwner}
+                handleUpdateRoom={handleUpdateRoom}
             />
             {/* {isOwner && (
                 <RoomSettingsModal

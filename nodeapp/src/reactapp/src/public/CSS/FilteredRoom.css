@@ -1,6 +1,6 @@
 .search-section {
     width: 100%;
-    margin-bottom: 20px;
+    margin: 20px 0;
     display: flex;
     justify-content: flex-end;
     border-bottom: 1px solid #ccc;
