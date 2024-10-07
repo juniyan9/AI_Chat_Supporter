@@ -1,9 +1,9 @@
 import '../../CSS/Message.css';
 import {useState, useLayoutEffect,useRef} from 'react';
-import ShowAll from './ShowAll';
+import ShowAllText from './ShowAllText';
 
 export default function Message({nickName, text, user1, highlight}) {
-  const [handleShowAll,setHandleShowAll] = useState(false);  
+  const [handleShowAllText,setHandleShowAllText] = useState(false);  
   const [overtext, setOvertext] = useState(false);
   const textRef = useRef(null);
 
@@ -51,18 +51,18 @@ export default function Message({nickName, text, user1, highlight}) {
         <div className={user1 ? "username1" : "username2"}>{nickName}</div>
         <div className='usetext' ref={textRef}>
           {highlight !== '' ? highlighttext(text, highlight) : <p>{text}</p>}
-          {overtext && !handleShowAll && (
-          <button className="buttonstyle" onClick={() => setHandleShowAll(true)}>
+          {overtext && !handleShowAllText && (
+          <button className="buttonstyle" onClick={() => setHandleShowAllText(true)}>
           전체보기
           </button>
       )}
         </div>
         
-        {handleShowAll && (
-          <ShowAll
+        {handleShowAllText && (
+          <ShowAllText
             text={text}
-            isOpen={handleShowAll}
-            onClose={()=>setHandleShowAll(false)}
+            isOpen={handleShowAllText}
+            onClose={()=>setHandleShowAllText(false)}
           />
         )}
       </div>

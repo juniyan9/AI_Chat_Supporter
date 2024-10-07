@@ -7,10 +7,9 @@ import TextContainer from "./TextContainer";
 // import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName}) {
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
-    const [ownerNickname, setOwnerNickName] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [messages, setMessages] = useState([]);
     
@@ -33,6 +32,8 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 socket.current.on('connect', () => {
                 socket.current.emit('enter_room', UserName, room.name);
                 setMessages([]);
+                
+                console.log('frame37',room);
                 if (timeoutId) {
                     // console.log("clearTimeout 전 timeoutId:", timeoutId)
                     clearTimeout(timeoutId); // 타이머 해제
@@ -137,8 +138,9 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 socket={socket} 
                 setMessages={setMessages} 
                 nickName={UserName} 
-                roomName={roomName} // 변경된 방 이름 전달
-                IsOwner={isOwner}
+                roomName={room.name}
+                isOwner={isOwner}
+                handleUpdateRoom={handleUpdateRoom}
             />
             {/* {isOwner && (
                 <RoomSettingsModal
