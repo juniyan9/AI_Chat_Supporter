@@ -4,7 +4,7 @@ import '../../CSS/FilteredRoom.css';
 import RoomModal from './RoomModal';
 import { useNavigate} from 'react-router-dom';
 
-export default function ChatListFrame({setIsSocketConnected,isSocketConnected,onSelectedRoom, UserName, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount,timeoutId,setTimeoutId}) {
+export default function ChatListFrame({setIsSocketConnected,isSocketConnected,onSelectedRoom, UserName, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount,timeoutId,setTimeoutId,count,setCount,setOwnerNickName}) {
     const [rooms, setRooms] = useState([]);
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
@@ -20,6 +20,9 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
     const handleSelectedRoom = (room) => {
         //console.log('ChatListFrame룸',room);//conut,id,private,maxcount,name(roomname),ownerid,ownernickname,password
         onSelectedRoom(room);
+        setMaxCount(room.maxCount)
+        setCount(room.count);
+        setOwnerNickName(room.ownerNickname)
         if(!isSocketConnected){
             setIsSocketConnected(true);
         }
@@ -143,7 +146,7 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                             <p>
                                 <span className="people-icon">👥</span>
                                 {room.isPrivate && <span className="lock-icon">🔒</span>} 
-                                {room.count}/{room.maxCount}, {room.count}명 접속중
+                                {count}/{maxCount}, {count}명 접속중
                             </p>
                         </div>
                     ))}
