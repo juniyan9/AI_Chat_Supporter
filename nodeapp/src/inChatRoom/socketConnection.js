@@ -94,10 +94,13 @@ export function socketConnection() {
 
         room.count = roomUsers[roomName].length;
       
-        logger.info(`enter_room 때 ${roomName}에 있는 사람 수: ${roomUsers[roomName].length} 명`, 'socketConnection.js')
-
-        // logger.info(`세션 만료 여부: ${user.sessionExpiresAt}`,'socketConnection.js');
-        io.to(roomName).emit("roomCountUpdate", room.count);
+        if (room) {
+          room.count = roomUsers[roomName].length;
+          logger.info(`enter_room 때 ${roomName}에 있는 사람 수: ${roomUsers[roomName].length} 명`, 'socketConnection.js');
+          io.to(roomName).emit("roomCountUpdate", room.count);
+        } else {
+          logger.error(`방 '${roomName}'을 찾을 수 없습니다.`);
+        }
 
         logger.info(`현재 방 사용자 정보(roomUsers) [방에 있는 사용자 ID]:${JSON.stringify(roomUsers[roomName])}`,'socketConnection.js')
 
