@@ -77,6 +77,7 @@ export default function ChatPage() {
                         setTimeoutId={setTimeoutId}
                         ownerNickname={ownerNickname}
                         setOwnerNickName={setOwnerNickName}
+                        setIsSocketConnected={setIsSocketConnected}
                     />:<div className='WaitingFrame'>
                         <img src={chaticon}/>
                         여러 사람들과 소통해보세요.

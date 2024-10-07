@@ -7,7 +7,7 @@ import TextContainer from "./TextContainer";
 // import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected}) {
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -72,6 +72,8 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 // console.log("chatframe딜리티드속 데이터 :",data); //방장닉네임
                 if (data) {
                     alert("방장이 방을 삭제하였습니다.");
+                    socket.current.disconnect();
+                    setIsSocketConnected(false);
                 }
             })
             
