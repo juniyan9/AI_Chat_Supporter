@@ -196,6 +196,42 @@ export function socketConnection() {
     // }
     });
 
+    socket.on('ai_analysis', async (data) => {
+      const { roomName, texts } = data;
+      console.log(`방에서 AI 분석 요청을 받았습니다: ${roomName}`);
+      console.log('텍스트들:', texts);
+
+      // const results = [];
+      const combinedText = texts.join(' ');
+
+        // for (const message of texts) {
+            const emotionResult = await analyzeEmotion(combinedText);
+            const emotionMatch = emotionResult.match(/(공포|놀람|분노|슬픔|중립|행복|혐오)/);
+            const emotion = emotionMatch ? emotionMatch[0] : "감정 분석 실패";
+
+            const sentimentResult = await analyzeSentiment(combinedText);
+            const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
+            const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패";
+            const score = sentimentMatch ? sentimentMatch[1] : "N/A";
+
+            // results.push({
+            //     message,
+            //     emotion,
+            //     sentiment,
+            //     score,
+            // });
+            const results = {
+              emotion,
+              sentiment,
+              score,
+              texts, // 원본 texts도 포함하여 전송
+          };
+        // }
+
+      logger.info(`클라이언트에 보내기 전 감정분석 결과:${JSON.stringify(results)}`, 'socketConnection.js')
+      socket.emit('ai_analysis_result', results);
+  });
+
     //소켓 연결 해제 처리
     // socket.on("disconnect", (roomName) => {  //소켓 끊어질 때 자동으로 발생하는 이벤트이므로 클라에서 관련 코드를 굳이 수동으로 호출할 필요 없고, 따라서 여기서도 roomName 넣어줄 필요가 없게 됨.
     socket.on("disconnect", () => {
