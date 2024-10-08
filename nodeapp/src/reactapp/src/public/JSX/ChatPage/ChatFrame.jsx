@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 import InfoBar from "./InfoBar";
 import MessageContainer from "./MessageContainer";
 import TextContainer from "./TextContainer";
+// import { text } from "body-parser";
 // import RoomSettingsModal from './RoomSettingsModal';
 
 
@@ -108,6 +109,12 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
         };
     }, [UserName, room, ownerNickname]);
 
+    const texts = messages
+        .filter(messages => messages.nickName !== "알리미")
+        .map(messages => messages.text);
+
+    console.log("메시지 내용들:", texts);
+
 
     // 방 정보 업데이트 핸들러
     const handleUpdateRoom = (updatedRoomDetails) => {
@@ -143,6 +150,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 roomName={room.name}
                 isOwner={isOwner}
                 handleUpdateRoom={handleUpdateRoom}
+                texts={texts}
             />
             {/* {isOwner && (
                 <RoomSettingsModal
