@@ -10,7 +10,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         
         if (isOpen) {
             // 서버에서 방 목록을 가져오는 API 호출
-            fetch('http://localhost:5000/rooms')  // 서버의 API
+            fetch('http://localhost:5001/rooms')  // 서버의 API
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Room list 불러오기 실패');
@@ -37,7 +37,9 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         }
     
         // 중복 방 제목 체크
-        const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
+        // const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
+        const isDuplicate = Array.isArray(existingRooms) && existingRooms.some(room => room.name === trimmedRoomName);
+
         if (isDuplicate) {
             alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
             return;
@@ -46,7 +48,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         // 새로운 방 정보 생성
         const newRoom = {
             name: trimmedRoomName,
-            count: 0,
+            count: 1,
             maxCount,
             password,
             isPrivate,
