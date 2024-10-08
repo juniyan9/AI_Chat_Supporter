@@ -35,7 +35,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 
                 console.log('frame37',room);
                 if (timeoutId) {
-                    // console.log("clearTimeout 전 timeoutId:", timeoutId)
+                    console.log("clearTimeout 전 timeoutId:", timeoutId)
                     clearTimeout(timeoutId); // 타이머 해제
                     console.log("소켓에서 timeoutId 지웠습니다.")
                     setTimeoutId(0)

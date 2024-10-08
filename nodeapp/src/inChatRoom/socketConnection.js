@@ -89,7 +89,7 @@ export function socketConnection() {
         // 사용자 ID를 배열에 추가
         roomUsers[roomName].push(user.id);
 
-        logger.info(`소켓에서 user.roomName: ${user.roomName}`, 'socketConnection.js')
+        // logger.info(`소켓에서 user.roomName: ${user.roomName}`, 'socketConnection.js')
         socket.join(user.roomName); //해당 소켓을 특정 방에 추가
 
         room.count = roomUsers[roomName].length;
@@ -99,7 +99,7 @@ export function socketConnection() {
         // logger.info(`세션 만료 여부: ${user.sessionExpiresAt}`,'socketConnection.js');
         io.to(roomName).emit("roomCountUpdate", room.count);
 
-        logger.info(`현재 방 사용자 정보(roomUsers) [방에 있는 사용자 ID]:${JSON.stringify(roomUsers[roomName])}`,'socketConnection.js')
+        logger.info(`현재 방 ${roomName}에 있는 사용자 정보:${JSON.stringify(roomUsers[roomName])}`,'socketConnection.js')
 
 
         // console.log("방 정보:", room );
@@ -107,9 +107,6 @@ export function socketConnection() {
         io.to(roomName).emit("room_details", room);
         // console.log("업데이트된 방 정보 전달:", room)
         io.to(roomName).emit("newRoomInfo", room);
-
-        const userIds = roomUsers[roomName].join(",");
-        // console.log(`${roomName} 방의 유저 ID 목록: 유저 ID: ${userIds}`);
       } else {
         console.error("사용자를 찾을 수 없습니다.");
       }
@@ -169,6 +166,8 @@ export function socketConnection() {
       );
 
       socket.to(roomName).emit('reply', message, userCheck.user.nickName);
+
+      logger.info(`room ${roomName}: Received message from client >>>>>>` + message);
 
     //   try {
     //     //감정분석
@@ -247,6 +246,7 @@ export function socketConnection() {
 
           const extendMin = 15
           user.sessionExpiresAt = new Date(Date.now() + extendMin * 60000);
+          logger.info(`user ${user.nickName}의 새로운 session 만료 시간:${user.sessionExpiresAt}`, 'socketConnection.js')
 
           user.socketId = null;
           user.roomName = null;

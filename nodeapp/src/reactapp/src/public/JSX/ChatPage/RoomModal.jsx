@@ -61,6 +61,10 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         try {
             const success = await onSave(newRoom);
             if (success) {
+                // setRoomName('');
+                // setPassword('');
+                // setIsPrivate(false);
+                // setMaxCount(0);
                 onClose();
                 fetchRooms();
             }

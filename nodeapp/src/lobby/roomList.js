@@ -42,7 +42,7 @@ getRoomListRouter.get("/", (req, res) => {
     // 사용자 정보 업데이트
     user.timeoutId = timeoutId;
   } else {
-    logger.info(`User ${user.nickName}의 timeout 생성 안 되었습니다.`,'roomList.js');
+    // logger.info(`User ${user.nickName}의 timeout 생성 안 되었습니다.`,'roomList.js');
   }
   const roomsAndTimeout = {rooms: rooms, timeoutmin: timeoutmin}
   res.json(roomsAndTimeout)
