@@ -147,33 +147,6 @@ app.use("/delete_room", deleteRoomRouter);
 /*Inside Chat Room*/
 socketConnection();
 
-
-/* 감정분석 결과 가져오기 */
-// const analyzeEmotion = (message) => {
-//   return new Promise((resolve, reject) => {
-//       const pythonProcess = spawn("python3", [path.join(__dirname, "ai_model/EmotionClassifier/EmotionClassifier.py"), message]);
-
-//       let outputData = '';
-
-//       pythonProcess.stdout.on("data", (data) => {
-//         // console.log("analyzeEmotion 내부:", data, "잘 가져옴")
-//           outputData += data.toString().trim() + "\n";  //개행문자 기준으로 outputData에 계속 넣음
-//       });
-
-//       pythonProcess.stderr.on("data", (data) => {
-//           console.log(data.toString());
-//       });
-
-//       pythonProcess.on("close", (code) => {
-//           if (code !== 0) { //다 완료되면 0이라고 옴
-//               reject(`Child process exited with code ${code}`);
-//           }else {
-//             resolve(outputData.toString().trim());
-//           }
-//       });
-//   });
-// };
-
 // 감정 분석 라우터
 app.use("/emotionClassifier", emotionClassifierRouter);
 

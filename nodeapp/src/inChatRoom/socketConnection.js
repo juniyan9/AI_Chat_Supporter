@@ -48,16 +48,12 @@ export function socketConnection() {
           return; // 세션이 만료되었으므로 추가 작업을 수행하지 않음
         }
 
-        // logger.info("타임아웃id 보낼 때 timeoutId"+user.timeoutId,22222222222222 )
         console.log("타임아웃 전")
         if (user.timeoutId) {
-          // logger.info("타임아웃id 보낼 때 timeoutId"+user.timeoutId,11111111111 )
           clearTimeout(user.timeoutId);
           logger.info(`소켓에서 User ${user.nickName}의 timeout을 지웠습니다 .`,'socketconnection.js');
-          // logger.info("소켓에서 타임아웃 해제됨:"+user.timeoutId,11111111111);
 
           user.timeoutId = null;
-          // logger.info("timeoutId 클라이언트에 보냄:");
         }
 
         user.socketId = socket.id;
@@ -172,68 +168,34 @@ export function socketConnection() {
         (check) => check.user.socketId === socket.id
       );
 
-      // socket.to(roomName).emit('reply', message, userCheck.user.nickName);
-      try {
-        감정분석
-        const result = analyzeEmotion(message);
-        const emotionMatch = result.match(/(공포|놀람|분노|슬픔|중립|행복|혐오)/);
-        const emotion = emotionMatch ? emotionMatch[0] : "감정 분석 실패"; // 매칭된 감정이 없으면 기본 메시지 사용
+      socket.to(roomName).emit('reply', message, userCheck.user.nickName);
 
-        // //감성분석
-        const sentimentResult = analyzeSentiment(message);
-        const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
-        const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패"; // 긍정/부정 결과
-        const score = sentimentMatch ? sentimentMatch[1] : "N/A"; // 확률 점수
+    //   try {
+    //     //감정분석
+    //     const result = await analyzeEmotion(message);
+    //     const emotionMatch = result.match(/(공포|놀람|분노|슬픔|중립|행복|혐오)/);
+    //     const emotion = emotionMatch ? emotionMatch[0] : "감정 분석 실패"; // 매칭된 감정이 없으면 기본 메시지 사용
 
-        // 분석된 감정을 클라이언트에 전송
-        // logger.info(`emit 전, 분석된 감정: ${emotion}`, 'socketConnection.js')
-        logger.info(`emit 전, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
-        socket.to(roomName).emit('reply', message, userCheck.user.nickName, emotion, sentiment, score);
-        // socket.to(roomName).emit('reply', message);
-        // logger.info(`emit 후, 분석된 감정: ${emotion}`, 'socketConnection.js')
-        logger.info(`emit 후, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
+    //     //감성분석
+    //     const sentimentResult = await analyzeSentiment(message);
+    //     const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
+    //     const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패"; // 긍정/부정 결과
+    //     const score = sentimentMatch ? sentimentMatch[1] : "N/A"; // 확률 점수
+
+    //     // 분석된 감정을 클라이언트에 전송
+    //     // logger.info(`emit 전, 분석된 감정: ${emotion}`, 'socketConnection.js')
+    //     logger.info(`emit 전, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
+    //     socket.to(roomName).emit('reply', message, userCheck.user.nickName, emotion, sentiment, score);
+    //     // logger.info(`emit 후, 분석된 감정: ${emotion}`, 'socketConnection.js')
+    //     logger.info(`emit 후, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
 
         
-        logger.info("Received message from client: " + message);
-        logger.info("Received message from client room: " + roomName);
-    } catch (error) {
-        console.error("Error during emotion analysis:", error);
-    }
+    //     logger.info("Received message from client: " + message);
+    //     logger.info("Received message from client room: " + roomName);
+    // } catch (error) {
+    //     console.error("Error during emotion analysis:", error);
+    // }
     });
-
-    // socket.on("update_messages", (updatedMessages) => {
-    //   console.log("클라이언트에서 받은 updated messages:", updatedMessages);
-    //   // console.log('소켓이 서버에 연결되었습니다. 소켓 ID:', socket.current.id);
-
-    //   let count1 = 0;
-    //   updatedMessages.forEach((message) => {
-    //     const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
-    //     // const ROOMNAME = updatedMessages[0].ROOMNAME
-    //     let count2 = 0;
-    //     count1 += 1;
-    //     count2 += 1;
-
-    //     if (ROOMNAME) {
-    //       socket.to(ROOMNAME).emit("update_messages_reply", MESSAGE, NickName); //reply
-    //       //통으로 전달할려면 updatedMessages를 넣어야 하나
-    //       //전달받는 데이터가 저렇게 다섯 가지 있어서 통으로 전달 안 한건데
-    //       // ui 에 선택적으로 message, nickname만 뿌리면 되나..?
-
-    //       // console.log("emit 코드 읽음");
-    //       console.log(
-    //         `count2: ${count2}, ${count1}클라한테 메시지, 닉네임 전달.`,
-    //         ROOMNAME,
-    //         "with message:",
-    //         MESSAGE,
-    //         "and nickname:",
-    //         NickName
-    //       );
-
-    //       // socket.broadcast.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);
-    //     }
-    //   });
-    //   socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
-    // });
 
     //소켓 연결 해제 처리
     // socket.on("disconnect", (roomName) => {  //소켓 끊어질 때 자동으로 발생하는 이벤트이므로 클라에서 관련 코드를 굳이 수동으로 호출할 필요 없고, 따라서 여기서도 roomName 넣어줄 필요가 없게 됨.

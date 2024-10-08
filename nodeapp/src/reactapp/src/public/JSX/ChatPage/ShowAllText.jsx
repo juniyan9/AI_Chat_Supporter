@@ -1,6 +1,6 @@
-import '../../CSS/ShowAll.css';
+import '../../CSS/ShowAllText.css';
 
-export default function ShowAll({text,isOpen,onClose}) {
+export default function ShowAllText({text,isOpen,onClose}) {
   
   if (!isOpen) return null;
 

@@ -1,9 +1,11 @@
 import React, { useState,useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../../CSS/ChatPage.css';
+import chaticon  from '../../IMG/chaticon.png';
 import ChatFrame from './ChatFrame';
 import LogFrame from './LogFrame';
-import Chatlistpage from '../ChatListPage/ChatListPage';
+import ChatListFrame from './ChatListFrame';
+
 
 
 export default function ChatPage() {
@@ -12,8 +14,12 @@ export default function ChatPage() {
     const [isPrivate, setIsPrivate] = useState(false);// 초기 비공개 여부 설정
     const [roomCount, setRoomCount] = useState(0);
     const [roomName, setRoomName] = useState(null);
-    const [maxCount, setMaxCount] = useState(2); // 초기 최대 인원 설정
+    const [maxCount, setMaxCount] = useState(0); // 초기 최대 인원 설정
     const [password, setPassword] = useState(''); // 초기 비밀번호 설정
+    const [timeoutId, setTimeoutId] = useState(0);
+    const [count, setCount] = useState(0);
+    const [ownerNickname, setOwnerNickName] = useState('');
+    // const [test,settest] =useState("00:00");
 
     const location = useLocation();
     const UserName = location.state?.nickName;
@@ -30,7 +36,7 @@ export default function ChatPage() {
     
     return (
         <div className="chatPage">
-            <Chatlistpage
+            <ChatListFrame
                 onSelectedRoom={handleSelectRoom}
                 UserName={UserName}
                 roomName={roomName}
@@ -44,24 +50,39 @@ export default function ChatPage() {
                 setMaxCount={setMaxCount}
                 setIsSocketConnected={setIsSocketConnected}
                 isSocketConnected={isSocketConnected}
+                timeoutId={timeoutId}
+                setTimeoutId={setTimeoutId}
+                count={count}
+                setCount={setCount}
+                setOwnerNickName={setOwnerNickName}
+                ownerNickname={ownerNickname}
             />
             <div className="chatFrameContainer">
-                <ChatFrame
-                    UserName={UserName}
-                    room={selectedRoom}
-                    socket={socket}
-                    roomCount={roomCount}
-                    setRoomCount={setRoomCount}
-                    roomName={roomName}
-                    setRoomName={setRoomName}
-                    password={password}
-                    setPassword={setPassword}
-                    isPrivate={isPrivate}
-                    setIsPrivate={setIsPrivate}
-                    maxCount={maxCount}
-                    setMaxCount={setMaxCount}
-                    setIsSocketConnected={setIsSocketConnected}
-                />
+                {isSocketConnected ?
+                    <ChatFrame
+                        UserName={UserName}
+                        room={selectedRoom}
+                        socket={socket}
+                        roomCount={roomCount}
+                        setRoomCount={setRoomCount}
+                        roomName={roomName}
+                        setRoomName={setRoomName}
+                        password={password}
+                        setPassword={setPassword}
+                        isPrivate={isPrivate}
+                        setIsPrivate={setIsPrivate}
+                        maxCount={maxCount}
+                        setMaxCount={setMaxCount}
+                        timeoutId={timeoutId}
+                        setTimeoutId={setTimeoutId}
+                        ownerNickname={ownerNickname}
+                        setOwnerNickName={setOwnerNickName}
+                        setIsSocketConnected={setIsSocketConnected}
+                    />:<div className='WaitingFrame'>
+                        <img src={chaticon}/>
+                        여러 사람들과 소통해보세요.
+                    </div>
+                }                
             </div>
             <LogFrame />
         </div>

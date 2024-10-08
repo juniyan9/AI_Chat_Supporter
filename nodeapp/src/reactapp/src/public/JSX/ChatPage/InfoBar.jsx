@@ -28,7 +28,7 @@ export default function InfoBar({ roomName, setonsearchtext, roomCount, maxCount
                 value={search}
                 onChange={inputText}
             />
-            <button className='barsearch'></button>
+            {/* <button className='barsearch'></button> */}
             <div className='line'></div>
         </div>
     );

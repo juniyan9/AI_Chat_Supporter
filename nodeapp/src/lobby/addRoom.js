@@ -16,6 +16,10 @@ let nextRoomId = 1;
 addRoomRouter.post("/", (req, res) => {
   const { name, count, maxCount, password, isPrivate, nickName } = req.body;
 
+  if (!req.session.user) {
+    return res.status(401).send("세션이 유효하지 않습니다. 유저 정보가 삭제되었습니다.");
+  }
+
    // 방 이름 중복 확인
    const existingRoom = rooms.find(room => room.name === name);
    if (existingRoom) {
@@ -23,12 +27,8 @@ addRoomRouter.post("/", (req, res) => {
      return res.status(400).json({ message: "이미 존재하는 방 이름입니다." });
    }
 
-  logger.info(`session.user 정보 from addRoomRouter: ${JSON.stringify(req.session.user)}`,'addRoom.js');
-
-
-  if (!req.session.user) {
-    return res.status(401).send("세션이 유효하지 않습니다. 유저 정보가 삭제되었습니다.");
-  }
+  // logger.info(`session.user 정보 from addRoomRouter: ${JSON.stringify(req.session.user)}`,'addRoom.js');
+ 
 
   //받은 닉네임을 userInfo의 닉네임과 비교해서 유저를 찾음(유저 id를 ownerId로 매치해주기 위함)
   const userCheck = userInfo.find((user) => user.user.nickName === nickName);

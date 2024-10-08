@@ -1,13 +1,13 @@
-.chatListPage {
+.ChatListFrame {
     width: 25%;
     height: 100vh;
     background-color: #FAF4F4;
     padding: 0 20px;
 }
 
-.chatListPage h2 {
+.ChatListFrame h2 {
     text-align: center;
-    font-size: 24px;
+    font-size: 20px;
     color: #333;
     margin-bottom: 2opx;
 }
@@ -27,22 +27,20 @@
 
 .room-list-section {
     width: 100%;
-    max-width: 1200px;
+    height: 85%;
     margin-bottom: 20px;
     text-align: center;
 }
 
 .room-list-section h2{
-    margin-bottom: 10px;
+    margin: 10px;
 }
 
 .room-list {
-    display: flex;
-    flex-direction: column;
-    height: 400px;
     overflow-y: auto;
-    /* align-items : center; */
+    height: 90%;
 }
+
 .room:hover {
     transform: translateY(-5px);
     border-color: #0962f0;
@@ -60,7 +58,6 @@
 
 .add-room-section {
     width: 100%;
-    max-width: 1200px;
     text-align: right;
     margin-top: 20px;
     border-top: 1px solid #e0e0e0; /* 위쪽 테두리로 구분선 추가 */
@@ -84,4 +81,12 @@
 .people-icon {
     margin-right: 2px;
     /* font-size: 16px; */
+}
+
+.refresh-button{
+    border: 0;
+    margin-right: 7px;
+    padding: 0px;
+    background: none;
+    cursor: pointer;
 }

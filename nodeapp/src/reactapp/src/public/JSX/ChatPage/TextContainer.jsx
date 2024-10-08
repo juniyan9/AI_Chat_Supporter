@@ -1,5 +1,6 @@
 import React from "react"
 import '../../CSS/TextContainer.css';
+import RoomSettingsModal  from './RoomSettingsModal'
 import { useState,useEffect,useRef } from "react";
 
 export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner,setShowModal}) {
@@ -44,8 +45,6 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
 
         if(message.trim() !== '' && message.length !== 0){
             socket.current.emit('message', message, roomName);
-            console.log(`message보낼 때 ${roomName} 잘 받아옴`)
-
             
             setMessage('');
             setMessages((prevMessages) => [
@@ -57,17 +56,18 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
                 }
               ]);
         }
+    }    
+
+    const modal = () =>{
+        setShowModal(true);
     }
-    const handleOpenModal = () => setShowModal(true);
-    
 
     return (
         <div className="TextContainer">
-                {isOwner ? (
-                    <button onClick={handleOpenModal} className="settingsButton">
-                        방 설정
-                    </button>
-                ) : <button>노방장</button>}
+            {isOwner ? (
+                <button onClick={modal}>방장</button>
+                ):<button>노방장</button>
+                }
                 <textarea
                     className="textinput"
                     name="message"
