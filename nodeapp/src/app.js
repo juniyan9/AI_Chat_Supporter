@@ -80,6 +80,27 @@ import llamaPostRouter from "./model_routers/llamaPostRouter.js";
 import emotionClassifierRouter from "./model_routers/emotionClassifierRouter.js";
 
 
+// 유저 세션 연장 처리 -- 방에 있는데 그냥 관전만 하는 유저 연장
+const extendPrd = 16
+setInterval(() => {
+  const now = new Date();
+
+  // console.log("세션연장처리 userInfo 배열 내용:", userInfo);  //잘 가져옴
+
+  userInfo.forEach((userCheck) => {
+    const user = userCheck.user;
+    // console.log("세션연장처리 세션 만료 시간 값 확인:", user.sessionExpiresAt);
+
+    const sessionExpiresAt = new Date(user.sessionExpiresAt);
+
+    if (user.socketId && now > sessionExpiresAt) {
+      extendSession(user);
+      logger.info("세션 연장 처리 완료");
+    }
+  });
+}, extendPrd * 60000); //17분마다 연장
+
+
 
 // 유저 세션 삭제 처리
 const delPrd = 5
