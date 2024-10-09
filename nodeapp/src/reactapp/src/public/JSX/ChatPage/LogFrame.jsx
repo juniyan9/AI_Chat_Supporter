@@ -4,10 +4,11 @@ import '../../CSS/LogFrame.css';
 
 import AImodel from "./AImodel";
 
-export default function LogFrame() {
+export default function LogFrame({AIAnalysisResult}) {
     return (
         <div className="LogFrame">
-            <AImodel />
+            <AImodel 
+            AIAnalysisResult={AIAnalysisResult} />
         </div>
     )
 }

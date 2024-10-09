@@ -73,7 +73,6 @@ import userRegisterRouter from "./main_page/main_page.js";
 import getRoomListRouter from "./lobby/roomList.js";
 import addRoomRouter from "./lobby/addRoom.js";
 import updateRoomDataRouter from "./lobby/updateRoom.js";
-import deleteRoomRouter from "./inChatRoom/deleteRoom.js";
 import geminiPostRouter from "./model_routers/geminiPostRouter.js";
 import geminiGetRouter from "./model_routers/geminiGetRouter.js";
 import llamaPostRouter from "./model_routers/llamaPostRouter.js";
@@ -142,7 +141,7 @@ app.use("/update_room", updateRoomDataRouter);
 // 방 목록 갱신
 app.use("/rooms", getRoomListRouter);
 //방 삭제
-app.use("/delete_room", deleteRoomRouter);
+// app.use("/delete_room", deleteRoomRouter);
 
 /*Inside Chat Room*/
 socketConnection();

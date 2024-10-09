@@ -19,6 +19,7 @@ export default function ChatPage() {
     const [timeoutId, setTimeoutId] = useState(0);
     const [count, setCount] = useState(0);
     const [ownerNickname, setOwnerNickName] = useState('');
+    const [AIAnalysisResult, setAIAnalysisResult] = useState(null);
     // const [test,settest] =useState("00:00");
 
     const location = useLocation();
@@ -77,6 +78,8 @@ export default function ChatPage() {
                         setTimeoutId={setTimeoutId}
                         ownerNickname={ownerNickname}
                         setOwnerNickName={setOwnerNickName}
+                        AIAnalysisResult={AIAnalysisResult}
+                        setAIAnalysisResult={setAIAnalysisResult}
                         setIsSocketConnected={setIsSocketConnected}
                     />:<div className='WaitingFrame'>
                         <img src={chaticon}/>
@@ -84,7 +87,9 @@ export default function ChatPage() {
                     </div>
                 }                
             </div>
-            <LogFrame />
+            <LogFrame 
+            AIAnalysisResult={AIAnalysisResult} />
+
         </div>
     );
 }

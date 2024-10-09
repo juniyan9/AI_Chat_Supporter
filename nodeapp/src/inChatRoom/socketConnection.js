@@ -92,6 +92,7 @@ export function socketConnection() {
         // logger.info(`소켓에서 user.roomName: ${user.roomName}`, 'socketConnection.js')
         socket.join(user.roomName); //해당 소켓을 특정 방에 추가
 
+        if (room) {
         room.count = roomUsers[roomName].length;
       
         logger.info(`enter_room 때 ${roomName}에 있는 사람 수: ${roomUsers[roomName].length} 명`, 'socketConnection.js')
@@ -107,6 +108,7 @@ export function socketConnection() {
         io.to(roomName).emit("room_details", room);
         // console.log("업데이트된 방 정보 전달:", room)
         io.to(roomName).emit("newRoomInfo", room);
+        }
       } else {
         console.error("사용자를 찾을 수 없습니다.");
       }
@@ -115,7 +117,7 @@ export function socketConnection() {
         //userCheck의 user
         socket.emit(
           "reply",
-          `${nickName}님이 ${roomName} 에 입장하셨습니다. 반갑습니다.`,
+          `${nickName}님이 ${roomName}에 입장하셨습니다. 반갑습니다.`,
           "알리미"
         ); // 나도 웰컴 메시지 확인할 수 있게 수정.
 
@@ -124,7 +126,7 @@ export function socketConnection() {
           .in(roomName)
           .emit(
             "reply",
-            `${nickName}님이 ${roomName} 에 입장하셨습니다. 반갑습니다.`,
+            `${nickName}님이 ${roomName}에 입장하셨습니다. 반갑습니다.`,
             "알리미"
           );
       } //위에서는 if(user)로 user를 걸어줘서 user.nickName / user.roomName 이런 식으로 안 해줘도 됨.
@@ -229,6 +231,7 @@ export function socketConnection() {
         // }
 
       logger.info(`클라이언트에 보내기 전 감정분석 결과:${JSON.stringify(results)}`, 'socketConnection.js')
+      console.log(`클라이언트에 보내기 전 감정분석 결과:${results}`, 'socketConnection.js')
       socket.emit('ai_analysis_result', results);
   });
 

@@ -1,0 +1,15 @@
+.ChildComponent1 {
+    position: relative;
+    padding: 20px; /* 필요한 여백 설정 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+    background: url('../IMG/surprise.jpeg') no-repeat center center; /* 이미지 설정 */
+    background-size: cover; /* 이미지 비율 유지 */
+    color: white; /* 텍스트 색상 */
+    border-radius: 10px; /* 모서리 둥글게 처리 */
+}
+
+.emotion-image {
+    width: 200px; /* 원하는 크기로 조정 */
+    height: auto; /* 비율 유지 */
+    margin: 20px auto; /* 위쪽 여백 및 가운데 정렬 */
+}
