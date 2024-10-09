@@ -61,6 +61,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         try {
             const success = await onSave(newRoom);
             if (success) {
+                // socket.current.emit('enter_room', UserName, trimmedRoomName);
                 // setRoomName('');
                 // setPassword('');
                 // setIsPrivate(false);

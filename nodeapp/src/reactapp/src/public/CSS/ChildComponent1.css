@@ -1,15 +1,42 @@
 .ChildComponent1 {
-    position: relative;
-    padding: 20px; /* 필요한 여백 설정 */
-    text-align: center; /* 텍스트 가운데 정렬 */
-    background: url('../IMG/surprise.jpeg') no-repeat center center; /* 이미지 설정 */
-    background-size: cover; /* 이미지 비율 유지 */
-    color: white; /* 텍스트 색상 */
-    border-radius: 10px; /* 모서리 둥글게 처리 */
+    padding: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    width: 300px;
+    text-align: center;
+}
+
+.analysis-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px; /* 이미지와 텍스트 간격 */
 }
 
 .emotion-image {
-    width: 200px; /* 원하는 크기로 조정 */
-    height: auto; /* 비율 유지 */
-    margin: 20px auto; /* 위쪽 여백 및 가운데 정렬 */
+    width: 100px;
+    height: 100px;
+    background-image: url('../IMG/surprise_emoticon.png'); /* 이모지 이미지 경로 */
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    margin-bottom: 16px;
+}
+
+.text-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 8px; /* 텍스트 간격 */
+}
+
+.detail-item {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.label {
+    font-weight: bold;
 }
