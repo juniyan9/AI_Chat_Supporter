@@ -32,7 +32,8 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 socket.current.on('connect', () => {
                 socket.current.emit('enter_room', UserName, room.name);
                 setMessages([]);
-                
+                setIsSocketConnected(true);
+
                 console.log('frame37',room);
                 if (timeoutId) {
                     // console.log("clearTimeout 전 timeoutId:", timeoutId)
@@ -72,7 +73,6 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 // console.log("chatframe딜리티드속 데이터 :",data); //방장닉네임
                 if (data) {
                     alert("방장이 방을 삭제하였습니다.");
-                    socket.current.disconnect();
                     setIsSocketConnected(false);
                 }
             })
@@ -104,6 +104,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
             if(socket.current){
                 socket.current.close();
                 socket.current =null;
+                setIsSocketConnected(false);
             }
         };
     }, [UserName, room, ownerNickname]);

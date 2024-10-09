@@ -103,7 +103,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
                     최대 인원수: <span>{maxCount}</span>
                     <input 
                         type="range" 
-                        value={maxCount}       
+                        value={maxCount}
                         onChange={(e) => setMaxCount(parseInt(e.target.value))} 
                         min="2" 
                         max="10"

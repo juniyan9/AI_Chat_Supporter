@@ -140,13 +140,21 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                         <div
                             key={room.name}
                             onClick={() => handleSelectedRoom(room)}
-                            className={`room ${room.count >= room.maxCount ? 'full' : ''}`}
+                            className={isSocketConnected ? "socketConnectedroom" : (`room ${room.count >= room.maxCount ? 'full' : ''}`)}
                         >
+                            {room.maxCount == room.count ?
+                                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="6.5" cy="6.5" r="6.5" fill="#BB2525"/>
+                                </svg> :
+                                <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="6.5" cy="6.5" r="6.5" fill="#6372FF"/>
+                                </svg>
+                            }
                             <h3>{room.name}</h3>
                             <p>
                                 <span className="people-icon">👥</span>
                                 {room.isPrivate && <span className="lock-icon">🔒</span>} 
-                                {count}/{maxCount}, {count}명 접속중
+                                {room.count}/{room.maxCount}, {room.count}명
                             </p>
                         </div>
                     ))}
