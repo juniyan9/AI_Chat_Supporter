@@ -13,16 +13,12 @@
 }
 
 .room {
-    background :linear-gradient(135deg, #A1C4FD 30%, #C2E9FB 70%);
-    padding: 15px;
+    padding: 10px;
     margin: 10px 0;
-    border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid #ddd;
 }
 
 .room-list-section {
@@ -43,8 +39,7 @@
 
 .room:hover {
     transform: translateY(-5px);
-    border-color: #0962f0;
-    
+    background: #dddddd;
 }
 
 .room.full {
@@ -52,7 +47,7 @@
 }
 
 .room h3 {
-    font-size: 18px;
+    font-size: 16px;
     margin : 0;
 }
 
@@ -89,4 +84,14 @@
     padding: 0px;
     background: none;
     cursor: pointer;
+}
+
+.socketConnectedroom{
+    background: #dddddd;
+    padding: 10px;
+    margin: 10px 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

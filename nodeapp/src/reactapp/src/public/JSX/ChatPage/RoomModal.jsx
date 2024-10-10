@@ -10,7 +10,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         
         if (isOpen) {
             // 서버에서 방 목록을 가져오는 API 호출
-            fetch('http://43.203.141.146:5000/rooms')  // 서버의 API
+            fetch('http://localhost:5000/rooms')  // 서버의 API
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Room list 불러오기 실패');
@@ -37,21 +37,15 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         }
     
         // 중복 방 제목 체크
-        // const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
-        // if (isDuplicate) {
-        //     alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
-        //     return;
-        // }
-        const isDuplicate = Array.isArray(existingRooms) && existingRooms.some(room => room.name === trimmedRoomName);
-        if (isDuplicate) {
-        alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
-        return;
+        const isDuplicate = Array.isArray(existingRooms) && existingRooms.some(room => room.name === trimmedRoomName);        if (isDuplicate) {
+            alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
+            return;
         }
     
         // 새로운 방 정보 생성
         const newRoom = {
             name: trimmedRoomName,
-            count: 0,
+            count: 1,
             maxCount,
             password,
             isPrivate,
@@ -61,11 +55,6 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         try {
             const success = await onSave(newRoom);
             if (success) {
-                // socket.current.emit('enter_room', UserName, trimmedRoomName);
-                // setRoomName('');
-                // setPassword('');
-                // setIsPrivate(false);
-                // setMaxCount(0);
                 onClose();
                 fetchRooms();
             }
@@ -113,7 +102,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
                     최대 인원수: <span>{maxCount}</span>
                     <input 
                         type="range" 
-                        value={maxCount}       
+                        value={maxCount}
                         onChange={(e) => setMaxCount(parseInt(e.target.value))} 
                         min="2" 
                         max="10"

@@ -14,13 +14,12 @@ export default function ChatPage() {
     const [isPrivate, setIsPrivate] = useState(false);// 초기 비공개 여부 설정
     const [roomCount, setRoomCount] = useState(0);
     const [roomName, setRoomName] = useState(null);
-    const [maxCount, setMaxCount] = useState(0); // 초기 최대 인원 설정
+    const [maxCount, setMaxCount] = useState(); // 초기 최대 인원 설정
     const [password, setPassword] = useState(''); // 초기 비밀번호 설정
     const [timeoutId, setTimeoutId] = useState(0);
     const [count, setCount] = useState(0);
     const [ownerNickname, setOwnerNickName] = useState('');
     const [AIAnalysisResult, setAIAnalysisResult] = useState(null);
-    const [isOwner, setIsOwner] = useState(false);
     // const [test,settest] =useState("00:00");
 
     const location = useLocation();
@@ -57,8 +56,6 @@ export default function ChatPage() {
                 count={count}
                 setCount={setCount}
                 setOwnerNickName={setOwnerNickName}
-                isOwner={isOwner}
-                setIsOwner={setIsOwner}
                 ownerNickname={ownerNickname}
             />
             <div className="chatFrameContainer">
@@ -81,20 +78,18 @@ export default function ChatPage() {
                         setTimeoutId={setTimeoutId}
                         ownerNickname={ownerNickname}
                         setOwnerNickName={setOwnerNickName}
+                        setIsSocketConnected={setIsSocketConnected}
                         AIAnalysisResult={AIAnalysisResult}
                         setAIAnalysisResult={setAIAnalysisResult}
-                        setIsSocketConnected={setIsSocketConnected}
-                        isOwner={isOwner}
-                        setIsOwner={setIsOwner}
                     />:<div className='WaitingFrame'>
-                        <img src={chaticon}/>
+                        <img src={chaticon} alt='대기화면'/>
                         여러 사람들과 소통해보세요.
                     </div>
                 }                
             </div>
             <LogFrame 
-            AIAnalysisResult={AIAnalysisResult} />
-
+                AIAnalysisResult={AIAnalysisResult}
+            />
         </div>
     );
 }

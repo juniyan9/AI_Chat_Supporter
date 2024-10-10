@@ -4,16 +4,12 @@ import io from 'socket.io-client';
 import InfoBar from "./InfoBar";
 import MessageContainer from "./MessageContainer";
 import TextContainer from "./TextContainer";
-// import { text } from "body-parser";
-// import RoomSettingsModal from './RoomSettingsModal';
+import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, 
-                                    password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, 
-                                    timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, 
-                                    isOwner, setAIAnalysisResult}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, setAIAnalysisResult}) {
     const [onsearchtext, setonSearchText] = useState('');
-    // const [isOwner, setIsOwner] = useState(false);
+    const [isOwner, setIsOwner] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [messages, setMessages] = useState([]);
     
@@ -32,20 +28,24 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
         if(room && !socket.current){
             // console.log('chatframe룸이름30',roomName);
             if(room.count < room.maxCount){
-                socket.current = io('http://43.203.141.146:5050');
+                
+                socket.current = io('http://localhost:5050');
                 socket.current.on('connect', () => {
                 socket.current.emit('enter_room', UserName, room.name);
+
                 setMessages([]);
-                
-                console.log('frame37',room);
+                setIsSocketConnected(true);
+
                 if (timeoutId) {
-                    console.log("clearTimeout 전 timeoutId:", timeoutId)
+                    // console.log("clearTimeout 전 timeoutId:", timeoutId)
                     clearTimeout(timeoutId); // 타이머 해제
                     console.log("소켓에서 timeoutId 지웠습니다.")
                     setTimeoutId(0)
                     console.log("소켓에서 timeoutId 만료 후 timeoutId:", timeoutId)
                 }
+                
                 //console.log('룸',room); //count,룸id,private,maxcount,name(roomname),ownerid,ownernickname,password
+                
             })
             }else{
                 alert('방이 꽉찼습니다');
@@ -61,7 +61,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
             // console.log("chatframe소켓 연결확인2",socket);//연결잘됌
 
             // 방장 여부 설정
-            // setIsOwner(UserName === ownerNickname);
+            setIsOwner(UserName === ownerNickname);
 
             // 서버에서 방장 정보를 받아오는 이벤트 리스너
             // socket.current.on('room_details', ( roomDetails ) => {
@@ -76,7 +76,6 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 // console.log("chatframe딜리티드속 데이터 :",data); //방장닉네임
                 if (data) {
                     alert("방장이 방을 삭제하였습니다.");
-                    socket.current.disconnect();
                     setIsSocketConnected(false);
                 }
             })
@@ -108,6 +107,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
             if(socket.current){
                 socket.current.close();
                 socket.current =null;
+                setIsSocketConnected(false);
             }
         };
     }, [UserName, room, ownerNickname]);
@@ -128,8 +128,6 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
         console.log('chatframe업데이트룸디테일즈',updatedRoomDetails);
     };
     const handleCloseModal = () => setShowModal(false);
-
-    
 
 
     return (
@@ -156,7 +154,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 texts={texts}
                 setAIAnalysisResult={setAIAnalysisResult}
             />
-            {/* {isOwner && (
+            {showModal && (
                 <RoomSettingsModal
                     isOpen={showModal}
                     onClose={handleCloseModal}
@@ -172,7 +170,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                         nickName: UserName
                     }}
                 />
-            )} */}
+            )}
         </div>
     );
 }
