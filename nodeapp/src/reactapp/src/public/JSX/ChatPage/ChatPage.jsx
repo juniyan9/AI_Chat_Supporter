@@ -57,6 +57,7 @@ export default function ChatPage() {
                 count={count}
                 setCount={setCount}
                 setOwnerNickName={setOwnerNickName}
+                isOwner={isOwner}
                 setIsOwner={setIsOwner}
                 ownerNickname={ownerNickname}
             />

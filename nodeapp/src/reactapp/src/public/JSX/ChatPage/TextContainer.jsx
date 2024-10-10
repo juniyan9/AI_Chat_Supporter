@@ -4,7 +4,7 @@ import RoomSettingsModal  from './RoomSettingsModal'
 import AImodel from "./AImodel";
 import { useState,useEffect,useRef } from "react";
 
-export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner,setShowModal, texts, setIsOwner, setAIAnalysisResult}) {
+export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner, setShowModal, texts, setAIAnalysisResult}) {
     
     const [message, setMessage] = useState('');
     const [scrollon,setscrollon] = useState(false);

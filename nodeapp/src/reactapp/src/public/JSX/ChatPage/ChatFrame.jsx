@@ -8,7 +8,10 @@ import TextContainer from "./TextContainer";
 // import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, setIsOwner, setAIAnalysisResult}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, 
+                                    password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, 
+                                    timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, 
+                                    isOwner, setAIAnalysisResult}) {
     const [onsearchtext, setonSearchText] = useState('');
     // const [isOwner, setIsOwner] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -58,7 +61,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
             // console.log("chatframe소켓 연결확인2",socket);//연결잘됌
 
             // 방장 여부 설정
-            setIsOwner(UserName === ownerNickname);
+            // setIsOwner(UserName === ownerNickname);
 
             // 서버에서 방장 정보를 받아오는 이벤트 리스너
             // socket.current.on('room_details', ( roomDetails ) => {
@@ -132,10 +135,10 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
     return (
         <div className="ChatFrame">
             <InfoBar
-                roomName={roomName} // 업데이트된 . 방이름 사용
+                roomName={room.name} // 업데이트된 . 방이름 사용
                 setonsearchtext={setonSearchText}
                 roomCount={roomCount}
-                maxCount = {maxCount}      // 업데이트된 최대 인원수 사용
+                maxCount = {room.maxCount}      // 업데이트된 최대 인원수 사용
                 isPrivate={isPrivate}      // 업데이트된 비공개 여부 사용
                 password={password}
             />
@@ -151,7 +154,6 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 isOwner={isOwner}
                 handleUpdateRoom={handleUpdateRoom}
                 texts={texts}
-                setIsOwner={setIsOwner}
                 setAIAnalysisResult={setAIAnalysisResult}
             />
             {/* {isOwner && (
