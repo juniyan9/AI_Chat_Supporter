@@ -14,9 +14,14 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
 
     console.log('listpage16',roomName);
     
-    const SERVER_URL = 'http://localhost:5000';
+    const SERVER_URL = 'http://43.203.141.146:9000';
     // console.log('rooms1',rooms);
     //rooms : 현재 존재하는 방배열 및 정보 conut,id,private,roomname,ownerid,ownernickname,password 등
+    useEffect (()=> {
+        // roomCount 변화 감지
+        console.log(`Room 인원수 업데이트 : ${count}`)
+    }, [count]);
+    
     const handleSelectedRoom = (room) => {
         //console.log('ChatListFrame룸',room);//conut,id,private,maxcount,name(roomname),ownerid,ownernickname,password
         onSelectedRoom(room);
@@ -80,7 +85,7 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                 setOwnerNickName(firstRoom.ownerNickname);
             }
         };
-        fetchInitialRooms();
+            fetchInitialRooms();
     }, []);
 
 
@@ -117,8 +122,7 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
 
             setRooms(prevRooms => [...prevRooms, data]);
             setFilteredRooms(prevRooms => [...prevRooms, data]); // 모든 방을 필터링 없이 설정
-
-            handleSelectedRoom(room);
+            // handleSelectedRoom(room);
 
             return true;
         } catch (error) {
@@ -169,9 +173,9 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                         <div
                             key={room.name}
                             onClick={() => handleSelectedRoom(room)}
-                            className={isSocketConnected && room.name == roomName ? "socketConnectedroom" : (`room ${room.count >= room.maxCount ? 'full' : ''}`)}
+                            className={isSocketConnected && room.name === roomName ? "socketConnectedroom" : (`room ${room.count >= room.maxCount ? 'full' : ''}`)}
                         >
-                            {room.maxCount == room.count ?
+                            {room.maxCount === room.count ?
                                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="6.5" cy="6.5" r="6.5" fill="#BB2525"/>
                                 </svg> :
