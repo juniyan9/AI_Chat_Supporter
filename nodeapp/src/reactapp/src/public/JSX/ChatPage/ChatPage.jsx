@@ -19,6 +19,7 @@ export default function ChatPage() {
     const [timeoutId, setTimeoutId] = useState(0);
     const [count, setCount] = useState(0);
     const [ownerNickname, setOwnerNickName] = useState('');
+    const [AIAnalysisResult, setAIAnalysisResult] = useState(null);
     // const [test,settest] =useState("00:00");
 
     const location = useLocation();
@@ -78,13 +79,17 @@ export default function ChatPage() {
                         ownerNickname={ownerNickname}
                         setOwnerNickName={setOwnerNickName}
                         setIsSocketConnected={setIsSocketConnected}
+                        AIAnalysisResult={AIAnalysisResult}
+                        setAIAnalysisResult={setAIAnalysisResult}
                     />:<div className='WaitingFrame'>
                         <img src={chaticon} alt='대기화면'/>
                         여러 사람들과 소통해보세요.
                     </div>
                 }                
             </div>
-            <LogFrame />
+            <LogFrame 
+                AIAnalysisResult={AIAnalysisResult}
+            />
         </div>
     );
 }

@@ -1,9 +1,9 @@
 import React from "react"
 import '../../CSS/TextContainer.css';
+import AImodel from "./AImodel";
 import { useState,useEffect,useRef } from "react";
 
-export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner, setShowModal, texts}) {
-    
+export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner, setShowModal, texts, setAIAnalysisResult}) {
     const [message, setMessage] = useState('');
     const [scrollon,setscrollon] = useState(false);
     const textareaRef = useRef(null);
@@ -65,6 +65,11 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
     const handleAIClick = () => {
         // texts 배열을 서버에 보냅니다.
         socket.current.emit('ai_analysis', {roomName, texts});
+        // AI 분석 결과 수신
+        socket.current.on('ai_analysis_result', (results) => {
+            console.log('AI Analysis Result:', results);
+            setAIAnalysisResult(results)
+        });
     };
 
     return (
