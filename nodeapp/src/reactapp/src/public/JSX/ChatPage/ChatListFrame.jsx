@@ -185,7 +185,9 @@ import { useNavigate} from 'react-router-dom';
 //     );
 // }
 
-export default function ChatListFrame({setIsSocketConnected,isSocketConnected,onSelectedRoom, UserName, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount,timeoutId,setTimeoutId,count,setCount,setOwnerNickName}) {
+export default function ChatListFrame({setIsSocketConnected,isSocketConnected,onSelectedRoom, UserName, roomName, 
+                                        setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, 
+                                        setMaxCount,timeoutId,setTimeoutId,count,setCount,setOwnerNickName, setIsOwner}) {
     const [rooms, setRooms] = useState([]);
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');

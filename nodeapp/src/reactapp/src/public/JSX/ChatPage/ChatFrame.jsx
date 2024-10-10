@@ -8,9 +8,9 @@ import TextContainer from "./TextContainer";
 // import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, setAIAnalysisResult}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, setIsOwner, setAIAnalysisResult}) {
     const [onsearchtext, setonSearchText] = useState('');
-    const [isOwner, setIsOwner] = useState(false);
+    // const [isOwner, setIsOwner] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [messages, setMessages] = useState([]);
     
@@ -151,6 +151,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 isOwner={isOwner}
                 handleUpdateRoom={handleUpdateRoom}
                 texts={texts}
+                setIsOwner={setIsOwner}
                 setAIAnalysisResult={setAIAnalysisResult}
             />
             {/* {isOwner && (

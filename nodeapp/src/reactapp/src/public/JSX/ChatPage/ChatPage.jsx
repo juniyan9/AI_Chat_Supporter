@@ -20,6 +20,7 @@ export default function ChatPage() {
     const [count, setCount] = useState(0);
     const [ownerNickname, setOwnerNickName] = useState('');
     const [AIAnalysisResult, setAIAnalysisResult] = useState(null);
+    const [isOwner, setIsOwner] = useState(false);
     // const [test,settest] =useState("00:00");
 
     const location = useLocation();
@@ -56,6 +57,7 @@ export default function ChatPage() {
                 count={count}
                 setCount={setCount}
                 setOwnerNickName={setOwnerNickName}
+                setIsOwner={setIsOwner}
                 ownerNickname={ownerNickname}
             />
             <div className="chatFrameContainer">
@@ -81,6 +83,8 @@ export default function ChatPage() {
                         AIAnalysisResult={AIAnalysisResult}
                         setAIAnalysisResult={setAIAnalysisResult}
                         setIsSocketConnected={setIsSocketConnected}
+                        isOwner={isOwner}
+                        setIsOwner={setIsOwner}
                     />:<div className='WaitingFrame'>
                         <img src={chaticon}/>
                         여러 사람들과 소통해보세요.
