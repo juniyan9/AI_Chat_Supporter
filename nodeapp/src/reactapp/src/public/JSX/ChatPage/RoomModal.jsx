@@ -37,8 +37,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         }
     
         // 중복 방 제목 체크
-        const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
-        if (isDuplicate) {
+        const isDuplicate = Array.isArray(existingRooms) && existingRooms.some(room => room.name === trimmedRoomName);        if (isDuplicate) {
             alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
             return;
         }
@@ -46,7 +45,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         // 새로운 방 정보 생성
         const newRoom = {
             name: trimmedRoomName,
-            count: 0,
+            count: 1,
             maxCount,
             password,
             isPrivate,

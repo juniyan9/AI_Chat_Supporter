@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import InfoBar from "./InfoBar";
 import MessageContainer from "./MessageContainer";
 import TextContainer from "./TextContainer";
-// import RoomSettingsModal from './RoomSettingsModal';
+import RoomSettingsModal from './RoomSettingsModal';
 
 
 export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected}) {
@@ -28,13 +28,14 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
         if(room && !socket.current){
             // console.log('chatframe룸이름30',roomName);
             if(room.count < room.maxCount){
+                
                 socket.current = io('http://localhost:5050');
                 socket.current.on('connect', () => {
                 socket.current.emit('enter_room', UserName, room.name);
+
                 setMessages([]);
                 setIsSocketConnected(true);
 
-                console.log('frame37',room);
                 if (timeoutId) {
                     // console.log("clearTimeout 전 timeoutId:", timeoutId)
                     clearTimeout(timeoutId); // 타이머 해제
@@ -42,7 +43,9 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                     setTimeoutId(0)
                     console.log("소켓에서 timeoutId 만료 후 timeoutId:", timeoutId)
                 }
+                
                 //console.log('룸',room); //count,룸id,private,maxcount,name(roomname),ownerid,ownernickname,password
+                
             })
             }else{
                 alert('방이 꽉찼습니다');
@@ -109,6 +112,12 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
         };
     }, [UserName, room, ownerNickname]);
 
+    const texts = messages
+        .filter(messages => messages.nickName !== "알리미")
+        .map(messages => messages.text);
+
+    console.log("메시지 내용들:", texts);
+
 
     // 방 정보 업데이트 핸들러
     const handleUpdateRoom = (updatedRoomDetails) => {
@@ -119,8 +128,6 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
         console.log('chatframe업데이트룸디테일즈',updatedRoomDetails);
     };
     const handleCloseModal = () => setShowModal(false);
-
-    
 
 
     return (
@@ -144,8 +151,9 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 roomName={room.name}
                 isOwner={isOwner}
                 handleUpdateRoom={handleUpdateRoom}
+                texts={texts}
             />
-            {/* {isOwner && (
+            {showModal && (
                 <RoomSettingsModal
                     isOpen={showModal}
                     onClose={handleCloseModal}
@@ -161,7 +169,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                         nickName: UserName
                     }}
                 />
-            )} */}
+            )}
         </div>
     );
 }

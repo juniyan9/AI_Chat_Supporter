@@ -1,9 +1,8 @@
 import React from "react"
 import '../../CSS/TextContainer.css';
-import RoomSettingsModal  from './RoomSettingsModal'
 import { useState,useEffect,useRef } from "react";
 
-export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner,setShowModal}) {
+export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner, setShowModal, texts}) {
     
     const [message, setMessage] = useState('');
     const [scrollon,setscrollon] = useState(false);
@@ -61,6 +60,12 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
     const modal = () =>{
         setShowModal(true);
     }
+    
+    // AI 버튼 클릭 핸들로
+    const handleAIClick = () => {
+        // texts 배열을 서버에 보냅니다.
+        socket.current.emit('ai_analysis', {roomName, texts});
+    };
 
     return (
         <div className="TextContainer">
@@ -68,6 +73,7 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
                 <button onClick={modal}>방장</button>
                 ):<button>노방장</button>
                 }
+                <button onClick={handleAIClick}>AI</button> {/* AI 버튼 */}
                 <textarea
                     className="textinput"
                     name="message"

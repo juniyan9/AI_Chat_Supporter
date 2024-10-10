@@ -79,7 +79,7 @@ export default function ChatPage() {
                         setOwnerNickName={setOwnerNickName}
                         setIsSocketConnected={setIsSocketConnected}
                     />:<div className='WaitingFrame'>
-                        <img src={chaticon}/>
+                        <img src={chaticon} alt='대기화면'/>
                         여러 사람들과 소통해보세요.
                     </div>
                 }                
