@@ -22,10 +22,6 @@ getRoomListRouter.get("/", (req, res) => {
     return res.status(401).send("세션이 유효하지 않습니다.")
   }
 
-  // setTimeout(() => {
-  //   console.log("timeout 됐습니다")
-  // }, timeoutmin );
-
   // 사용자 정보 업데이트
   const userIndex = userInfo.findIndex(user => user.user.id === req.session.user.id);
   
@@ -40,18 +36,16 @@ getRoomListRouter.get("/", (req, res) => {
     logger.info(`User ${user.nickName}의 timeout이 생성되었습니다.`,'roomList.js');
     const timeoutId = setTimeout(() => {
     logger.info(`User ${user.nickName}이 timeout 되었습니다.${user.timeoutId}`,'roomList.js');
-    //실제로 timeout돼서 퇴출될 때 위 로그가 찍힘
+    //실제로 timeout돼서 퇴출될 때 위 로그가 찍힘 (타이머에 할당된 시간 끝나고 콜백 실행)
     user.timeoutId = null;
-      // 추가 작업: 세션 만료 처리
     }, timeoutmin);
     // 사용자 정보 업데이트
     user.timeoutId = timeoutId;
   } else {
-    logger.info(`User ${user.nickName}의 timeout 생성 안 되었습니다.`,'roomList.js');
+    // logger.info(`User ${user.nickName}의 timeout 생성 안 되었습니다.`,'roomList.js');
   }
-  // logger.info('rooms 정보 보내기 전 rooms:', rooms, 'roomList.js')
   const roomsAndTimeout = {rooms: rooms, timeoutmin: timeoutmin}
-  res.json(roomsAndTimeout);
+  res.json(roomsAndTimeout)
 });
 
 export default getRoomListRouter;

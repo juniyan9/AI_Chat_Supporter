@@ -6,6 +6,8 @@ const io = new Server(httpServer, { cors: "*" });
 import { logger } from "../app.js";
 import { userInfo } from "../main_page/main_page.js";
 import { rooms } from "../lobby/addRoom.js";
+import { analyzeEmotion } from "../model_function/analyzeEmotion.js";
+import { analyzeSentiment } from "../model_function/analyzeSentiment.js";
 
 export function socketConnection() {
   let roomUsers = {};
@@ -46,16 +48,12 @@ export function socketConnection() {
           return; // 세션이 만료되었으므로 추가 작업을 수행하지 않음
         }
 
-        // logger.info("타임아웃id 보낼 때 timeoutId"+user.timeoutId,22222222222222 )
         console.log("타임아웃 전")
         if (user.timeoutId) {
-          // logger.info("타임아웃id 보낼 때 timeoutId"+user.timeoutId,11111111111 )
           clearTimeout(user.timeoutId);
           logger.info(`소켓에서 User ${user.nickName}의 timeout을 지웠습니다 .`,'socketconnection.js');
-          // logger.info("소켓에서 타임아웃 해제됨:"+user.timeoutId,11111111111);
 
           user.timeoutId = null;
-          // logger.info("timeoutId 클라이언트에 보냄:");
         }
 
         user.socketId = socket.id;
@@ -89,13 +87,12 @@ export function socketConnection() {
         }
 
         // 사용자 ID를 배열에 추가
-        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.1")
         roomUsers[roomName].push(user.id);
-        logger.info("enter_room: 사용자를 roomUsers에 잘 추가했습니다.2")
 
-        logger.info(`소켓에서 user.roomName: ${user.roomName}`, 'socketConnection.js')
+        // logger.info(`소켓에서 user.roomName: ${user.roomName}`, 'socketConnection.js')
         socket.join(user.roomName); //해당 소켓을 특정 방에 추가
 
+        if (room) {
         room.count = roomUsers[roomName].length;
       
         logger.info(`enter_room 때 ${roomName}에 있는 사람 수: ${roomUsers[roomName].length} 명`, 'socketConnection.js')
@@ -103,7 +100,7 @@ export function socketConnection() {
         // logger.info(`세션 만료 여부: ${user.sessionExpiresAt}`,'socketConnection.js');
         io.to(roomName).emit("roomCountUpdate", room.count);
 
-        logger.info(`현재 방 사용자 정보(roomUsers) [방에 있는 사용자 ID]:${JSON.stringify(roomUsers[roomName])}`,'socketConnection.js')
+        logger.info(`현재 방 ${roomName}에 있는 사용자 정보:${JSON.stringify(roomUsers[roomName])}`,'socketConnection.js')
 
 
         // console.log("방 정보:", room );
@@ -111,9 +108,7 @@ export function socketConnection() {
         io.to(roomName).emit("room_details", room);
         // console.log("업데이트된 방 정보 전달:", room)
         io.to(roomName).emit("newRoomInfo", room);
-
-        const userIds = roomUsers[roomName].join(",");
-        // console.log(`${roomName} 방의 유저 ID 목록: 유저 ID: ${userIds}`);
+        }
       } else {
         console.error("사용자를 찾을 수 없습니다.");
       }
@@ -122,7 +117,7 @@ export function socketConnection() {
         //userCheck의 user
         socket.emit(
           "reply",
-          `${nickName}님이 ${roomName} 에 입장하셨습니다. 반갑습니다.`,
+          `${nickName}님이 ${roomName}에 입장하셨습니다. 반갑습니다.`,
           "알리미"
         ); // 나도 웰컴 메시지 확인할 수 있게 수정.
 
@@ -131,7 +126,7 @@ export function socketConnection() {
           .in(roomName)
           .emit(
             "reply",
-            `${nickName}님이 ${roomName} 에 입장하셨습니다. 반갑습니다.`,
+            `${nickName}님이 ${roomName}에 입장하셨습니다. 반갑습니다.`,
             "알리미"
           );
       } //위에서는 if(user)로 user를 걸어줘서 user.nickName / user.roomName 이런 식으로 안 해줘도 됨.
@@ -172,52 +167,73 @@ export function socketConnection() {
         (check) => check.user.socketId === socket.id
       );
 
-      // socket.to(roomName).emit('reply', message, userCheck.user.nickName);
-      // if (userCheck) {
-      // io.to(roomName).emit('reply', message, userCheck.user.nickName);
-      // }
+      socket.to(roomName).emit('reply', message, userCheck.user.nickName);
 
-      // messages.push(message);
-      //   // console.log('Updated messages array:', messages);
+      logger.info(`room ${roomName}: Received message from client >>>>>>` + message);
 
-      socket.to(roomName).emit('reply', message);
-      logger.info("Received message from client: " + message);
-      logger.info("Received message from client room: " + roomName);
+    //   try {
+    //     //감정분석
+    //     const result = await analyzeEmotion(message);
+    //     const emotionMatch = result.match(/(공포|놀람|분노|슬픔|중립|행복|혐오)/);
+    //     const emotion = emotionMatch ? emotionMatch[0] : "감정 분석 실패"; // 매칭된 감정이 없으면 기본 메시지 사용
+
+    //     //감성분석
+    //     const sentimentResult = await analyzeSentiment(message);
+    //     const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
+    //     const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패"; // 긍정/부정 결과
+    //     const score = sentimentMatch ? sentimentMatch[1] : "N/A"; // 확률 점수
+
+    //     // 분석된 감정을 클라이언트에 전송
+    //     // logger.info(`emit 전, 분석된 감정: ${emotion}`, 'socketConnection.js')
+    //     logger.info(`emit 전, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
+    //     socket.to(roomName).emit('reply', message, userCheck.user.nickName, emotion, sentiment, score);
+    //     // logger.info(`emit 후, 분석된 감정: ${emotion}`, 'socketConnection.js')
+    //     logger.info(`emit 후, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
+
+        
+    //     logger.info("Received message from client: " + message);
+    //     logger.info("Received message from client room: " + roomName);
+    // } catch (error) {
+    //     console.error("Error during emotion analysis:", error);
+    // }
     });
 
-    // socket.on("update_messages", (updatedMessages) => {
-    //   console.log("클라이언트에서 받은 updated messages:", updatedMessages);
-    //   // console.log('소켓이 서버에 연결되었습니다. 소켓 ID:', socket.current.id);
+    socket.on('ai_analysis', async (data) => {
+      const { roomName, texts } = data;
+      console.log(`방에서 AI 분석 요청을 받았습니다: ${roomName}`);
+      console.log('텍스트들:', texts);
 
-    //   let count1 = 0;
-    //   updatedMessages.forEach((message) => {
-    //     const { ROOMNAME, MESSAGE, NickName, MESSAGE_ID, DATE } = message;
-    //     // const ROOMNAME = updatedMessages[0].ROOMNAME
-    //     let count2 = 0;
-    //     count1 += 1;
-    //     count2 += 1;
+      // const results = [];
+      const combinedText = texts.join(' ');
 
-    //     if (ROOMNAME) {
-    //       socket.to(ROOMNAME).emit("update_messages_reply", MESSAGE, NickName); //reply
-    //       //통으로 전달할려면 updatedMessages를 넣어야 하나
-    //       //전달받는 데이터가 저렇게 다섯 가지 있어서 통으로 전달 안 한건데
-    //       // ui 에 선택적으로 message, nickname만 뿌리면 되나..?
+        // for (const message of texts) {
+            const emotionResult = await analyzeEmotion(combinedText);
+            const emotionMatch = emotionResult.match(/(공포|놀람|분노|슬픔|중립|행복|혐오)/);
+            const emotion = emotionMatch ? emotionMatch[0] : "감정 분석 실패";
 
-    //       // console.log("emit 코드 읽음");
-    //       console.log(
-    //         `count2: ${count2}, ${count1}클라한테 메시지, 닉네임 전달.`,
-    //         ROOMNAME,
-    //         "with message:",
-    //         MESSAGE,
-    //         "and nickname:",
-    //         NickName
-    //       );
+            const sentimentResult = await analyzeSentiment(combinedText);
+            const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
+            const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패";
+            const score = sentimentMatch ? sentimentMatch[1] : "N/A";
 
-    //       // socket.broadcast.to(ROOMNAME).emit('update_messages_reply', MESSAGE, NickName);
-    //     }
-    //   });
-    //   socket.emit("message_status", "메시지가 성공적으로 전송되었습니다.");
-    // });
+            // results.push({
+            //     message,
+            //     emotion,
+            //     sentiment,
+            //     score,
+            // });
+            const results = {
+              emotion,
+              sentiment,
+              score,
+              texts, // 원본 texts도 포함하여 전송
+          };
+        // }
+
+      logger.info(`클라이언트에 보내기 전 감정분석 결과:${JSON.stringify(results)}`, 'socketConnection.js')
+      console.log(`클라이언트에 보내기 전 감정분석 결과:${results}`, 'socketConnection.js')
+      socket.emit('ai_analysis_result', results);
+  });
 
     //소켓 연결 해제 처리
     // socket.on("disconnect", (roomName) => {  //소켓 끊어질 때 자동으로 발생하는 이벤트이므로 클라에서 관련 코드를 굳이 수동으로 호출할 필요 없고, 따라서 여기서도 roomName 넣어줄 필요가 없게 됨.
@@ -269,6 +285,7 @@ export function socketConnection() {
 
           const extendMin = 15
           user.sessionExpiresAt = new Date(Date.now() + extendMin * 60000);
+          logger.info(`user ${user.nickName}의 새로운 session 만료 시간:${user.sessionExpiresAt}`, 'socketConnection.js')
 
           user.socketId = null;
           user.roomName = null;

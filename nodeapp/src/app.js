@@ -8,6 +8,7 @@ import * as url from "url";
 import session from "express-session";
 import dotenv from "dotenv";
 dotenv.config();
+import { spawn } from "child_process";
 
 import { socketConnection } from "./inChatRoom/socketConnection.js";
 import { userInfo } from "./main_page/main_page.js";
@@ -72,31 +73,31 @@ import userRegisterRouter from "./main_page/main_page.js";
 import getRoomListRouter from "./lobby/roomList.js";
 import addRoomRouter from "./lobby/addRoom.js";
 import updateRoomDataRouter from "./lobby/updateRoom.js";
-import deleteRoomRouter from "./inChatRoom/deleteRoom.js";
 import geminiPostRouter from "./model_routers/geminiPostRouter.js";
 import geminiGetRouter from "./model_routers/geminiGetRouter.js";
 import llamaPostRouter from "./model_routers/llamaPostRouter.js";
+import emotionClassifierRouter from "./model_routers/emotionClassifierRouter.js";
 
 
-// 유저 세션 연장 처리
-// const extendPrd = 17
-// setInterval(() => {
-//   const now = new Date();
+// 유저 세션 연장 처리 -- 방에 있는데 그냥 관전만 하는 유저 연장
+const extendPrd = 16
+setInterval(() => {
+  const now = new Date();
 
-//   // console.log("세션연장처리 userInfo 배열 내용:", userInfo);  //잘 가져옴
+  // console.log("세션연장처리 userInfo 배열 내용:", userInfo);  //잘 가져옴
 
-//   userInfo.forEach((userCheck) => {
-//     const user = userCheck.user;
-//     // console.log("세션연장처리 세션 만료 시간 값 확인:", user.sessionExpiresAt);
+  userInfo.forEach((userCheck) => {
+    const user = userCheck.user;
+    // console.log("세션연장처리 세션 만료 시간 값 확인:", user.sessionExpiresAt);
 
-//     const sessionExpiresAt = new Date(user.sessionExpiresAt);
+    const sessionExpiresAt = new Date(user.sessionExpiresAt);
 
-//     if (user.socketId && now > sessionExpiresAt) {
-//       extendSession(user);
-//       logger.info("세션 연장 처리 완료");
-//     }
-//   });
-// }, extendPrd * 60000); //17분마다 연장
+    if (user.socketId && now > sessionExpiresAt) {
+      extendSession(user);
+      logger.info("세션 연장 처리 완료");
+    }
+  });
+}, extendPrd * 60000); //17분마다 연장
 
 
 
@@ -140,10 +141,14 @@ app.use("/update_room", updateRoomDataRouter);
 // 방 목록 갱신
 app.use("/rooms", getRoomListRouter);
 //방 삭제
-app.use("/delete_room", deleteRoomRouter);
+// app.use("/delete_room", deleteRoomRouter);
 
 /*Inside Chat Room*/
 socketConnection();
+
+// 감정 분석 라우터
+app.use("/emotionClassifier", emotionClassifierRouter);
+
 
 
 /* 모델 호출 */

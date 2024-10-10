@@ -8,8 +8,8 @@ import { rooms } from "./addRoom.js";
 
 // export function updateRoomData(app){
 updateRoomDataRouter.post("/", (req, res) => {
+  logger.info(`세션 정보 from updateRoomDataRouter: ${JSON.stringify(req.session.user)}`,'updateRoom.js');
 
-  console.log("updateRoomDataRouter, session check:", req.session.user)
 
   if (!req.session.user) {
     return res.status(401).send("세션이 유효하지 않습니다. 유저 정보가 삭제되었습니다.");
