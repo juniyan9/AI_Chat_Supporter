@@ -133,10 +133,10 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
     return (
         <div className="ChatFrame">
             <InfoBar
-                roomName={roomName} // 업데이트된 . 방이름 사용
+                roomName={room.name} // 업데이트된 . 방이름 사용
                 setonsearchtext={setonSearchText}
                 roomCount={roomCount}
-                maxCount = {maxCount}      // 업데이트된 최대 인원수 사용
+                maxCount = {room.maxCount}      // 업데이트된 최대 인원수 사용
                 isPrivate={isPrivate}      // 업데이트된 비공개 여부 사용
                 password={password}
             />
