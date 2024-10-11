@@ -6,8 +6,6 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
                                     setPassword,isPrivate, setIsPrivate, maxCount, setMaxCount}){
     const [existingRooms, setExistingRooms] = useState([]); // 중복확인을 위한 state
 
-    console.log("const 아래 existingRooms:", Array.isArray(existingRooms))
-
 
     // useEffect를 사용하여 모달이 열릴 때 기존 방 목록을 서버에서 가져옴
     useEffect(() => {
@@ -19,14 +17,10 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
                     if (!response.ok) {
                         throw new Error('Room list 불러오기 실패');
                     }
-                    console.log("data 받아오기 전 Array.isArray(existingRooms):", Array.isArray(existingRooms));
                     return response.json();
                 })
                 .then(data => {
                     setExistingRooms(data); // 방 목록 저장
-                    console.log("서버에서 받은 data:", data)
-                    console.log("existingRooms:", existingRooms)
-                    console.log("Array.isArray(existingRooms):", Array.isArray(existingRooms));
                 })
                 .catch(error => {
                     console.log('Room list 불러오기 실패', error);
@@ -43,12 +37,11 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         // 방 제목이 2자 이상인지 확인
         if (trimmedRoomName.length < 2) {
             alert("방 제목은 2자 이상이어야 합니다.");
-            console.log("방제목체크아래Array.isArray(existingRooms):", Array.isArray(existingRooms));
             return;
         }
 
         if (Array.isArray(existingRooms) && existingRooms.length > 0) {
-            const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
+            const isDuplicate = existingRooms.find((room) => room.name === trimmedRoomName);
             console.log("isDuplicate:", isDuplicate);
         if (isDuplicate) {
             alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");

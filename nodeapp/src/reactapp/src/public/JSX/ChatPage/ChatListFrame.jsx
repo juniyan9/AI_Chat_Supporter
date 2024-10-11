@@ -107,6 +107,16 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                 body: JSON.stringify(room)
             });
 
+             // 중복된 방 이름에 대한 에러메시지
+        if (response.status === 400) {
+            const errorMessage = await response.json();
+            if (errorMessage.message === "이미 존재하는 방 이름입니다.") {
+                alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
+                setRoomName('');
+                return false; // 특정 에러 발생 시 false 반환
+            }
+        }
+
             const data = await response.json();
             console.log("서버의 data:" ,data);
 
