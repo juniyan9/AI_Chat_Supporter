@@ -1,9 +1,10 @@
 import React, { useState,useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import '../../CSS/RoomModal.css';
 
 export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,roomName,setRoomName,password, setPassword,isPrivate, setIsPrivate, maxCount, setMaxCount}){
     const [existingRooms, setExistingRooms] = useState([]); // 중복확인을 위한 state
-
+    console.log("const 아래 existingRooms:", Array.isArray(existingRooms))
 
     // useEffect를 사용하여 모달이 열릴 때 기존 방 목록을 서버에서 가져옴
     useEffect(() => {
@@ -37,9 +38,13 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         }
     
         // 중복 방 제목 체크
-        const isDuplicate = Array.isArray(existingRooms) && existingRooms.some(room => room.name === trimmedRoomName);        if (isDuplicate) {
-            alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
-            return;
+        if (Array.isArray(existingRooms) && existingRooms.length > 0) {
+            const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
+            console.log("isDuplicate:", isDuplicate);
+            if (isDuplicate) {
+                alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
+                return;
+            }
         }
     
         // 새로운 방 정보 생성

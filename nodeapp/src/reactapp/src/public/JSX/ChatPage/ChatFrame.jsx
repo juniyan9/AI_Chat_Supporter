@@ -7,7 +7,7 @@ import TextContainer from "./TextContainer";
 import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, setAIAnalysisResult}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, setAIAnalysisResult,setForceUpdate}) {
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -27,7 +27,8 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
     useEffect(() => {
         if(room && !socket.current){
             // console.log('chatframe룸이름30',roomName);
-            if(room.count < room.maxCount){
+            setForceUpdate();
+            if(room && room.count < room.maxCount){
                 
                 socket.current = io('http://43.203.141.146:9090');
                 socket.current.on('connect', () => {
@@ -136,7 +137,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 roomName={room.name} // 업데이트된 . 방이름 사용
                 setonsearchtext={setonSearchText}
                 roomCount={roomCount}
-                maxCount = {room.maxCount}      // 업데이트된 최대 인원수 사용
+                maxCount = {maxCount}      // 업데이트된 최대 인원수 사용
                 isPrivate={isPrivate}      // 업데이트된 비공개 여부 사용
                 password={password}
             />
@@ -153,13 +154,13 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 handleUpdateRoom={handleUpdateRoom}
                 texts={texts}
                 setAIAnalysisResult={setAIAnalysisResult}
+                setShowModal={setShowModal}
             />
             {showModal && (
                 <RoomSettingsModal
                     isOpen={showModal}
                     onClose={handleCloseModal}
                     onUpdate={handleUpdateRoom}
-                    setShowModal={setShowModal}
                     socket={socket}
                     roomDetails={{ 
                         name: roomName,

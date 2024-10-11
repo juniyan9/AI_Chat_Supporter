@@ -4,24 +4,25 @@ import '../../CSS/FilteredRoom.css';
 import RoomModal from './RoomModal';
 import { useNavigate} from 'react-router-dom';
 
-export default function ChatListFrame({setIsSocketConnected,isSocketConnected,onSelectedRoom, UserName, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount,timeoutId,setTimeoutId,count,setCount,setOwnerNickName}) {
+export default function ChatListFrame({setIsSocketConnected,isSocketConnected,onSelectedRoom, UserName, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount,timeoutId,setTimeoutId,count,setCount,setOwnerNickName,forceUpdate}) {
     const [rooms, setRooms] = useState([]);
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     
+
     const navigate = useNavigate();
 
-    console.log('listpage16',roomName);
+    // console.log('listpage16',roomName);
     
     const SERVER_URL = 'http://43.203.141.146:9000';
     // console.log('rooms1',rooms);
     //rooms : 현재 존재하는 방배열 및 정보 conut,id,private,roomname,ownerid,ownernickname,password 등
-    useEffect (()=> {
-        // roomCount 변화 감지
-        console.log(`Room 인원수 업데이트 : ${count}`)
+
+    useEffect(() => {
+        fetchRooms(); // 서버에서 방 목록을 다시 불러옴
     }, [count]);
-    
+
     const handleSelectedRoom = (room) => {
         //console.log('ChatListFrame룸',room);//conut,id,private,maxcount,name(roomname),ownerid,ownernickname,password
         onSelectedRoom(room);
@@ -48,7 +49,8 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
             //console.log("서버의 data:" ,data); // rooms,timeoutmin
             //console.log("닉네임", UserName); //유저 닉네임
             // console.log("data.rooms", data.rooms); //rooms랑 같음
-            
+            // console.log('listframe54:', count);
+
             if (data.rooms.length > 0) {
                 // 방 목록이 비어있지 않은 경우 첫 번째 방의 정보를 설정
                 const firstRoom = data.rooms[0];
@@ -59,9 +61,9 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
             }
 
             if (data.timeoutmin) {
-                console.log("timeout 생성됩니다.");
+                // console.log("timeout 생성됩니다.");
                 setTimeoutId(setTimeout(() => {
-                    console.log("timeout 됐습니다.")
+                    // console.log("timeout 됐습니다.")
                     setTimeoutId(0);
                     // navigate('/');
                 }, data.timeoutmin));
@@ -85,7 +87,7 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                 setOwnerNickName(firstRoom.ownerNickname);
             }
         };
-            fetchInitialRooms();
+        fetchInitialRooms();
     }, []);
 
 
@@ -122,8 +124,13 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
 
             setRooms(prevRooms => [...prevRooms, data]);
             setFilteredRooms(prevRooms => [...prevRooms, data]); // 모든 방을 필터링 없이 설정
-            // handleSelectedRoom(room);
 
+            if(!isSocketConnected){
+                handleSelectedRoom(room);
+            }if(isSocketConnected){
+
+                handleSelectedRoom(room);
+            }
             return true;
         } catch (error) {
             console.error('Failed to add data', error);
@@ -184,11 +191,18 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                                 </svg>
                             }
                             <h3>{room.name}</h3>
-                            <p>
+                            <span className="tooltip">
+                                👥
+                                <span className="tooltip-text">
+                                    {room.count}/{room.maxCount}명 참가 중
+                                </span>
+                            </span>
+
+                            {/* <p>
                                 <span className="people-icon">👥</span>
                                 {room.isPrivate && <span className="lock-icon">🔒</span>} 
                                 {room.count}/{room.maxCount}, {room.count}명
-                            </p>
+                            </p> */}
                         </div>
                     ))}
                 </div>
