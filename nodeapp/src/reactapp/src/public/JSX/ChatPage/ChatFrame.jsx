@@ -82,8 +82,6 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
             
 
             // 서버에서 업데이트된 방 정보 받아오는 이벤트 리스너
-            
-            
             // socket.current.on('room_updated', (updatedSettings) => {
             //     //console.log('chatframe업데이트 세팅즈', updatedSettings);
             //     setMaxCount(updatedSettings.maxCount);   // 변경된 최대 인원수 업데이트
@@ -136,7 +134,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 roomName={room.name} // 업데이트된 . 방이름 사용
                 setonsearchtext={setonSearchText}
                 roomCount={roomCount}
-                maxCount = {room.maxCount}      // 업데이트된 최대 인원수 사용
+                maxCount={maxCount}      // 업데이트된 최대 인원수 사용
                 isPrivate={isPrivate}      // 업데이트된 비공개 여부 사용
                 password={password}
             />
@@ -150,6 +148,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 nickName={UserName} 
                 roomName={room.name}
                 isOwner={isOwner}
+                setShowModal={setShowModal}
                 handleUpdateRoom={handleUpdateRoom}
                 texts={texts}
                 setAIAnalysisResult={setAIAnalysisResult}

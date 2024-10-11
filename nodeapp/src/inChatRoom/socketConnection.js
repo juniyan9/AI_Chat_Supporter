@@ -133,7 +133,8 @@ export function socketConnection() {
     });
 
     socket.on('room_updated', (data) => {
-      const { originalName, updatedName, updatedMaxCount, updatedPassword, updatedIsPrivate } = data;
+      const { originalName, updatedName, ownerNickname, updatedMaxCount, updatedPassword, updatedIsPrivate } = data;
+      logger.info(`방 설정 업데이트 시 받은 정보: ${data}`, 'socketConnection.js')
 
       let roomIndex = rooms.findIndex(
         (room) => room.name === originalName
@@ -156,8 +157,13 @@ export function socketConnection() {
         logger.info(`업데이트된 방 정보 받은 후 방 정보: ${JSON.stringify(updatedRoomData)}`,'socketConnection.js');
 
         io.to(originalName).emit('newRoomInfo', updatedRoomData);
+
+        socket.emit('update_room_response', updatedRoomData)
     }
   })
+
+
+
 
     // //유저 메시지 접수 및 소켓들에 보내주기
     //socket id, message id, roomName, message, date 받아오기

@@ -28,64 +28,50 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
     //console.log("룸디테일즈 방장닉네임" , roomDetails.ownerNickname); //방장 닉네임뜸
     //console.log(roomDetails); isprivate,maxCount,name,nickName,ownerNickname,password
 
-    const handleSave = async () => {
-        // console.log(roomDetails.ownerNickname);
-        
+    const handleSave = () => {
         if (roomName.trim() === '') {
             alert('방 이름을 입력하세요.');
             return;
         }
 
         setIsSaving(true);
-        try {
-            const response = await fetch(`${SERVER_URL}/update_room`, {
-                
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    originalName: roomDetails.name,
-                    updatedName: roomName,
-                    ownerNickname : roomDetails.ownerNickname,
-                    updatedMaxCount: maxCount,
-                    updatedPassword: password,
-                    updatedIsPrivate: isPrivate,
-                    count : count, // 현재 인원 수 포함
-                }),
-            
-            });
-            const data = await response.json();
-            console.log("서버에게 받은 업데이트 된 방 정보 :", data.data);
 
-            
-            if (response.ok) {
-                setIsSaving(false);
+        // 소켓을 통해 서버로 방 업데이트 요청을 전송
+        socket.current.emit('room_updated', {
+            originalName: roomDetails.name,
+            updatedName: roomName,
+            ownerNickname: roomDetails.ownerNickname,
+            updatedMaxCount: maxCount,
+            updatedPassword: password,
+            updatedIsPrivate: isPrivate,
+            count: count, // 현재 인원 수 포함
+        });
+
+        // 서버에서 업데이트 결과를 받는 이벤트 리스너 설정
+        socket.current.on('update_room_response', (response) => {
+            setIsSaving(false);
+            console.log("response:", response)
+
+            if (response) {
                 alert('방 정보가 업데이트되었습니다.');
 
-                onUpdate({ 
+                // UI를 업데이트하는 함수 호출
+                onUpdate({
                     name: roomName,
-                    maxCount, 
-                    password, 
+                    maxCount,
+                    password,
                     isPrivate,
-                    count : data.data.count, // 여기서 받은 count를 포함
-                    ownerNickname : roomDetails.ownerNickname, //소유자 닉네임
-                    id : data.data.id,
-                    
+                    count: response.count, // 서버에서 받은 새로운 count
+                    ownerNickname: roomDetails.ownerNickname,
+                    id: response.id,
                 });
+
                 onClose();
-            
             } else {
-                const errorData = await response.json();
                 alert('방 정보 업데이트에 실패했습니다.');
-                console.error('Failed to update room:', errorData.error);
-                setIsSaving(false);
+                console.error('Failed to update room:', response.error);
             }
-        } catch (error) {
-            setIsSaving(false);
-            alert('서버와의 통신 중 오류가 발생했습니다.');
-            console.error('Failed to update room:', error);
-        }
+        });
     };
 
     const handleDelete = async () => {
@@ -107,7 +93,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
                             type="text"
                             value={roomName}
                             onChange={(e) => setRoomName(e.target.value)}
-                            disabled={isSaving || isDeleting}
+                            disabled={true}
                         />
                     </label>
                     <label>
