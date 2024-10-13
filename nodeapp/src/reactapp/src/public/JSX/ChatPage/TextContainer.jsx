@@ -3,7 +3,8 @@ import '../../CSS/TextContainer.css';
 import AImodel from "./AImodel";
 import { useState,useEffect,useRef } from "react";
 
-export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner, setShowModal, texts, setAIAnalysisResult}) {
+export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner, 
+                                        setShowModal, texts, setAIAnalysisResult, setEmotionsAnalysisResult, setIntentionsAnalysisResult}) {
     const [message, setMessage] = useState('');
     const [scrollon,setscrollon] = useState(false);
     const textareaRef = useRef(null);
@@ -72,6 +73,28 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
         });
     };
 
+    // gemini 감정분석
+    const handleGeminiEmoClick = () => {
+        // texts 배열을 서버에 보냅니다.
+        socket.current.emit('gemini_emo_analysis', {roomName, texts});
+        // AI 분석 결과 수신
+        socket.current.on('gemini_emo_analysis_result', (results) => {
+            console.log('Gemini Analysis Result:', results);
+            setEmotionsAnalysisResult(results)
+        });
+    };
+
+    // gemini 의도분석
+    const handleGeminiIntentionsClick = () => {
+        // texts 배열을 서버에 보냅니다.
+        socket.current.emit('gemini_intentions_analysis', {roomName, texts});
+        // AI 분석 결과 수신
+        socket.current.on('gemini_intentions_analysis_result', (results) => {
+            console.log('Gemini Analysis Result:', results);
+            setIntentionsAnalysisResult(results)
+        });
+    };
+
     return (
         <div className="TextContainer">
             {isOwner ? (
@@ -79,6 +102,8 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
                 ):<button>노방장</button>
                 }
                 <button onClick={handleAIClick}>AI</button> {/* AI 버튼 */}
+                <button onClick={handleGeminiEmoClick}>감정분석</button> {/* gemini 감정분석 버튼 */}
+                <button onClick={handleGeminiIntentionsClick}>의도분석</button> {/* gemini 의도분석 버튼 */}
                 <textarea
                     className="textinput"
                     name="message"

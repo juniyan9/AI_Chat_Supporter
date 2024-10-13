@@ -60,8 +60,9 @@ export default function MainPage() {
         <div className="pullpage">
             <div className="MainPage">
                 <div className="Main">
-                <h1>AI Chat Support</h1>
-                <h2>Transforming<br/>Conversations with<br/>Ai - Powered Support</h2>
+                <h1>AI Chat Supporter</h1>
+                <h2>Your Friendly<br/>Conversations Helper</h2>
+                <br></br>
                     <input 
                         type='text' 
                         name='nickName'

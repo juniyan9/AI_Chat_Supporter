@@ -7,7 +7,10 @@ import TextContainer from "./TextContainer";
 import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, setAIAnalysisResult}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, 
+                                    setRoomName, password, setPassword, isPrivate, setIsPrivate, 
+                                    maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,
+                                    setOwnerNickName,setIsSocketConnected, setAIAnalysisResult, setEmotionsAnalysisResult, setIntentionsAnalysisResult}) {
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -29,7 +32,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
             // console.log('chatframe룸이름30',roomName);
             if(room.count < room.maxCount){
                 
-                socket.current = io('http://localhost:5050');
+                socket.current = io('http://43.203.141.146:5050');
                 socket.current.on('connect', () => {
                 socket.current.emit('enter_room', UserName, room.name);
 
@@ -152,6 +155,8 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 handleUpdateRoom={handleUpdateRoom}
                 texts={texts}
                 setAIAnalysisResult={setAIAnalysisResult}
+                setEmotionsAnalysisResult={setEmotionsAnalysisResult}
+                setIntentionsAnalysisResult={setIntentionsAnalysisResult}
             />
             {showModal && (
                 <RoomSettingsModal
