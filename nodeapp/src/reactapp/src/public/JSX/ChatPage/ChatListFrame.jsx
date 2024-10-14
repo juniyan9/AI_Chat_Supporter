@@ -125,12 +125,6 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
             setRooms(prevRooms => [...prevRooms, data]);
             setFilteredRooms(prevRooms => [...prevRooms, data]); // 모든 방을 필터링 없이 설정
 
-            if(!isSocketConnected){
-                handleSelectedRoom(room);
-            }if(isSocketConnected){
-
-                handleSelectedRoom(room);
-            }
             return true;
         } catch (error) {
             console.error('Failed to add data', error);

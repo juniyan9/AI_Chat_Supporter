@@ -7,7 +7,10 @@ import TextContainer from "./TextContainer";
 import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, setAIAnalysisResult,setEmotionsAnalysisResult, setIntentionsAnalysisResult}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount,
+    roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount,
+    setMaxCount, timeoutId, setTimeoutId,ownerNickname,setIsSocketConnected,
+    setAIAnalysisResult,EmotionsAnalysisResult,setEmotionsAnalysisResult,IntentionsAnalysisResult,setIntentionsAnalysisResult}) {
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -52,8 +55,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 return;
             }
 
-            // 방장 여부 설정
-            setIsOwner(UserName === ownerNickname);
+           
             
             socket.current.on('roomCountUpdate', (count) => {
                 //console.log('chatframe카운트',count); 
@@ -66,11 +68,15 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 setIsOwner(UserName === newOwnerNickName); // roomCount 업데이트
             });
 
+             // 방장 여부 설정
+            setIsOwner(UserName === ownerNickname);// 방장이면 true로 설정
+             
             socket.current.on('roomDeleted', (data) => {
                 // console.log("chatframe딜리티드속 데이터 :",data); //방장닉네임
                 if (data) {
                     alert("방장이 방을 삭제하였습니다.");
                     setIsSocketConnected(false);
+                    setIsOwner(false);  // 방을 나갈 때 방장 여부를 false로 설정
                 }
             })
 
@@ -89,11 +95,8 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 socket.current.close();
                 socket.current =null;
                 setIsSocketConnected(false);
-                if(isOwner){
-                    console.log('frame93',isOwner);
-                    setIsOwner(false);
-                    console.log('frame95',isOwner);
-                }
+                setIsOwner(false);
+                console.log('frame94',isOwner);
             }
         };
     }, [UserName, room, ownerNickname]);
@@ -115,7 +118,11 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
     };
     const handleCloseModal = () => setShowModal(false);
 
-
+    const outroom = () =>{
+        socket.current.close();
+        socket.current =null;
+        setIsSocketConnected(false);
+    }
     return (
         <div className="ChatFrame">
             <InfoBar
@@ -138,8 +145,13 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 isOwner={isOwner}
                 handleUpdateRoom={handleUpdateRoom}
                 texts={texts}
-                setAIAnalysisResult={setAIAnalysisResult}
+                // setAsIAnalysisResult={setAIAnalysisResult}
                 setShowModal={setShowModal}
+                outroom={outroom}
+                EmotionsAnalysisResult={EmotionsAnalysisResult}
+                setEmotionsAnalysisResult={setEmotionsAnalysisResult}
+                IntentionsAnalysisResult={IntentionsAnalysisResult}
+                setIntentionsAnalysisResult={setIntentionsAnalysisResult}
             />
             {showModal && (
                 <RoomSettingsModal

@@ -11,7 +11,7 @@
 .textinput{
     border: solid 1px #E8E6EA;
     border-radius: 10px;
-    width: 200px;
+    width: 68%;
     height: 30px;
     font-size: 13px;
     overflow-y: hidden;
@@ -24,8 +24,13 @@
 }
 .forwarding{
     background: url(../IMG/Icon.png) no-repeat 7px;
+    width: 35px;
 }
-
+.setting{
+    background: url(../IMG/setting.png) no-repeat 7px;
+    width: 35px;
+    height: 35px;
+}
 .toggleSettings{
     position: fixed;
     top: 85%;
@@ -55,7 +60,7 @@
     display: none;
 }
 .TextContainer button{
-    margin: 0 5px;
+    margin: 0 9px;
     height: 35px;
     font-size: 11px;
     border: solid 1px #E8E6EA;
