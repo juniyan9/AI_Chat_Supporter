@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import '../../CSS/ChildComponent3.css';
 
 const ChildComponent3 = ({ IntentionsAnalysisResult }) => { 

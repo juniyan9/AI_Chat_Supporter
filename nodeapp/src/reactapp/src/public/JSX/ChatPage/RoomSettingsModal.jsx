@@ -122,7 +122,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
                             type="checkbox"
                             checked={isPrivate}
                             onChange={(e) => setIsPrivate(e.target.checked)}
-                            disabled={isSaving || isDeleting}
+                            disabled={ isSaving || isDeleting}
                         />
                     </label>
                     <div className="modal-buttons">

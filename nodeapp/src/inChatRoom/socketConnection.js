@@ -13,7 +13,7 @@ import gemini_run from "../model_routers/gemini.js";
 export function socketConnection() {
   let roomUsers = {};
 
-  const WS_port = 9090;
+  const WS_port = 5050;
   httpServer.listen(WS_port, () => {
     logger.info("WebSocket listening at port %d", WS_port);
   });
@@ -103,10 +103,6 @@ export function socketConnection() {
 
         logger.info(`현재 방 ${roomName}에 있는 사용자 정보:${JSON.stringify(roomUsers[roomName])}`,'socketConnection.js')
 
-
-        // console.log("방 정보:", room );
-        socket.emit("room_details", room);
-        io.to(roomName).emit("room_details", room);
         // console.log("업데이트된 방 정보 전달:", room)
         io.to(roomName).emit("newRoomInfo", room);
         }
@@ -273,30 +269,32 @@ export function socketConnection() {
               // roomUsers[roomName]이 배열이 아닐 경우, 빈 배열로 초기화
               roomUsers[roomName] = [];
             }
+            //채팅방 실 사용자 관리 배열 업데이트
+            socket.broadcast.to(roomName).emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");
 
-            // 방장인지 확인
-            if (user.nickName == room.ownerNickname) {
-              io.to(roomName).emit("roomDeleted", "방장이 방을 삭제했습니다.");
-
-              // 받은 roomName으로 rooms 배열에서 해당 방을 찾음
-              const roomIndex = rooms.findIndex((room) => room.name === roomName);
-
-
-              // 방이 존재하는 경우, rooms 배열에서 삭제함
-              if (roomIndex !== -1) {
-                  // rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
-                  console.log("방 삭제 후 rooms 배열:", rooms);
-              }
-            } else {
-              //채팅방 실 사용자 관리 배열 업데이트
-              socket.broadcast.to(roomName).emit("reply", `${user.nickName}님이 방을 나갔습니다.`, "알리미");
-            }
             //방장이든 일반유저든 상관없이 공통으로
-            roomUsers[roomName] = roomUsers[roomName].filter((id) => id !== user.id);
+            roomUsers[roomName] = roomUsers[roomName].filter((id) => id !== user.id); //방에 남아있는 사람 재정비
+
             room.count = roomUsers[roomName].length;
             logger.info(`방에 남아있는 사람 ID - roomUsers:${JSON.stringify(roomUsers)}`, 'socketConnection.js');
             logger.info(`${roomName}에 남아있는 사람 수: ${room.count || 0} 명`, 'socketConnection.js');
             io.to(roomName).emit("roomCountUpdate", room.count);
+
+            if (room.ownerID === user.id) {
+              const remainingUsers = roomUsers[roomName];
+              if (remainingUsers.length > 0) {
+                // 새 방장 설정: 남아 있는 첫 번째 사용자를 방장으로 지정
+                room.ownerID = remainingUsers[0]; // 첫 번째 사용자의 ID로 설정
+                const newOwner = userInfo.find(u => u.user.id === room.ownerID);
+                if (newOwner) {
+                  io.to(roomName).emit("reply", `${newOwner.user.nickName}가 새로운 방장으로 지정되었습니다.`, "알리미");
+                  io.to(roomName).emit('newOwnerNickName', newOwner.user.nickName)
+                }
+              } else {
+                // 방에 남아 있는 사용자가 없으면 방장 ID를 null로 설정
+                room.ownerID = null;
+              }
+            }
           }
 
           const extendMin = 15
