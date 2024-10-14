@@ -4,10 +4,15 @@ import '../../CSS/TextContainer.css';
 import { useState,useEffect,useRef } from "react";
 
 export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner, 
-                                        setShowModal, texts, setAIAnalysisResult, setEmotionsAnalysisResult, setIntentionsAnalysisResult}) {
+                                        setShowModal, texts, setEmotionsAnalysisResult, setIntentionsAnalysisResult,outroom}) {
     const [message, setMessage] = useState('');
     const [scrollon,setscrollon] = useState(false);
     const textareaRef = useRef(null);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    const toggleSettings = () => {
+        setIsSettingsOpen(!isSettingsOpen);
+      };
 
     useEffect(()=>{
         const textarea = textareaRef.current;
@@ -62,7 +67,7 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
         setShowModal(true);
     }
     
-    // AI 버튼 클릭 핸들로
+    // // AI 버튼 클릭 핸들로
     // const handleAIClick = () => {
     //     // texts 배열을 서버에 보냅니다.
     //     socket.current.emit('ai_analysis', {roomName, texts});
@@ -97,12 +102,26 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
 
     return (
         <div className="TextContainer">
-            {isOwner ? (
-                <button className="isOwner" onClick={modal}>방장</button>
-                ):<button className="noOwner"></button>
-                }
-                <button onClick={handleGeminiEmoClick}>감정분석</button> {/* gemini 감정분석 버튼 */}
-                <button onClick={handleGeminiIntentionsClick}>의도분석</button> {/* gemini 의도분석 버튼 */}
+                <button className="setting"onClick={toggleSettings}></button>    
+                    {isSettingsOpen &&(
+                        <div className="toggleSettings"> 
+                            {isOwner ? (
+                                <button className="isOwner" onClick={modal}>방설정</button>
+                                ):<button className="noOwner"></button>
+                                }
+                            {/* <button onClick={handleAIClick}>AI</button> AI 버튼 */}
+                            <button onClick={handleGeminiEmoClick}>감정분석</button> {/* gemini 감정분석 버튼 */}
+                            <button onClick={handleGeminiIntentionsClick}>의도분석</button> {/* gemini 의도분석 버튼 */}
+                            <button onClick={toggleSettings}>닫기</button>
+                            <button onClick={outroom}>채팅방나가기</button>
+                        </div>)
+                    }
+                    {isSettingsOpen && (
+                        <div
+                            onClick={toggleSettings}
+                            className="togglesettingsback"
+                        />
+                    )}                
                 <textarea
                     className="textinput"
                     name="message"
