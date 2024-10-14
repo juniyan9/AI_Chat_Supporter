@@ -8,6 +8,11 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
     const [message, setMessage] = useState('');
     const [scrollon,setscrollon] = useState(false);
     const textareaRef = useRef(null);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+    const toggleSettings = () => {
+        setIsSettingsOpen(!isSettingsOpen);
+      };
 
     useEffect(()=>{
         const textarea = textareaRef.current;
@@ -97,13 +102,25 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
 
     return (
         <div className="TextContainer">
-            {isOwner ? (
-                <button className="isOwner" onClick={modal}>방장</button>
-                ):<button className="noOwner"></button>
-                }
-                <button onClick={handleAIClick}>AI</button> {/* AI 버튼 */}
-                <button onClick={handleGeminiEmoClick}>감정분석</button> {/* gemini 감정분석 버튼 */}
-                <button onClick={handleGeminiIntentionsClick}>의도분석</button> {/* gemini 의도분석 버튼 */}
+                <button onClick={toggleSettings}> 설정</button>    
+                    {isSettingsOpen &&(
+                        <div className="toggleSettings"> 
+                            {isOwner ? (
+                                <button className="isOwner" onClick={modal}>방장</button>
+                                ):<button className="noOwner"></button>
+                                }
+                            {/* <button onClick={handleAIClick}>AI</button> AI 버튼 */}
+                            <button onClick={handleGeminiEmoClick}>감정분석</button> {/* gemini 감정분석 버튼 */}
+                            <button onClick={handleGeminiIntentionsClick}>의도분석</button> {/* gemini 의도분석 버튼 */}
+                            <button onClick={toggleSettings}>닫기</button>
+                        </div>)
+                    }
+                    {isSettingsOpen && (
+                        <div
+                            onClick={toggleSettings}
+                            className="togglesettingsback"
+                        />
+                    )}                
                 <textarea
                     className="textinput"
                     name="message"
