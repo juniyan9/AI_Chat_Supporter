@@ -61,15 +61,14 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
             // console.log("chatframe소켓 연결확인2",socket);//연결잘됌
 
             // 방장 여부 설정
+            // 처음부터 받아온 방장 / 중간에 바뀐 방장
             setIsOwner(UserName === ownerNickname);
 
-            // 서버에서 방장 정보를 받아오는 이벤트 리스너
-            // socket.current.on('room_details', ( roomDetails ) => {
-            //     // console.log('chatframe룸디테일즈',roomDetails); //count,룸id,private,maxcount,name(roomname),ownerid,ownernickname,password
-            //     setOwnerNickName(roomDetails.ownerNickname);  // 부모 컴포넌트로 ownerNickname 전달
-            //     setMaxCount(roomDetails.maxCount);
-            //     setRoomName(roomDetails.roomName);
-            // });
+            socket.current.on('newOwnerNickName', (newOwnerNickName) => {
+                console.log('newOwnerNickName:', newOwnerNickName); 
+                console.log('isOwner:', isOwner)
+                setIsOwner(UserName === newOwnerNickName); // roomCount 업데이트
+            });
 
 
             socket.current.on('roomDeleted', (data) => {
@@ -79,18 +78,6 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                     setIsSocketConnected(false);
                 }
             })
-            
-
-            // 서버에서 업데이트된 방 정보 받아오는 이벤트 리스너
-            
-            
-            // socket.current.on('room_updated', (updatedSettings) => {
-            //     //console.log('chatframe업데이트 세팅즈', updatedSettings);
-            //     setMaxCount(updatedSettings.maxCount);   // 변경된 최대 인원수 업데이트
-            //     setIsPrivate(updatedSettings.isPrivate); //변경된 비공개 여부 업데이트
-            //     setPassword(updatedSettings.password);
-            //     setRoomName(updatedSettings.name);
-            // })
 
 
             socket.current.on('reply', (reply_message, nickName) => {
@@ -108,6 +95,9 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 socket.current.close();
                 socket.current =null;
                 setIsSocketConnected(false);
+                if(isOwner) {
+                    setIsOwner(false);
+                }
             }
         };
     }, [UserName, room, ownerNickname]);
