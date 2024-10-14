@@ -15,7 +15,7 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
 
     // console.log('listpage16',roomName);
     
-    const SERVER_URL = 'http://43.203.141.146:9000';
+    const SERVER_URL = 'http://localhost:9000';
     // console.log('rooms1',rooms);
     //rooms : 현재 존재하는 방배열 및 정보 conut,id,private,roomname,ownerid,ownernickname,password 등
 

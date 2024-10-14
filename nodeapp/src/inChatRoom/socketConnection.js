@@ -8,6 +8,7 @@ import { userInfo } from "../main_page/main_page.js";
 import { rooms } from "../lobby/addRoom.js";
 import { analyzeEmotion } from "../model_function/analyzeEmotion.js";
 import { analyzeSentiment } from "../model_function/analyzeSentiment.js";
+import gemini_run from "../model_routers/gemini.js";
 
 export function socketConnection() {
   let roomUsers = {};
@@ -133,7 +134,8 @@ export function socketConnection() {
     });
 
     socket.on('room_updated', (data) => {
-      const { originalName, updatedName, updatedMaxCount, updatedPassword, updatedIsPrivate } = data;
+      const { originalName, updatedName, ownerNickname, updatedMaxCount, updatedPassword, updatedIsPrivate } = data;
+      logger.info(`방 설정 업데이트 시 받은 정보: ${data}`, 'socketConnection.js')
 
       let roomIndex = rooms.findIndex(
         (room) => room.name === originalName
@@ -156,8 +158,11 @@ export function socketConnection() {
         logger.info(`업데이트된 방 정보 받은 후 방 정보: ${JSON.stringify(updatedRoomData)}`,'socketConnection.js');
 
         io.to(originalName).emit('newRoomInfo', updatedRoomData);
+
+        socket.emit('update_room_response', updatedRoomData)
     }
   })
+
 
     // //유저 메시지 접수 및 소켓들에 보내주기
     //socket id, message id, roomName, message, date 받아오기
@@ -170,32 +175,6 @@ export function socketConnection() {
       socket.to(roomName).emit('reply', message, userCheck.user.nickName);
 
       logger.info(`room ${roomName}: Received message from client >>>>>>` + message);
-
-    //   try {
-    //     //감정분석
-    //     const result = await analyzeEmotion(message);
-    //     const emotionMatch = result.match(/(공포|놀람|분노|슬픔|중립|행복|혐오)/);
-    //     const emotion = emotionMatch ? emotionMatch[0] : "감정 분석 실패"; // 매칭된 감정이 없으면 기본 메시지 사용
-
-    //     //감성분석
-    //     const sentimentResult = await analyzeSentiment(message);
-    //     const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
-    //     const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패"; // 긍정/부정 결과
-    //     const score = sentimentMatch ? sentimentMatch[1] : "N/A"; // 확률 점수
-
-    //     // 분석된 감정을 클라이언트에 전송
-    //     // logger.info(`emit 전, 분석된 감정: ${emotion}`, 'socketConnection.js')
-    //     logger.info(`emit 전, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
-    //     socket.to(roomName).emit('reply', message, userCheck.user.nickName, emotion, sentiment, score);
-    //     // logger.info(`emit 후, 분석된 감정: ${emotion}`, 'socketConnection.js')
-    //     logger.info(`emit 후, 분석된 감정: ${emotion}, 감성: ${sentiment}, 확률: ${score}`, 'socketConnection.js');
-
-        
-    //     logger.info("Received message from client: " + message);
-    //     logger.info("Received message from client room: " + roomName);
-    // } catch (error) {
-    //     console.error("Error during emotion analysis:", error);
-    // }
     });
 
     socket.on('ai_analysis', async (data) => {
@@ -215,13 +194,6 @@ export function socketConnection() {
             const sentimentMatch = sentimentResult.match(/(\d+\.\d+)% 확률로 (긍정|부정) 리뷰입니다/);
             const sentiment = sentimentMatch ? sentimentMatch[2] : "감정 분석 실패";
             const score = sentimentMatch ? sentimentMatch[1] : "N/A";
-
-            // results.push({
-            //     message,
-            //     emotion,
-            //     sentiment,
-            //     score,
-            // });
             const results = {
               emotion,
               sentiment,
@@ -233,7 +205,51 @@ export function socketConnection() {
       logger.info(`클라이언트에 보내기 전 감정분석 결과:${JSON.stringify(results)}`, 'socketConnection.js')
       console.log(`클라이언트에 보내기 전 감정분석 결과:${results}`, 'socketConnection.js')
       socket.emit('ai_analysis_result', results);
+    });
+
+    socket.on('gemini_emo_analysis', async (data) => {
+      const { roomName, texts } = data;
+      console.log(`방에서 감정분석 요청을 받았습니다: ${roomName}`);
+      console.log('텍스트들:', texts);
+  
+      // 프롬프트 생성: texts에 문구를 추가
+      const prompt = `${texts.join(' ')} 여기에서 드러나는 감정이 무엇인 것 같아? **표시 넣지 마.`;
+  
+      try {
+          // gemini_run 함수로 프롬프트 전달하고 응답 받기
+          const analysisResult = await gemini_run(prompt);
+  
+          // 분석 결과 출력
+          console.log('감정 분석 결과:', analysisResult);
+  
+          // 필요에 따라 클라이언트로 결과 전달
+          socket.emit('gemini_emo_analysis_result', { roomName, analysisResult });
+      } catch (error) {
+          console.error('감정 분석 중 오류 발생:', error);
+      }
   });
+
+  socket.on('gemini_intentions_analysis', async (data) => {
+    const { roomName, texts } = data;
+    console.log(`방에서 감정분석 요청을 받았습니다: ${roomName}`);
+    console.log('텍스트들:', texts);
+
+    // 프롬프트 생성: texts에 문구를 추가
+    const prompt = `${texts.join(' ')} 여기에 드러나는 의도는 무엇인 것 같아? 한 단락으로 알려주고 ** 표시 넣지 마.`;
+
+    try {
+        // gemini_run 함수로 프롬프트 전달하고 응답 받기
+        const analysisResult = await gemini_run(prompt);
+
+        // 분석 결과 출력
+        console.log('의도 분석 결과:', analysisResult);
+
+        // 필요에 따라 클라이언트로 결과 전달
+        socket.emit('gemini_intentions_analysis_result', { roomName, analysisResult });
+    } catch (error) {
+        console.error('의도 분석 중 오류 발생:', error);
+    }
+});
 
     //소켓 연결 해제 처리
     // socket.on("disconnect", (roomName) => {  //소켓 끊어질 때 자동으로 발생하는 이벤트이므로 클라에서 관련 코드를 굳이 수동으로 호출할 필요 없고, 따라서 여기서도 roomName 넣어줄 필요가 없게 됨.
@@ -268,7 +284,7 @@ export function socketConnection() {
 
               // 방이 존재하는 경우, rooms 배열에서 삭제함
               if (roomIndex !== -1) {
-                  rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
+                  // rooms.splice(roomIndex, 1); // 배열에서 해당 인덱스의 방을 삭제
                   console.log("방 삭제 후 rooms 배열:", rooms);
               }
             } else {

@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+// import { useNavigate, useLocation } from "react-router-dom";
 import '../../CSS/RoomModal.css';
 
 export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,roomName,setRoomName,password, setPassword,isPrivate, setIsPrivate, maxCount, setMaxCount}){
@@ -11,7 +11,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
         
         if (isOpen) {
             // 서버에서 방 목록을 가져오는 API 호출
-            fetch('http://43.203.141.146:9000/rooms')  // 서버의 API
+            fetch('http://localhost:9000/rooms')  // 서버의 API
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Room list 불러오기 실패');

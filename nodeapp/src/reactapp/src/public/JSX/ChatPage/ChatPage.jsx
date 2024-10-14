@@ -20,7 +20,8 @@ export default function ChatPage() {
     const [count, setCount] = useState(0);
     const [ownerNickname, setOwnerNickName] = useState('');
     const [AIAnalysisResult, setAIAnalysisResult] = useState(null);
-    const [forceUpdate, setForceUpdate] = useState(0);
+    const [EmotionsAnalysisResult, setEmotionsAnalysisResult] = useState(null);
+    const [IntentionsAnalysisResult, setIntentionsAnalysisResult] = useState(null);
     // const [test,settest] =useState("00:00");
 
     const location = useLocation();
@@ -58,7 +59,7 @@ export default function ChatPage() {
                 setCount={setCount}
                 setOwnerNickName={setOwnerNickName}
                 ownerNickname={ownerNickname}
-                forceUpdate={forceUpdate}
+                
             />
             <div className="chatFrameContainer">
                 {isSocketConnected ?
@@ -83,7 +84,11 @@ export default function ChatPage() {
                         setIsSocketConnected={setIsSocketConnected}
                         AIAnalysisResult={AIAnalysisResult}
                         setAIAnalysisResult={setAIAnalysisResult}
-                        setForceUpdate={setForceUpdate}
+                        EmotionsAnalysisResult={EmotionsAnalysisResult}
+                        setEmotionsAnalysisResult={setEmotionsAnalysisResult}
+                        IntentionsAnalysisResult={IntentionsAnalysisResult}
+                        setIntentionsAnalysisResult={setIntentionsAnalysisResult}
+
                     />:<div className='WaitingFrame'>
                         <img src={chaticon} alt='대기화면'/>
                         여러 사람들과 소통해보세요.
@@ -92,6 +97,8 @@ export default function ChatPage() {
             </div>
             <LogFrame 
                 AIAnalysisResult={AIAnalysisResult}
+                EmotionsAnalysisResult={EmotionsAnalysisResult}
+                IntentionsAnalysisResult={IntentionsAnalysisResult}
             />
         </div>
     );

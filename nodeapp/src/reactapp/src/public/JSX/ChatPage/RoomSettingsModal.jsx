@@ -3,8 +3,6 @@ import '../../CSS/RoomSettingsModal.css';
 
 
 
-const SERVER_URL = 'http://43.203.141.146:9000';
-
 export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpdate, onDelete, socket}) {
     const [roomName, setRoomName] = useState(roomDetails?.name || '');
     const [maxCount, setMaxCount] = useState(roomDetails?.maxCount || 10);
@@ -115,7 +113,7 @@ export default function RoomSettingsModal({ isOpen, onClose, roomDetails, onUpda
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            disabled={isSaving || isDeleting}
+                            disabled={!isPrivate || isSaving || isDeleting}
                         />
                     </label>
                     <label>

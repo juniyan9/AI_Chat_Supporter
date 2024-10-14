@@ -24,6 +24,15 @@
 }
 .forwarding{
     background: url(../IMG/Icon.png) no-repeat 7px;
+}
+
+.isOwner{
+    
+}
+.noOwner{
+    display: none;
+}
+.TextContainer button{
     margin: 0 10px;
     width: 35px;
     height: 35px;
