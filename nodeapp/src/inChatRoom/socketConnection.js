@@ -21,8 +21,6 @@ export function socketConnection() {
   //events
   io.on("connection", (socket) => {
     logger.info("A Client has connected.");
-    // console.log("socket:", socket) //잘 찍음
-    // console.log("socket.id:", socket.id) //잘 찍음
 
     // 방에 들어갈 때 socketId와 roomName이 userInfo의 user에 업데이트 돼야함.
     socket.on("enter_room", (nickName, roomName) => {
@@ -281,12 +279,17 @@ export function socketConnection() {
             io.to(roomName).emit("roomCountUpdate", room.count);
 
             if (room.ownerID === user.id) {
+              room.ownerID = null; // 방장 권한 박탈
+              logger.info(`${user.nickName}가 방장 권한을 박탈당했습니다.`, 'socketConnection.js');
+            }
+
               const remainingUsers = roomUsers[roomName];
               if (remainingUsers.length > 0) {
                 // 새 방장 설정: 남아 있는 첫 번째 사용자를 방장으로 지정
                 room.ownerID = remainingUsers[0]; // 첫 번째 사용자의 ID로 설정
                 const newOwner = userInfo.find(u => u.user.id === room.ownerID);
                 if (newOwner) {
+                  room.ownerNickname = newOwner.user.nickName; // 새 방장 닉네임 설정
                   io.to(roomName).emit("reply", `${newOwner.user.nickName}가 새로운 방장으로 지정되었습니다.`, "알리미");
                   io.to(roomName).emit('newOwnerNickName', newOwner.user.nickName)
                 }
@@ -294,7 +297,6 @@ export function socketConnection() {
                 // 방에 남아 있는 사용자가 없으면 방장 ID를 null로 설정
                 room.ownerID = null;
               }
-            }
           }
 
           const extendMin = 15

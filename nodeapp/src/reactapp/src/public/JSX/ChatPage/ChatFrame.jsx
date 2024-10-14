@@ -61,14 +61,13 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
             // console.log("chatframe소켓 연결확인2",socket);//연결잘됌
 
             // 방장 여부 설정
-            // 처음부터 받아온 방장 / 중간에 바뀐 방장
-            setIsOwner(UserName === ownerNickname);
+            setIsOwner(UserName === ownerNickname); // 방장이면 true로 설정
 
             socket.current.on('newOwnerNickName', (newOwnerNickName) => {
                 console.log('newOwnerNickName:', newOwnerNickName); 
                 console.log('isOwner:', isOwner)
                 setIsOwner(UserName === newOwnerNickName); // roomCount 업데이트
-            });
+            }); 
 
 
             socket.current.on('roomDeleted', (data) => {
@@ -95,9 +94,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 socket.current.close();
                 socket.current =null;
                 setIsSocketConnected(false);
-                if(isOwner) {
-                    setIsOwner(false);
-                }
+                setIsOwner(false);  // 방을 나갈 때 방장 여부를 false로 설정
             }
         };
     }, [UserName, room, ownerNickname]);
@@ -143,6 +140,8 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 handleUpdateRoom={handleUpdateRoom}
                 texts={texts}
                 setAIAnalysisResult={setAIAnalysisResult}
+                setEmotionsAnalysisResult={setEmotionsAnalysisResult}
+                setIntentionsAnalysisResult={setIntentionsAnalysisResult}
                 setShowModal={setShowModal}
             />
             {showModal && (

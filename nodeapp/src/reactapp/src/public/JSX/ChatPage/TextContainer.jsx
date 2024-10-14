@@ -63,15 +63,15 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
     }
     
     // AI 버튼 클릭 핸들로
-    const handleAIClick = () => {
-        // texts 배열을 서버에 보냅니다.
-        socket.current.emit('ai_analysis', {roomName, texts});
-        // AI 분석 결과 수신
-        socket.current.on('ai_analysis_result', (results) => {
-            console.log('AI Analysis Result:', results);
-            setAIAnalysisResult(results)
-        });
-    };
+    // const handleAIClick = () => {
+    //     // texts 배열을 서버에 보냅니다.
+    //     socket.current.emit('ai_analysis', {roomName, texts});
+    //     // AI 분석 결과 수신
+    //     socket.current.on('ai_analysis_result', (results) => {
+    //         console.log('AI Analysis Result:', results);
+    //         setAIAnalysisResult(results)
+    //     });
+    // };
 
     // gemini 감정분석
     const handleGeminiEmoClick = () => {
@@ -101,7 +101,6 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
                 <button className="isOwner" onClick={modal}>방장</button>
                 ):<button className="noOwner"></button>
                 }
-                <button onClick={handleAIClick}>AI</button> {/* AI 버튼 */}
                 <button onClick={handleGeminiEmoClick}>감정분석</button> {/* gemini 감정분석 버튼 */}
                 <button onClick={handleGeminiIntentionsClick}>의도분석</button> {/* gemini 의도분석 버튼 */}
                 <textarea
