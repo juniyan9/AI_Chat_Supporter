@@ -4,19 +4,25 @@ import '../../CSS/FilteredRoom.css';
 import RoomModal from './RoomModal';
 import { useNavigate} from 'react-router-dom';
 
-export default function ChatListFrame({setIsSocketConnected,isSocketConnected,onSelectedRoom, UserName, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount,timeoutId,setTimeoutId,count,setCount,setOwnerNickName}) {
+export default function ChatListFrame({setIsSocketConnected,isSocketConnected,onSelectedRoom, UserName, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount,timeoutId,setTimeoutId,count,setCount,setOwnerNickName,forceUpdate}) {
     const [rooms, setRooms] = useState([]);
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     
+
     const navigate = useNavigate();
 
-    console.log('listpage16',roomName);
+    // console.log('listpage16',roomName);
     
-    const SERVER_URL = 'http://localhost:5000';
+    const SERVER_URL = 'http://localhost:9000';
     // console.log('rooms1',rooms);
     //rooms : 현재 존재하는 방배열 및 정보 conut,id,private,roomname,ownerid,ownernickname,password 등
+
+    useEffect(() => {
+        fetchRooms(); // 서버에서 방 목록을 다시 불러옴
+    }, [count]);
+
     const handleSelectedRoom = (room) => {
         //console.log('ChatListFrame룸',room);//conut,id,private,maxcount,name(roomname),ownerid,ownernickname,password
         onSelectedRoom(room);
@@ -43,7 +49,8 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
             //console.log("서버의 data:" ,data); // rooms,timeoutmin
             //console.log("닉네임", UserName); //유저 닉네임
             // console.log("data.rooms", data.rooms); //rooms랑 같음
-            
+            // console.log('listframe54:', count);
+
             if (data.rooms.length > 0) {
                 // 방 목록이 비어있지 않은 경우 첫 번째 방의 정보를 설정
                 const firstRoom = data.rooms[0];
@@ -54,9 +61,9 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
             }
 
             if (data.timeoutmin) {
-                console.log("timeout 생성됩니다.");
+                // console.log("timeout 생성됩니다.");
                 setTimeoutId(setTimeout(() => {
-                    console.log("timeout 됐습니다.")
+                    // console.log("timeout 됐습니다.")
                     setTimeoutId(0);
                     // navigate('/');
                 }, data.timeoutmin));
@@ -107,16 +114,6 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                 body: JSON.stringify(room)
             });
 
-             // 중복된 방 이름에 대한 에러메시지
-        if (response.status === 400) {
-            const errorMessage = await response.json();
-            if (errorMessage.message === "이미 존재하는 방 이름입니다.") {
-                alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
-                setRoomName('');
-                return false; // 특정 에러 발생 시 false 반환
-            }
-        }
-
             const data = await response.json();
             console.log("서버의 data:" ,data);
 
@@ -128,8 +125,12 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
             setRooms(prevRooms => [...prevRooms, data]);
             setFilteredRooms(prevRooms => [...prevRooms, data]); // 모든 방을 필터링 없이 설정
 
-            handleSelectedRoom(room);
+            if(!isSocketConnected){
+                handleSelectedRoom(room);
+            }if(isSocketConnected){
 
+                handleSelectedRoom(room);
+            }
             return true;
         } catch (error) {
             console.error('Failed to add data', error);
@@ -179,9 +180,9 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                         <div
                             key={room.name}
                             onClick={() => handleSelectedRoom(room)}
-                            className={isSocketConnected && room.name == roomName ? "socketConnectedroom" : (`room ${room.count >= room.maxCount ? 'full' : ''}`)}
+                            className={isSocketConnected && room.name === roomName ? "socketConnectedroom" : (`room ${room.count >= room.maxCount ? 'full' : ''}`)}
                         >
-                            {room.maxCount == room.count ?
+                            {room.maxCount === room.count ?
                                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="6.5" cy="6.5" r="6.5" fill="#BB2525"/>
                                 </svg> :
@@ -190,11 +191,18 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
                                 </svg>
                             }
                             <h3>{room.name}</h3>
-                            <p>
+                            <span className="tooltip">
+                                👥
+                                <span className="tooltip-text">
+                                    {room.count}/{room.maxCount}명 참가 중
+                                </span>
+                            </span>
+
+                            {/* <p>
                                 <span className="people-icon">👥</span>
                                 {room.isPrivate && <span className="lock-icon">🔒</span>} 
                                 {room.count}/{room.maxCount}, {room.count}명
-                            </p>
+                            </p> */}
                         </div>
                     ))}
                 </div>

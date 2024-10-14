@@ -1,18 +1,17 @@
 import React, { useState,useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+// import { useNavigate, useLocation } from "react-router-dom";
 import '../../CSS/RoomModal.css';
 
-export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,roomName,setRoomName,password, 
-                                    setPassword,isPrivate, setIsPrivate, maxCount, setMaxCount}){
+export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,roomName,setRoomName,password, setPassword,isPrivate, setIsPrivate, maxCount, setMaxCount}){
     const [existingRooms, setExistingRooms] = useState([]); // 중복확인을 위한 state
-
+    console.log("const 아래 existingRooms:", Array.isArray(existingRooms))
 
     // useEffect를 사용하여 모달이 열릴 때 기존 방 목록을 서버에서 가져옴
     useEffect(() => {
         
         if (isOpen) {
             // 서버에서 방 목록을 가져오는 API 호출
-            fetch('http://localhost:5000/rooms')  // 서버의 API
+            fetch('http://localhost:9000/rooms')  // 서버의 API
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Room list 불러오기 실패');
@@ -27,8 +26,6 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
                 });
         }
     }, [isOpen]);
-    
-
 
     const handleSave = async () => {
         // 공백 제거 후 방 제목 만들기
@@ -39,24 +36,16 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
             alert("방 제목은 2자 이상이어야 합니다.");
             return;
         }
-
+    
+        // 중복 방 제목 체크
         if (Array.isArray(existingRooms) && existingRooms.length > 0) {
-            const isDuplicate = existingRooms.find((room) => room.name === trimmedRoomName);
+            const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
             console.log("isDuplicate:", isDuplicate);
-        if (isDuplicate) {
-            alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
-            return;
+            if (isDuplicate) {
+                alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
+                return;
+            }
         }
-    }
-
-    // 중복된 방 제목이 있는지 확인
-    // const isDuplicate = existingRooms.some(room => room.name === trimmedRoomName);
-
-    // if (isDuplicate) {
-    //     alert("이미 존재하는 방 제목입니다. 다시 입력해주세요.");
-    //     console.log("중복된 방 제목:", trimmedRoomName);
-    //     return;
-    // }
     
         // 새로운 방 정보 생성
         const newRoom = {

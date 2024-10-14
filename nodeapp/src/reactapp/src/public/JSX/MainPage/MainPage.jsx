@@ -5,9 +5,10 @@ import ModalAlert from "./ModalAlert";
 
 export default function MainPage() {
     const [nickName, setNickName] = useState('');
+    const [ShowalertModal,setShowAlertModal] =useState(false);
     const navigate = useNavigate();
     const inputRef = useRef(null);
-    const [ShowalertModal,setShowAlertModal] =useState(false);
+    
 
     useEffect(()=>{
         if(inputRef.current){
@@ -18,7 +19,7 @@ export default function MainPage() {
     const handleNickNameSubmit = async () => {
         if (nickName) {
             try {
-                const response = await fetch('http://43.203.141.146:5000/register', {
+                const response = await fetch('http://localhost:9000/register', {
                     credentials : 'include',
                     method: 'POST',
                     headers: {
@@ -63,7 +64,7 @@ export default function MainPage() {
                 <h1>AI Chat Supporter</h1>
                 <h2>Your Friendly<br/>Conversations Helper</h2>
                 <br></br>
-                    <input 
+                    <input
                         type='text' 
                         name='nickName'
                         placeholder="닉네임 입력"

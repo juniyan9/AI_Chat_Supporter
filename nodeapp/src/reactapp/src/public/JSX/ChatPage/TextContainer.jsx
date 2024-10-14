@@ -1,6 +1,6 @@
 import React from "react"
 import '../../CSS/TextContainer.css';
-import AImodel from "./AImodel";
+// import AImodel from "./AImodel";
 import { useState,useEffect,useRef } from "react";
 
 export default function TextContainer({ socket, setMessages, nickName, roomName, isOwner, 
@@ -98,8 +98,8 @@ export default function TextContainer({ socket, setMessages, nickName, roomName,
     return (
         <div className="TextContainer">
             {isOwner ? (
-                <button onClick={modal}>방장</button>
-                ):<button>노방장</button>
+                <button className="isOwner" onClick={modal}>방장</button>
+                ):<button className="noOwner"></button>
                 }
                 <button onClick={handleAIClick}>AI</button> {/* AI 버튼 */}
                 <button onClick={handleGeminiEmoClick}>감정분석</button> {/* gemini 감정분석 버튼 */}

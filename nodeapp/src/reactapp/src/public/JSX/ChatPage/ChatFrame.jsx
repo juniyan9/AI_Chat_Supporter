@@ -7,10 +7,7 @@ import TextContainer from "./TextContainer";
 import RoomSettingsModal from './RoomSettingsModal';
 
 
-export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, 
-                                    setRoomName, password, setPassword, isPrivate, setIsPrivate, 
-                                    maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,
-                                    setOwnerNickName,setIsSocketConnected, setAIAnalysisResult, setEmotionsAnalysisResult, setIntentionsAnalysisResult}) {
+export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount, roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount, setMaxCount, timeoutId, setTimeoutId,ownerNickname,setOwnerNickName,setIsSocketConnected, setAIAnalysisResult,setEmotionsAnalysisResult, setIntentionsAnalysisResult}) {
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -30,9 +27,9 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
     useEffect(() => {
         if(room && !socket.current){
             // console.log('chatframe룸이름30',roomName);
-            if(room.count < room.maxCount){
+            if(room && room.count < room.maxCount){
                 
-                socket.current = io('http://43.203.141.146:5050');
+                socket.current = io('http://localhost:9090');
                 socket.current.on('connect', () => {
                 socket.current.emit('enter_room', UserName, room.name);
 
@@ -85,6 +82,8 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
             
 
             // 서버에서 업데이트된 방 정보 받아오는 이벤트 리스너
+            
+            
             // socket.current.on('room_updated', (updatedSettings) => {
             //     //console.log('chatframe업데이트 세팅즈', updatedSettings);
             //     setMaxCount(updatedSettings.maxCount);   // 변경된 최대 인원수 업데이트
@@ -137,7 +136,7 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 roomName={room.name} // 업데이트된 . 방이름 사용
                 setonsearchtext={setonSearchText}
                 roomCount={roomCount}
-                maxCount={maxCount}      // 업데이트된 최대 인원수 사용
+                maxCount = {maxCount}      // 업데이트된 최대 인원수 사용
                 isPrivate={isPrivate}      // 업데이트된 비공개 여부 사용
                 password={password}
             />
@@ -151,19 +150,16 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 nickName={UserName} 
                 roomName={room.name}
                 isOwner={isOwner}
-                setShowModal={setShowModal}
                 handleUpdateRoom={handleUpdateRoom}
                 texts={texts}
                 setAIAnalysisResult={setAIAnalysisResult}
-                setEmotionsAnalysisResult={setEmotionsAnalysisResult}
-                setIntentionsAnalysisResult={setIntentionsAnalysisResult}
+                setShowModal={setShowModal}
             />
             {showModal && (
                 <RoomSettingsModal
                     isOpen={showModal}
                     onClose={handleCloseModal}
                     onUpdate={handleUpdateRoom}
-                    setShowModal={setShowModal}
                     socket={socket}
                     roomDetails={{ 
                         name: roomName,

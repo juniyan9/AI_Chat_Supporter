@@ -8,9 +8,10 @@ export default function LogFrame({AIAnalysisResult, EmotionsAnalysisResult, Inte
     return (
         <div className="LogFrame">
             <AImodel 
-            AIAnalysisResult={AIAnalysisResult} 
-            EmotionsAnalysisResult={EmotionsAnalysisResult}
-            IntentionsAnalysisResult={IntentionsAnalysisResult}/>
+                AIAnalysisResult={AIAnalysisResult} 
+                EmotionsAnalysisResult={EmotionsAnalysisResult}
+                IntentionsAnalysisResult={IntentionsAnalysisResult}
+            />
         </div>
     )
 }

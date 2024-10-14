@@ -14,7 +14,7 @@ export default function ChatPage() {
     const [isPrivate, setIsPrivate] = useState(false);// 초기 비공개 여부 설정
     const [roomCount, setRoomCount] = useState(0);
     const [roomName, setRoomName] = useState(null);
-    const [maxCount, setMaxCount] = useState(); // 초기 최대 인원 설정
+    const [maxCount, setMaxCount] = useState(2); // 초기 최대 인원 설정
     const [password, setPassword] = useState(''); // 초기 비밀번호 설정
     const [timeoutId, setTimeoutId] = useState(0);
     const [count, setCount] = useState(0);
@@ -59,6 +59,7 @@ export default function ChatPage() {
                 setCount={setCount}
                 setOwnerNickName={setOwnerNickName}
                 ownerNickname={ownerNickname}
+                
             />
             <div className="chatFrameContainer">
                 {isSocketConnected ?
@@ -87,6 +88,7 @@ export default function ChatPage() {
                         setEmotionsAnalysisResult={setEmotionsAnalysisResult}
                         IntentionsAnalysisResult={IntentionsAnalysisResult}
                         setIntentionsAnalysisResult={setIntentionsAnalysisResult}
+
                     />:<div className='WaitingFrame'>
                         <img src={chaticon} alt='대기화면'/>
                         여러 사람들과 소통해보세요.
