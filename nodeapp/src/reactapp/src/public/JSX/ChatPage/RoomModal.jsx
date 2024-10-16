@@ -2,7 +2,9 @@ import React, { useState,useEffect } from "react";
 // import { useNavigate, useLocation } from "react-router-dom";
 import '../../CSS/RoomModal.css';
 
-export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,roomName,setRoomName,password, setPassword,isPrivate, setIsPrivate, maxCount, setMaxCount}){
+export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,roomName,
+                                    setRoomName,password, setPassword,isPrivate, setIsPrivate, 
+                                    maxCount, setMaxCount, handleSelectedRoom}){
     const [existingRooms, setExistingRooms] = useState([]); // 중복확인을 위한 state
     console.log("const 아래 existingRooms:", Array.isArray(existingRooms))
 
@@ -62,6 +64,7 @@ export default function RoomModal({UserName, isOpen, onClose, onSave,fetchRooms,
             if (success) {
                 onClose();
                 fetchRooms();
+                handleSelectedRoom(newRoom);
             }
         } catch (error) {
             console.error('Failed to create room', error);

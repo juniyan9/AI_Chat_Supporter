@@ -9,8 +9,8 @@ import RoomSettingsModal from './RoomSettingsModal';
 
 export default function ChatFrame({UserName, room, socket, roomCount, setRoomCount,
     roomName, setRoomName, password, setPassword, isPrivate, setIsPrivate, maxCount,
-    setMaxCount, timeoutId, setTimeoutId,ownerNickname,setIsSocketConnected,
-    setAIAnalysisResult,EmotionsAnalysisResult,setEmotionsAnalysisResult,IntentionsAnalysisResult,setIntentionsAnalysisResult}) {
+    setMaxCount, ownerNickname,setIsSocketConnected, EmotionsAnalysisResult,
+    setEmotionsAnalysisResult,IntentionsAnalysisResult,setIntentionsAnalysisResult}) {
     const [onsearchtext, setonSearchText] = useState('');
     const [isOwner, setIsOwner] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -38,14 +38,6 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
 
                 setMessages([]);
                 setIsSocketConnected(true);
-
-                if (timeoutId) {
-                    // console.log("clearTimeout 전 timeoutId:", timeoutId)
-                    clearTimeout(timeoutId); // 타이머 해제
-                    console.log("소켓에서 timeoutId 지웠습니다.")
-                    setTimeoutId(0)
-                    console.log("소켓에서 timeoutId 만료 후 timeoutId:", timeoutId)
-                }
                 
                 //console.log('룸',room); //count,룸id,private,maxcount,name(roomname),ownerid,ownernickname,password
                 
@@ -54,7 +46,6 @@ export default function ChatFrame({UserName, room, socket, roomCount, setRoomCou
                 alert('방이 꽉찼습니다');
                 return;
             }
-
            
             
             socket.current.on('roomCountUpdate', (count) => {

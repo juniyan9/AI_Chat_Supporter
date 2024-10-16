@@ -80,7 +80,7 @@ import emotionClassifierRouter from "./model_routers/emotionClassifierRouter.js"
 
 
 // 유저 세션 연장 처리 -- 방에 있는데 그냥 관전만 하는 유저 연장
-const extendPrd = 16
+const extendPrd = 10
 setInterval(() => {
   const now = new Date();
 
