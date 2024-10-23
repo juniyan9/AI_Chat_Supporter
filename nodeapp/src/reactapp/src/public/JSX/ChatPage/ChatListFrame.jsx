@@ -19,10 +19,6 @@ export default function ChatListFrame({setIsSocketConnected,isSocketConnected,on
     // console.log('rooms1',rooms);
     //rooms : 현재 존재하는 방배열 및 정보 conut,id,private,roomname,ownerid,ownernickname,password 등
 
-    useEffect(() => {
-        fetchRooms(); // 서버에서 방 목록을 다시 불러옴
-    }, [count]);
-
     const handleSelectedRoom = (room) => {
         //console.log('ChatListFrame룸',room);//conut,id,private,maxcount,name(roomname),ownerid,ownernickname,password
         onSelectedRoom(room);

@@ -1,4 +1,5 @@
 .MessageContainer {
+    width: 100%;
     height: 86%;
     overflow-y: auto;
 }
