@@ -13,7 +13,7 @@ import gemini_run from "../model_routers/gemini.js";
 export function socketConnection() {
   let roomUsers = {};
 
-  const WS_port = 5050;
+  const WS_port = 9090;
   httpServer.listen(WS_port, () => {
     logger.info("WebSocket listening at port %d", WS_port);
   });
